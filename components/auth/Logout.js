@@ -3,13 +3,10 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "../../supabase";
-import { AiOutlinePoweroff } from "react-icons/ai";
-import { useParams } from "next/navigation";
+import CircularProgress from "@mui/material/CircularProgress";
 
-
-const Logout = ({ hover }) => {
+const Logout = () => {
   const router = useRouter();
-  const params = useParams();
   const [session, setSession] = useState(null);
   const [loading, setLoading] = useState(false);
 
@@ -21,9 +18,9 @@ const Logout = ({ hover }) => {
         if (error) {
           throw error;
         }
+        router.push("/");
       } catch (error) {
         console.error("Logout error:", error.message);
-      } finally {
         router.push("/");
       }
     }, 1000);
@@ -32,27 +29,21 @@ const Logout = ({ hover }) => {
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
+      if (!session) {
+        router.push("/");
+      }
     });
   }, []);
 
   return (
     <>
-      <button onClick={() => signOut()}>
-        {loading ? (
-          <>
-            <div className="bg-zinc-900 rounded-md h-10 mx-2 items-center justify-center transition-all hidden sm:flex">
-              <span className="text-2xl transition-all">
-              </span>
-            </div>
-          </>
-        ) : (
-          <>
-            <AiOutlinePoweroff />
-            Logout
-          </>
-        )
-        }
-      </button >
+      {loading ? (
+        <div className="flex items-center justify-center gap-2">
+          <CircularProgress size={20} color="inherit" /> Logout
+        </div>
+      ) : (
+        <button onClick={() => signOut()}>Logout</button>
+      )}
     </>
   );
 };

@@ -5,7 +5,6 @@ import { Auth } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
 import { useRouter } from "next/navigation";
 import { supabase } from "../../supabase";
-import Logout from "./Logout";
 
 export default function Login() {
   const [session, setSession] = useState(null);
@@ -27,12 +26,14 @@ export default function Login() {
 
   if (!session) {
     return (
-      <Auth
-        supabaseClient={supabase}
-        appearance={{ theme: ThemeSupa }}
-        theme="dark"
-        providers={["twitch", "discord"]}
-      />
+      <div className="max-w-80 mx-auto">
+        <Auth
+          supabaseClient={supabase}
+          appearance={{ theme: ThemeSupa }}
+          theme="dark"
+          providers={["twitch", "discord"]}
+        />
+      </div>
     );
   } else {
     router.push("/dashboard");
