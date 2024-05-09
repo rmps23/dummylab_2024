@@ -77,10 +77,9 @@ const Navbar = () => {
               'aria-labelledby': 'basic-button',
             }}
           >
-            <MenuItem onClick={handleClose}>Dashboard</MenuItem>
-            <MenuItem onClick={handleClose}>Players</MenuItem>
-            <Divider />
-            <MenuItem><Logout /></MenuItem>
+            <MenuItem onClick={handleClose}>
+              <Link href="/dashboard/players">Players</Link>
+            </MenuItem>
           </Menu>
           <Button
             id="settings-button"
