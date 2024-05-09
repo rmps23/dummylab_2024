@@ -26,15 +26,6 @@ const Logout = () => {
     }, 1000);
   };
 
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      if (!session) {
-        router.push("/");
-      }
-    });
-  }, []);
-
   return (
     <>
       {loading ? (
