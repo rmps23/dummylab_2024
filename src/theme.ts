@@ -1,18 +1,18 @@
 "use client";
-import { Chakra_Petch } from "next/font/google";
 import { createTheme } from "@mui/material/styles";
-
-const chakra = Chakra_Petch({
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
-});
 
 const theme = createTheme({
   typography: {
-    fontFamily: chakra.style.fontFamily,
+    fontFamily: '"Chakra Petch", sans-serif',
   },
   palette: {
     mode: "dark",
+    primary: {
+      main: "#1de9b6",
+    },
+    secondary: {
+      main: "#1de9b6",
+    },
   },
 });
 

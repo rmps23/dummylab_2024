@@ -1,0 +1,39 @@
+import { supabase } from "@/supabase";
+
+async function getPlayers() {
+  const { data, error } = await supabase
+    .from("player")
+    .select("id, name, riot_id, role (id, name, image_link)");
+
+  if (error) {
+    console.error("Error fetching players:", error);
+    return [];
+  }
+  return data;
+}
+
+async function getPlayerByID(playerID) {
+  // Assuming you want to fetch by playerID
+  const { data, error } = await supabase
+    .from("player")
+    .select("id, name, riot_id, role (id, name, image_link)")
+    .eq("id", playerID); // Using the playerID to filter the query
+
+  if (error) {
+    console.error("Error fetching player by ID:", error);
+    return null; // Changed to return null instead of an empty array for single record
+  }
+  return data;
+}
+
+async function deletePlayerByID(deletePlayerId) {
+  const { error } = await supabase
+    .from("player")
+    .delete()
+    .eq("id", deletePlayerId);
+  if (error) {
+    console.error("Error deleting player:", error.message);
+  }
+}
+
+export { getPlayers, getPlayerByID, deletePlayerByID };
