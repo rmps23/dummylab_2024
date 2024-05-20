@@ -36,4 +36,31 @@ async function deletePlayerByID(deletePlayerId) {
   }
 }
 
-export { getPlayers, getPlayerByID, deletePlayerByID };
+
+async function getPlayerPUUID(RiotID) {
+  const [gameName, tagLine] = RiotID.split("#");
+  const url = `/api/riot/${gameName}/${tagLine}`;
+
+  try {
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Error fetching matches: ${response.statusText} - ${errorText}`);
+    }
+
+    const data = await response.json();
+    // Ensure the data is an array
+    return Array.isArray(data) ? data : [data];
+  } catch (error) {
+    console.error("Error fetching player matches:", error);
+    return [];
+  }
+}
+
+export { getPlayers, getPlayerByID, deletePlayerByID, getPlayerPUUID };
