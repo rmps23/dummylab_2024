@@ -37,7 +37,7 @@ async function deletePlayerByID(deletePlayerId) {
 }
 
 
-async function getPlayerPUUID(RiotID) {
+async function getPlayerRiotInfo(RiotID) {
   const [gameName, tagLine] = RiotID.split("#");
   const url = `/api/riot/${gameName}/${tagLine}`;
 
@@ -63,4 +63,5 @@ async function getPlayerPUUID(RiotID) {
   }
 }
 
-export { getPlayers, getPlayerByID, deletePlayerByID, getPlayerPUUID };
+
+export { getPlayers, getPlayerByID, deletePlayerByID, getPlayerRiotInfo };
