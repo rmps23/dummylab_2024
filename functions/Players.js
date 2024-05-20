@@ -36,22 +36,23 @@ async function deletePlayerByID(deletePlayerId) {
   }
 }
 
-
-async function getPlayerRiotInfo(RiotID) {
+async function getPlayerRiotInfo(RiotID, PlayerID) {
   const [gameName, tagLine] = RiotID.split("#");
   const url = `/api/riot/${gameName}/${tagLine}`;
 
   try {
     const response = await fetch(url, {
-      method: 'GET',
+      method: "GET",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
     });
 
     if (!response.ok) {
       const errorText = await response.text();
-      throw new Error(`Error fetching matches: ${response.statusText} - ${errorText}`);
+      throw new Error(
+        `Error fetching matches: ${response.statusText} - ${errorText}`
+      );
     }
 
     const data = await response.json();
@@ -62,6 +63,5 @@ async function getPlayerRiotInfo(RiotID) {
     return [];
   }
 }
-
 
 export { getPlayers, getPlayerByID, deletePlayerByID, getPlayerRiotInfo };
