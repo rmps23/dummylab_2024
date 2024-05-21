@@ -134,19 +134,30 @@ async function fetchMatchDetails(matchId, puuid, playerID, matchData) {
     const participants = data.metadata.participants;
     const participantID = participants.findIndex(participantPuuid => participantPuuid === puuid);
 
-    const championName = matchData.info.participants[participantID].championName;
+    const otherParticipants = [];
+    let participantData = null;
 
-    // console.log(matchData.info.participants[participantID]);
-
-
-    const gameFrames = data.info.frames;
-
-    for (const [index, frame] of gameFrames.entries()) {
-      if (index === 11) {
-        const gold_at_10 = frame.participantFrames[participantID].totalGold;
-        await insertGameStats(playerID, matchId, gold_at_10, championName);
+    matchData.info.participants.forEach((part, index) => {
+      if (index === participantID) {
+        participantData = part;
+      } else {
+        otherParticipants.push(part);
       }
-    }
+    });
+
+    // console.log(otherParticipants);
+    // console.log(participantData);
+
+    await insertGameStats(playerID, matchId, participantData, otherParticipants);
+
+    // const gameFrames = data.info.frames;
+
+    // for (const [index, frame] of gameFrames.entries()) {
+    //   if (index === 11) {
+    //     const gold_at_10 = frame.participantFrames[participantID].totalGold;
+    //     await insertGameStats(playerID, matchId, gold_at_10, championName);
+    //   }
+    // }
 
   } catch (error) {
     console.error(`Failed to fetch match info for ${matchId}:`, error);
@@ -154,11 +165,11 @@ async function fetchMatchDetails(matchId, puuid, playerID, matchData) {
   }
 }
 
-async function insertGameStats(playerID, matchId, gold_at_10, championName) {
+async function insertGameStats(playerID, matchId, participantData, otherParticipants) {
   const { data, error } = await supabase
     .from('game_list')
     .upsert(
-      { game_id: matchId, player_id: playerID, gold_at_10: gold_at_10, champion_name: championName },
+      { game_id: matchId, player_id: playerID, participant_me: participantData, participant_others: otherParticipants },
       { onConflict: 'game_id' }
     );
 
