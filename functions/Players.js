@@ -102,10 +102,10 @@ async function fetchMatchQeueu(matchId, puuid, playerID) {
       throw new Error(`Error: ${response.status} ${response.statusText}`);
     }
 
-    const data = await response.json();
+    const matchData = await response.json();
 
-    if (data.info.queueId == 420) {
-      await fetchMatchDetails(matchId, puuid, playerID);
+    if (matchData.info.queueId == 420) {
+      await fetchMatchDetails(matchId, puuid, playerID, matchData);
     }
 
   } catch (error) {
@@ -114,7 +114,7 @@ async function fetchMatchQeueu(matchId, puuid, playerID) {
   }
 }
 
-async function fetchMatchDetails(matchId, puuid, playerID) {
+async function fetchMatchDetails(matchId, puuid, playerID, matchData) {
   const check_game_type = `/api/lol/match/v5/matches/${matchId}/timeline`;
 
   try {
@@ -134,12 +134,17 @@ async function fetchMatchDetails(matchId, puuid, playerID) {
     const participants = data.metadata.participants;
     const participantID = participants.findIndex(participantPuuid => participantPuuid === puuid);
 
+    const championName = matchData.info.participants[participantID].championName;
+
+    // console.log(matchData.info.participants[participantID]);
+
+
     const gameFrames = data.info.frames;
 
     for (const [index, frame] of gameFrames.entries()) {
       if (index === 11) {
         const gold_at_10 = frame.participantFrames[participantID].totalGold;
-        await insertGameStats(playerID, matchId, gold_at_10);
+        await insertGameStats(playerID, matchId, gold_at_10, championName);
       }
     }
 
@@ -149,11 +154,11 @@ async function fetchMatchDetails(matchId, puuid, playerID) {
   }
 }
 
-async function insertGameStats(playerID, matchId, gold_at_10) {
+async function insertGameStats(playerID, matchId, gold_at_10, championName) {
   const { data, error } = await supabase
     .from('game_list')
     .upsert(
-      { game_id: matchId, player_id: playerID, gold_at_10: gold_at_10 },
+      { game_id: matchId, player_id: playerID, gold_at_10: gold_at_10, champion_name: championName },
       { onConflict: 'game_id' }
     );
 
