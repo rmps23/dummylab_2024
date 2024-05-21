@@ -43,19 +43,14 @@ const PlayerInfo = () => {
   const getPlayerPuuidInfo = async (riotID) => {
     setLoading(true);
     try {
-      const puuidData = await getPlayerRiotInfo(riotID, playerID); // Pass playerID here
+      const puuidData = await getPlayerRiotInfo(riotID, playerID);
       setPlayerPuuid(puuidData);
-      if (puuidData.matchesData) {
-        const filteredMatches = puuidData.matchesData.filter(
-          (match) => match.queueId === 420
-        );
-        setMatchDetails(filteredMatches);
-      }
     } catch (error) {
       console.error("Error fetching player PUUID:", error);
     }
     setLoading(false);
   };
+
   const handleUpdate = () => {
     if (playerInfo) {
       getPlayerPuuidInfo(playerInfo.riot_id);
@@ -63,22 +58,15 @@ const PlayerInfo = () => {
   };
 
   const renderPlayerPuuid = (puuid) => {
-    // Check if puuid is not undefined and is an array
     if (!puuid || !Array.isArray(puuid)) return null;
 
     return (
       <div>
-        {puuid.map(
-          (
-            puuidItem,
-            index // Use a different variable name for individual puuid item
-          ) => (
-            <div key={index}>
-              <p>{puuidItem.puuid}</p> // Access puuid property of individual
-              item
-            </div>
-          )
-        )}
+        {puuid.map((puuidItem, index) => (
+          <div key={index}>
+            <p>{puuidItem.puuid}</p>
+          </div>
+        ))}
       </div>
     );
   };
