@@ -13,9 +13,7 @@ const PlayerInfo = () => {
   const params = useParams();
   const [playerID, setPlayerID] = useState();
   const [playerInfo, setPlayerInfo] = useState();
-  const [playerPuuid, setPlayerPuuid] = useState();
-  const [opgg, setOPGG] = useState();
-  const [matchDetails, setMatchDetails] = useState([]);
+  const [playerData, setPlayerData] = useState();
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -31,7 +29,6 @@ const PlayerInfo = () => {
       if (data && data.length > 0) {
         const player = data[0];
         setPlayerInfo(player);
-        generateOpggLink(player.riot_id);
       } else {
         console.log("No player found");
       }
@@ -40,11 +37,11 @@ const PlayerInfo = () => {
     }
   };
 
-  const getPlayerPuuidInfo = async (riotID) => {
+  const getPlayerAPIInfo = async (riotID) => {
     setLoading(true);
     try {
-      const puuidData = await getPlayerRiotInfo(riotID, playerID);
-      setPlayerPuuid(puuidData);
+      const playerData = await getPlayerRiotInfo(riotID, playerID);
+      setPlayerData(playerData);
     } catch (error) {
       console.error("Error fetching player PUUID:", error);
     }
@@ -53,28 +50,10 @@ const PlayerInfo = () => {
 
   const handleUpdate = () => {
     if (playerInfo) {
-      getPlayerPuuidInfo(playerInfo.riot_id);
+      getPlayerAPIInfo(playerInfo.riot_id);
     }
   };
 
-  const renderPlayerPuuid = (puuid) => {
-    if (!puuid || !Array.isArray(puuid)) return null;
-
-    return (
-      <div>
-        {puuid.map((puuidItem, index) => (
-          <div key={index}>
-            <p>{puuidItem.puuid}</p>
-          </div>
-        ))}
-      </div>
-    );
-  };
-
-  const generateOpggLink = (riotId) => {
-    const formattedRiotId = riotId.replace("#", "-");
-    return `https://www.op.gg/summoners/euw/${formattedRiotId}`;
-  };
 
   return (
     <div>
@@ -94,21 +73,13 @@ const PlayerInfo = () => {
               </p>
             </div>
             <div>
-              <Link
-                href={generateOpggLink(playerInfo.riot_id)}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="bg-blue-600 p-1 rounded-sm hover:"
-              >
-                OP.GG
-              </Link>
               <Button
                 variant="contained"
                 size="small"
                 sx={{ fontSize: "0.7rem", fontWeight: "600" }}
                 onClick={handleUpdate}
               >
-                {loading ? <CircularProgress size={24} /> : "Update"}
+                {loading ? <CircularProgress size={24} color="warning" /> : "Update"}
               </Button>
             </div>
           </div>
@@ -116,18 +87,6 @@ const PlayerInfo = () => {
           <p className="flex justify-center">
             <CircularProgress />
           </p>
-        )}
-        {playerPuuid && renderPlayerPuuid(playerPuuid)}
-        {matchDetails.length > 0 && (
-          <div>
-            <h2>Match Details</h2>
-            {matchDetails.map((match, index) => (
-              <div key={index}>
-                <p>Match ID: {match.matchId}</p>
-                <pre>{JSON.stringify(match.timelineData, null, 2)}</pre>
-              </div>
-            ))}
-          </div>
         )}
       </div>
     </div>

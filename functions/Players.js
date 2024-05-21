@@ -145,19 +145,7 @@ async function fetchMatchDetails(matchId, puuid, playerID, matchData) {
       }
     });
 
-    // console.log(otherParticipants);
-    // console.log(participantData);
-
     await insertGameStats(playerID, matchId, participantData, otherParticipants);
-
-    // const gameFrames = data.info.frames;
-
-    // for (const [index, frame] of gameFrames.entries()) {
-    //   if (index === 11) {
-    //     const gold_at_10 = frame.participantFrames[participantID].totalGold;
-    //     await insertGameStats(playerID, matchId, gold_at_10, championName);
-    //   }
-    // }
 
   } catch (error) {
     console.error(`Failed to fetch match info for ${matchId}:`, error);
@@ -178,7 +166,6 @@ async function insertGameStats(playerID, matchId, participantData, otherParticip
     return null;
   }
 
-  return data; // Optionally return data if needed
 }
 
 
