@@ -1,12 +1,12 @@
-'use client'
+"use client";
 
 import Link from "next/link";
 import Logout from "../auth/Logout";
 import Image from "next/image";
-import Button from '@mui/material/Button';
-import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
-import Divider from '@mui/material/Divider';
+import Button from "@mui/material/Button";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
+import Divider from "@mui/material/Divider";
 
 import { supabase } from "@/supabase";
 import { FaBars } from "react-icons/fa6";
@@ -61,9 +61,9 @@ const Navbar = () => {
         <div>
           <Button
             id="basic-button"
-            aria-controls={openBasicMenu ? 'basic-menu' : undefined}
+            aria-controls={openBasicMenu ? "basic-menu" : undefined}
             aria-haspopup="true"
-            aria-expanded={openBasicMenu ? 'true' : undefined}
+            aria-expanded={openBasicMenu ? "true" : undefined}
             onClick={handleClickBasic}
           >
             <FaBars className="text-zinc-200 text-xl flex gap-2 items-center justify-center" />
@@ -74,7 +74,7 @@ const Navbar = () => {
             open={openBasicMenu}
             onClose={handleClose}
             MenuListProps={{
-              'aria-labelledby': 'basic-button',
+              "aria-labelledby": "basic-button",
             }}
           >
             <MenuItem onClick={handleClose}>
@@ -83,9 +83,9 @@ const Navbar = () => {
           </Menu>
           <Button
             id="settings-button"
-            aria-controls={openSettingsMenu ? 'settings-menu' : undefined}
+            aria-controls={openSettingsMenu ? "settings-menu" : undefined}
             aria-haspopup="true"
-            aria-expanded={openSettingsMenu ? 'true' : undefined}
+            aria-expanded={openSettingsMenu ? "true" : undefined}
             onClick={handleClickSettings}
           >
             <FaGear className="text-zinc-200 text-xl" />
@@ -96,13 +96,15 @@ const Navbar = () => {
             open={openSettingsMenu}
             onClose={handleClose}
             MenuListProps={{
-              'aria-labelledby': 'settings-button',
+              "aria-labelledby": "settings-button",
             }}
           >
             <MenuItem onClick={handleClose}>Profile</MenuItem>
             <MenuItem onClick={handleClose}>My account</MenuItem>
             <Divider />
-            <MenuItem><Logout /></MenuItem>
+            <MenuItem>
+              <Logout />
+            </MenuItem>
           </Menu>
         </div>
       </div>

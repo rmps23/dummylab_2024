@@ -1,19 +1,20 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import Navbar from "@/components/navbar/Navbar";
-import { getPlayerByID, getPlayerRiotInfo } from "@/functions/Players";
 import { useParams } from "next/navigation";
-import { CircularProgress } from "@mui/material";
+
+import Navbar from "@/components/navbar/Navbar";
 import Image from "next/image";
+
+import { getPlayerByID } from "@/functions/Players";
+import { CircularProgress } from "@mui/material";
 import { Button } from "@mui/material";
-import Link from "next/link";
 
 const PlayerInfo = () => {
   const params = useParams();
   const [playerID, setPlayerID] = useState();
   const [playerInfo, setPlayerInfo] = useState();
-  const [playerData, setPlayerData] = useState();
+  const [PlayerSupaData, setPlayerSupaData] = useState([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -26,14 +27,18 @@ const PlayerInfo = () => {
   const getPlayerInfo = async (playerID) => {
     try {
       const data = await getPlayerByID(playerID);
-      if (data && data.length > 0) {
-        const player = data[0];
-        setPlayerInfo(player);
-      } else {
-        console.log("No player found");
-      }
+      const player = data[0];
+      setPlayerInfo(player);
     } catch (error) {
       console.error("Error fetching player info:", error);
+    }
+  };
+  const fetchSupaPlayerData = async (playerID) => {
+    try {
+      const data = await getSupaPlayerData(playerID);
+      setPlayerSupaData(data);
+    } catch (error) {
+      console.error("Error fetching Supa player data:", error);
     }
   };
 
@@ -41,7 +46,10 @@ const PlayerInfo = () => {
     setLoading(true);
     try {
       const playerData = await getPlayerRiotInfo(riotID, playerID);
-      setPlayerData(playerData);
+      setPlayerInfo((prevInfo) => ({
+        ...prevInfo,
+        riotData: playerData,
+      }));
     } catch (error) {
       console.error("Error fetching player PUUID:", error);
     }
@@ -54,7 +62,6 @@ const PlayerInfo = () => {
     }
   };
 
-
   return (
     <div>
       <Navbar />
@@ -66,7 +73,7 @@ const PlayerInfo = () => {
                 src={playerInfo.role.image_link}
                 alt={playerInfo.role.name}
                 width={25}
-                height={0}
+                height={25} // Changed height to 25 to maintain aspect ratio
               ></Image>
               <p className="uppercase text-zinc-200 font-medium text-md">
                 {playerInfo.name}
@@ -77,9 +84,13 @@ const PlayerInfo = () => {
                 variant="contained"
                 size="small"
                 sx={{ fontSize: "0.7rem", fontWeight: "600" }}
-                onClick={handleUpdate}
+                // onClick={handleUpdate}
               >
-                {loading ? <CircularProgress size={24} color="warning" /> : "Update"}
+                {loading ? (
+                  <CircularProgress size={24} color="warning" />
+                ) : (
+                  "Update"
+                )}
               </Button>
             </div>
           </div>
@@ -88,6 +99,18 @@ const PlayerInfo = () => {
             <CircularProgress />
           </p>
         )}
+      </div>
+      <div className="max-w-[1440px] px-5 mx-auto">
+        <div className="flex flex-col gap-4">
+          {PlayerSupaData && PlayerSupaData.length > 0
+            ? PlayerSupaData.map((supaData, index) => (
+                <div
+                  className="bg-gradient-to-r from-teal-500/30 border border-teal-500/30 p-4"
+                  key={index}
+                ></div>
+              ))
+            : "loading"}
+        </div>
       </div>
     </div>
   );
