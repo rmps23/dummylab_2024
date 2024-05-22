@@ -7,7 +7,7 @@ import Navbar from "@/components/navbar/Navbar";
 import Image from "next/image";
 
 import { getPlayerByID } from "@/functions/Players";
-import { getSupaPlayerData } from "@/functions/GameList";
+import { getSupaPlayerData, getPlayerRiotInfo } from "@/functions/GameList";
 import { CircularProgress, Button } from "@mui/material";
 
 const PlayerInfo = () => {
@@ -20,24 +20,28 @@ const PlayerInfo = () => {
     function_GetSupaPlayerData(params.PlayerID);
   }, [params.PlayerID]);
 
+  const handleUpdate = () => {
+    function_GetPlayerMatchData(playerInfo.riot_id, params.PlayerID);
+  };
+
+
   const function_GetSupaPlayerData = async (player_id) => {
     const supa_player_data = await getSupaPlayerData(player_id);
-    // You might want to do something with supa_player_data here
   };
 
   const function_GetPlayerInfo = async (player_id) => {
     setLoading(true);
     const player_info = await getPlayerByID(player_id);
-    console.log(player_info);
     setPlayerInfo(player_info);
     setLoading(false);
   };
 
-  const handleUpdate = () => {
-    if (playerInfo) {
-      // Call update function here
-    }
+  const function_GetPlayerMatchData = async (RiotID, playerID) => {
+    await getPlayerRiotInfo(RiotID, playerID);
   };
+
+
+
 
   return (
     <div>
@@ -81,7 +85,7 @@ const PlayerInfo = () => {
       </div>
       <div className="max-w-[1440px] px-5 mx-auto">
         <div className="flex flex-col gap-4">
-          {/* Additional player information can be rendered here */}
+          {/* Additional player information can be rendered here */}s
         </div>
       </div>
     </div>
