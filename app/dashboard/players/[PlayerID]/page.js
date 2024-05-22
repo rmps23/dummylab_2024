@@ -7,58 +7,35 @@ import Navbar from "@/components/navbar/Navbar";
 import Image from "next/image";
 
 import { getPlayerByID } from "@/functions/Players";
-import { CircularProgress } from "@mui/material";
-import { Button } from "@mui/material";
+import { getSupaPlayerData } from "@/functions/GameList";
+import { CircularProgress, Button } from "@mui/material";
 
 const PlayerInfo = () => {
   const params = useParams();
-  const [playerID, setPlayerID] = useState();
-  const [playerInfo, setPlayerInfo] = useState();
-  const [PlayerSupaData, setPlayerSupaData] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [playerInfo, setPlayerInfo] = useState(null);
 
   useEffect(() => {
-    if (params.PlayerID) {
-      setPlayerID(params.PlayerID);
-      getPlayerInfo(params.PlayerID);
-    }
+    function_GetPlayerInfo(params.PlayerID);
+    function_GetSupaPlayerData(params.PlayerID);
   }, [params.PlayerID]);
 
-  const getPlayerInfo = async (playerID) => {
-    try {
-      const data = await getPlayerByID(playerID);
-      const player = data[0];
-      setPlayerInfo(player);
-    } catch (error) {
-      console.error("Error fetching player info:", error);
-    }
-  };
-  const fetchSupaPlayerData = async (playerID) => {
-    try {
-      const data = await getSupaPlayerData(playerID);
-      setPlayerSupaData(data);
-    } catch (error) {
-      console.error("Error fetching Supa player data:", error);
-    }
+  const function_GetSupaPlayerData = async (player_id) => {
+    const supa_player_data = await getSupaPlayerData(player_id);
+    // You might want to do something with supa_player_data here
   };
 
-  const getPlayerAPIInfo = async (riotID) => {
+  const function_GetPlayerInfo = async (player_id) => {
     setLoading(true);
-    try {
-      const playerData = await getPlayerRiotInfo(riotID, playerID);
-      setPlayerInfo((prevInfo) => ({
-        ...prevInfo,
-        riotData: playerData,
-      }));
-    } catch (error) {
-      console.error("Error fetching player PUUID:", error);
-    }
+    const player_info = await getPlayerByID(player_id);
+    console.log(player_info);
+    setPlayerInfo(player_info);
     setLoading(false);
   };
 
   const handleUpdate = () => {
     if (playerInfo) {
-      getPlayerAPIInfo(playerInfo.riot_id);
+      // Call update function here
     }
   };
 
@@ -69,12 +46,14 @@ const PlayerInfo = () => {
         {playerInfo ? (
           <div className="bg-zinc-900 border-b border-teal-500 flex justify-between gap-3 p-4 rounded-md items-center">
             <div className="flex gap-3">
-              <Image
-                src={playerInfo.role.image_link}
-                alt={playerInfo.role.name}
-                width={25}
-                height={25} // Changed height to 25 to maintain aspect ratio
-              ></Image>
+              {playerInfo.role && (
+                <Image
+                  src={playerInfo.role.image_link}
+                  alt={playerInfo.role.name}
+                  width={25}
+                  height={25} // Changed height to 25 to maintain aspect ratio
+                />
+              )}
               <p className="uppercase text-zinc-200 font-medium text-md">
                 {playerInfo.name}
               </p>
@@ -84,7 +63,7 @@ const PlayerInfo = () => {
                 variant="contained"
                 size="small"
                 sx={{ fontSize: "0.7rem", fontWeight: "600" }}
-                // onClick={handleUpdate}
+                onClick={handleUpdate}
               >
                 {loading ? (
                   <CircularProgress size={24} color="warning" />
@@ -102,14 +81,7 @@ const PlayerInfo = () => {
       </div>
       <div className="max-w-[1440px] px-5 mx-auto">
         <div className="flex flex-col gap-4">
-          {PlayerSupaData && PlayerSupaData.length > 0
-            ? PlayerSupaData.map((supaData, index) => (
-                <div
-                  className="bg-gradient-to-r from-teal-500/30 border border-teal-500/30 p-4"
-                  key={index}
-                ></div>
-              ))
-            : "loading"}
+          {/* Additional player information can be rendered here */}
         </div>
       </div>
     </div>

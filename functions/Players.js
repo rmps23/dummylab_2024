@@ -16,7 +16,8 @@ async function getPlayerByID(playerID) {
   const { data, error } = await supabase
     .from("player")
     .select("id, name, riot_id, role (id, name, image_link)")
-    .eq("id", playerID);
+    .eq("id", playerID)
+    .single();
 
   if (error) {
     console.error("Error fetching player by ID:", error);
@@ -35,6 +36,17 @@ async function deletePlayerByID(deletePlayerId) {
     console.error("Error deleting player:", error.message);
   }
 }
+
+
+
+
+
+
+
+
+
+
+
 
 async function getPlayerRiotInfo(RiotID, playerID) {
   // GET THE PLAYER PUUID
@@ -174,23 +186,10 @@ async function insertGameStats(playerID, matchId, game_time, lanes) {
   }
 }
 
-async function getSupaPlayerData(playerID) {
-  const { data, error } = await supabase
-    .from("game_list")
-    .select("*")
-    .eq("player_id", playerID);
-
-  if (error) {
-    console.error("Error deleting player:", error.message);
-  }
-
-  return data;
-}
 
 export {
   getPlayers,
   getPlayerByID,
   deletePlayerByID,
   getPlayerRiotInfo,
-  getSupaPlayerData,
 };
