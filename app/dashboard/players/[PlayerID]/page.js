@@ -28,7 +28,6 @@ const PlayerInfo = () => {
   const function_GetSupaPlayerData = async (player_id) => {
     const supa_player_data = await getSupaPlayerData(player_id);
     setPlayerSupaInfo(supa_player_data);
-    console.log(supa_player_data);
   };
 
   const function_GetPlayerInfo = async (player_id) => {
@@ -86,13 +85,13 @@ const PlayerInfo = () => {
         <div className="flex flex-col gap-4">
           {playerSupaInfo && playerSupaInfo.length > 0
             ? playerSupaInfo.map((game_data, index) => {
-                return (
-                  <div
-                    key={index}
-                    className="bg-zinc-900 hover:bg-zinc-800 transition-all duration-100 rounded-md border-l-2 border-teal-500 flex justify-between"
-                  >
-                    <p>{game_data.game_time}m</p>
-                    {/* <div className="flex flex-col py-2 px-10">
+              return (
+                <div
+                  key={index}
+                  className="bg-zinc-900 hover:bg-zinc-800 transition-all duration-100 rounded-md border-l-2 border-teal-500 flex justify-between"
+                >
+                  <p>{game_data.game_time}m</p>
+                  {/* <div className="flex flex-col py-2 px-10">
                       <div className="flex gap-2 rounded-md justify-center">
                         <Image
                           src={`https://ddragon.leagueoflegends.com/cdn/14.10.1/img/champion/${game_data.blue_top.champ_name}.png`}
@@ -179,9 +178,9 @@ const PlayerInfo = () => {
                         ></Image>
                       </div>
                     </div> */}
-                  </div>
-                );
-              })
+                </div>
+              );
+            })
             : "There is no data from this player."}
         </div>
       </div>
