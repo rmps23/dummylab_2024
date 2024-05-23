@@ -2,7 +2,7 @@ export async function GET(request, { params }) {
   const { puuid } = params;
   const apiKey = process.env.NEXT_PUBLIC_RIOT_API_KEY;
 
-  const gameList = `https://europe.api.riotgames.com/lol/match/v5/matches/by-puuid/${puuid}/ids?start=0&count=20&api_key=${apiKey}`;
+  const gameList = `https://europe.api.riotgames.com/lol/match/v5/matches/by-puuid/${puuid}/ids?type=ranked&count=20&api_key=${apiKey}`;
 
   try {
     const response = await fetch(gameList);

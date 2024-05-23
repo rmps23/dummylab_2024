@@ -8,6 +8,7 @@ import { getPlayerByID } from "@/functions/Players";
 import { getSupaPlayerData, getPlayerRiotInfo } from "@/functions/GameList";
 import { CircularProgress, Button } from "@mui/material";
 import champion_json from "@/lol_champions.json";
+import GameInfoBar from "@/components/players/GameInfoBar";
 
 const PlayerInfo = () => {
   const params = useParams();
@@ -53,7 +54,7 @@ const PlayerInfo = () => {
                   src={playerInfo.role.image_link}
                   alt={playerInfo.role.name}
                   width={25}
-                  height={25} // Changed height to 25 to maintain aspect ratio
+                  height={25}
                 />
               )}
               <p className="uppercase text-zinc-200 font-medium text-md">
@@ -85,102 +86,12 @@ const PlayerInfo = () => {
         <div className="flex flex-col gap-4">
           {playerSupaInfo && playerSupaInfo.length > 0
             ? playerSupaInfo.map((game_data, index) => {
-              return (
-                <div
-                  key={index}
-                  className="bg-zinc-900 hover:bg-zinc-800 transition-all duration-100 rounded-md border-l-2 border-teal-500 flex justify-between"
-                >
-                  <p>{game_data.game_time}m</p>
-                  {/* <div className="flex flex-col py-2 px-10">
-                      <div className="flex gap-2 rounded-md justify-center">
-                        <Image
-                          src={`https://ddragon.leagueoflegends.com/cdn/14.10.1/img/champion/${game_data.blue_top.champ_name}.png`}
-                          width={25}
-                          height={25}
-                          className="rounded-full border-2 border-teal-500"
-                        ></Image>
-                        <p className="flex items-center gap-2 text-teal-500 font-medium">
-                          vs
-                        </p>
-                        <Image
-                          src={`https://ddragon.leagueoflegends.com/cdn/14.10.1/img/champion/${game_data.red_top.champ_name}.png`}
-                          width={25}
-                          height={25}
-                          className="rounded-full border-2 border-teal-500"
-                        ></Image>
-                      </div>
-                      <div className="flex gap-2 rounded-md justify-center">
-                        <Image
-                          src={`https://ddragon.leagueoflegends.com/cdn/14.10.1/img/champion/${game_data.blue_jungler.champ_name}.png`}
-                          width={25}
-                          height={25}
-                          className="rounded-full border-2 border-teal-500"
-                        ></Image>
-                        <p className="flex items-center gap-2 text-teal-500 font-medium">
-                          vs
-                        </p>
-                        <Image
-                          src={`https://ddragon.leagueoflegends.com/cdn/14.10.1/img/champion/${game_data.red_jungler.champ_name}.png`}
-                          width={25}
-                          height={25}
-                          className="rounded-full border-2 border-teal-500"
-                        ></Image>
-                      </div>
-                      <div className="flex gap-2 rounded-md justify-center">
-                        <Image
-                          src={`https://ddragon.leagueoflegends.com/cdn/14.10.1/img/champion/${game_data.blue_mid.champ_name}.png`}
-                          width={25}
-                          height={25}
-                          className="rounded-full border-2 border-teal-500"
-                        ></Image>
-                        <p className="flex items-center gap-2 text-teal-500 font-medium">
-                          vs
-                        </p>
-                        <Image
-                          src={`https://ddragon.leagueoflegends.com/cdn/14.10.1/img/champion/${game_data.red_mid.champ_name}.png`}
-                          width={25}
-                          height={25}
-                          className="rounded-full border-2 border-teal-500"
-                        ></Image>
-                      </div>
-                      <div className="flex gap-2 rounded-md justify-center">
-                        <Image
-                          src={`https://ddragon.leagueoflegends.com/cdn/14.10.1/img/champion/${game_data.blue_bot.champ_name}.png`}
-                          width={25}
-                          height={25}
-                          className="rounded-full border-2 border-teal-500"
-                        ></Image>
-                        <p className="flex items-center gap-2 text-teal-500 font-medium">
-                          vs
-                        </p>
-                        <Image
-                          src={`https://ddragon.leagueoflegends.com/cdn/14.10.1/img/champion/${game_data.red_bot.champ_name}.png`}
-                          width={25}
-                          height={25}
-                          className="rounded-full border-2 border-teal-500"
-                        ></Image>
-                      </div>
-                      <div className="flex gap-2 rounded-md justify-center">
-                        <Image
-                          src={`https://ddragon.leagueoflegends.com/cdn/14.10.1/img/champion/${game_data.blue_sup.champ_name}.png`}
-                          width={25}
-                          height={25}
-                          className="rounded-full border-2 border-teal-500"
-                        ></Image>
-                        <p className="flex items-center gap-2 text-teal-500 font-medium">
-                          vs
-                        </p>
-                        <Image
-                          src={`https://ddragon.leagueoflegends.com/cdn/14.10.1/img/champion/${game_data.red_sup.champ_name}.png`}
-                          width={25}
-                          height={25}
-                          className="rounded-full border-2 border-teal-500"
-                        ></Image>
-                      </div>
-                    </div> */}
-                </div>
-              );
-            })
+                return (
+                  <div key={index}>
+                    <GameInfoBar data={game_data}></GameInfoBar>
+                  </div>
+                );
+              })
             : "There is no data from this player."}
         </div>
       </div>

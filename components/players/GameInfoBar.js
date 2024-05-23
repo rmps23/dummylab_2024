@@ -1,0 +1,81 @@
+import React from "react";
+import Link from "next/link";
+import lol_champions from "@/lol_champions.json";
+import lol_spells from "@/lol_summoner_spells.json";
+import Image from "next/image";
+import { Tooltip } from "react-tooltip";
+
+const GameInfoBar = ({ data }) => {
+  const dateFromTimestamp = new Date(data.game_end_timestamp);
+  const currentDate = new Date();
+  const timeDifference = currentDate - dateFromTimestamp;
+  const daysDifference = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+  const gameVersion = data.gameVersion.split(".").slice(0, 2).join(".");
+  const champIcon =
+    "https://fpwrnfdqzvztmakmrdnc.supabase.co/storage/v1/object/public/champions_icons/" +
+    lol_champions.data[data.championName].image.full;
+  const champName = lol_champions.data[data.championName].name;
+  const role =
+    "https://fpwrnfdqzvztmakmrdnc.supabase.co/storage/v1/object/public/roles/" +
+    data.teamPosition.toLowerCase() +
+    ".png";
+
+  return (
+    <div
+      className={`bg-zinc-800 p-4 rounded-md border-l-2 ${
+        data.win === false ? "border-red-500" : "border-cyan-500"
+      }`}
+    >
+      <div className="flex items-center justify-between">
+        <div className="flex gap-2 mb-4">
+          <span className="uppercase text-xs">Ranked Solo</span>
+          <span className=" text-xs text-teal-400">
+            {daysDifference === 0 ? "Today" : `${daysDifference}d ago`}
+          </span>
+          <span className=" text-xs text-teal-400">-</span>
+          <span className=" text-xs text-teal-400">
+            {data.game_time} minutes
+          </span>
+        </div>
+        <div className="flex gap-2 items-center">
+          <span className=" text-xs text-zinc-400">Patch {gameVersion}</span>
+          <Link
+            href={"#"}
+            className="text-xs p-1 font-bold border border-teal-500 bg-teal-500 text-zinc-950 rounded-sm uppercase hover:bg-zinc-950 hover:border hover:border-teal-500 hover:text-teal-500 transition-all duration-200"
+          >
+            Match Details
+          </Link>
+        </div>
+      </div>
+      <div className="flex items-center gap-3">
+        <div className="w-16 h-16 overflow-hidden rounded-md border border-teal-500">
+          <Image
+            src={champIcon}
+            height={200}
+            width={200}
+            className="scale-110"
+            alt=""
+            data-tooltip-id="champ_name"
+            data-tooltip-content={champName}
+          ></Image>
+          <Tooltip id="champ_name" place="right" variant="light" />
+        </div>
+        <div>
+          <Image
+            src={role}
+            height={30}
+            width={30}
+            alt=""
+            className="border-teal-600 bg-zinc-900 border rounded-md p-1"
+          ></Image>
+        </div>
+        <div className="flex flex-col items-center gap-3">
+          <div></div>
+          <div></div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default GameInfoBar;

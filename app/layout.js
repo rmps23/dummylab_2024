@@ -2,6 +2,7 @@ import "./globals.css";
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v13-appRouter";
 import { ThemeProvider } from "@mui/material/styles";
 import theme from "@/src/theme";
+import "react-tooltip/dist/react-tooltip.css";
 
 export default function RootLayout({ children }) {
   return (
