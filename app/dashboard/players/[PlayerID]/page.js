@@ -29,7 +29,6 @@ const PlayerInfo = () => {
     const supa_player_data = await getSupaPlayerData(player_id);
     setPlayerSupaInfo(supa_player_data);
     console.log(supa_player_data);
-    console.log(champions);
   };
 
   const function_GetPlayerInfo = async (player_id) => {
@@ -93,7 +92,7 @@ const PlayerInfo = () => {
                     className="bg-zinc-900 hover:bg-zinc-800 transition-all duration-100 rounded-md border-l-2 border-teal-500 flex justify-between"
                   >
                     <p>{game_data.game_time}m</p>
-                    <div className="flex flex-col py-2 px-10">
+                    {/* <div className="flex flex-col py-2 px-10">
                       <div className="flex gap-2 rounded-md justify-center">
                         <Image
                           src={`https://ddragon.leagueoflegends.com/cdn/14.10.1/img/champion/${game_data.blue_top.champ_name}.png`}
@@ -179,7 +178,7 @@ const PlayerInfo = () => {
                           className="rounded-full border-2 border-teal-500"
                         ></Image>
                       </div>
-                    </div>
+                    </div> */}
                   </div>
                 );
               })
