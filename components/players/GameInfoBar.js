@@ -6,6 +6,9 @@ import Image from "next/image";
 import { Tooltip } from "react-tooltip";
 
 const GameInfoBar = ({ data }) => {
+
+  console.log(data);
+
   const dateFromTimestamp = new Date(data.game_end_timestamp);
   const currentDate = new Date();
   const timeDifference = currentDate - dateFromTimestamp;
@@ -20,11 +23,30 @@ const GameInfoBar = ({ data }) => {
     data.teamPosition.toLowerCase() +
     ".png";
 
+  const sum_spell_1_str = data.summoner1Id.toString();
+  const sum_spell_2_str = data.summoner2Id.toString();
+
+  function findSummonerByKey(data, key) {
+    for (const summoner in data) {
+      if (data[summoner].key === key) {
+        return data[summoner].image.full;
+      }
+    }
+    return null;
+  }
+
+  const sum1img = findSummonerByKey(lol_spells.data, sum_spell_1_str);
+  const sum2img = findSummonerByKey(lol_spells.data, sum_spell_2_str);
+
+  const summoner1 = "https://fpwrnfdqzvztmakmrdnc.supabase.co/storage/v1/object/public/sum_spells/" + sum1img;
+  const summoner2 = "https://fpwrnfdqzvztmakmrdnc.supabase.co/storage/v1/object/public/sum_spells/" + sum2img;
+
+  const items = [data.item0, data.item1, data.item2, data.item3, data.item4, data.item5, data.item6];
+
   return (
     <div
-      className={`bg-zinc-800 p-4 rounded-md border-l-2 ${
-        data.win === false ? "border-red-500" : "border-cyan-500"
-      }`}
+      className={`bg-zinc-800 p-4 rounded-md border-l-2 ${data.win === false ? "border-red-500" : "border-cyan-500"
+        }`}
     >
       <div className="flex items-center justify-between">
         <div className="flex gap-2 mb-4">
@@ -47,7 +69,7 @@ const GameInfoBar = ({ data }) => {
           </Link>
         </div>
       </div>
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-3 h-20">
         <div className="w-16 h-16 overflow-hidden rounded-md border border-teal-500">
           <Image
             src={champIcon}
@@ -70,8 +92,70 @@ const GameInfoBar = ({ data }) => {
           ></Image>
         </div>
         <div className="flex flex-col items-center gap-3">
-          <div></div>
-          <div></div>
+          <div>
+            <Image
+              src={summoner1}
+              height={30}
+              width={30}
+              alt=""
+              className="border-teal-600 bg-zinc-900 border rounded-md"
+            ></Image>
+          </div>
+          <div>
+            <Image
+              src={summoner2}
+              height={30}
+              width={30}
+              alt=""
+              className="border-teal-600 bg-zinc-900 border rounded-md"
+            ></Image>
+          </div>
+        </div>
+        <div className="block gap-3 bg-zinc-600 w-[2px] rounded-full h-full">
+        </div>
+        <div className="flex flex-col items-center gap-3">
+          <div className="grid grid-cols-3 gap-3">
+            {items.slice(0, 6).map((item, index) => (
+              item !== 0 ? (
+                <div key={index}>
+                  <Image
+                    src={data[`item${index}`] !== 0 ? `https://ddragon.leagueoflegends.com/cdn/14.10.1/img/item/${data[`item${index}`]}.png` : ``}
+                    height={30}
+                    width={30}
+                    alt=""
+                    className="border-teal-600 bg-zinc-900 border rounded-md"
+                  />
+                </div>
+              ) : (
+                <div key={index}>
+                  <div className="border-teal-600 text-xs font-thin bg-zinc-900 border rounded-md h-[30px] w-[30px] flex items-center justify-center">
+                    -
+                  </div>
+                </div>
+              )
+            ))}
+          </div>
+        </div>
+        <div>
+          {items.length > 6 && (
+            items[6] !== 0 ? (
+              <div key={6}>
+                <Image
+                  src={data[`item6`] !== 0 ? `https://ddragon.leagueoflegends.com/cdn/14.10.1/img/item/${data[`item6`]}.png` : ``}
+                  height={30}
+                  width={30}
+                  alt=""
+                  className="border-teal-600 bg-zinc-900 border rounded-md"
+                />
+              </div>
+            ) : (
+              <div key={6}>
+                <div className="border-teal-600 text-xs font-thin bg-zinc-900 border rounded-md h-[30px] w-[30px] flex items-center justify-center">
+                  -
+                </div>
+              </div>
+            )
+          )}
         </div>
       </div>
     </div>
