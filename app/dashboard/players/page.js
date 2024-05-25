@@ -26,6 +26,7 @@ import {
 } from "@mui/material";
 import Link from "next/link";
 import { supabase } from "@/supabase";
+import PlayerCard from "@/components/players/PlayerCard";
 
 const Players = () => {
   const [players, setPlayers] = useState([]);
@@ -53,11 +54,6 @@ const Players = () => {
     return `https://www.op.gg/summoners/euw/${formattedRiotId}`;
   };
 
-  const handleDeletePlayer = async (uid) => {
-    setDeletePlayerId(uid); // Set the ID of the player to be deleted
-    setOpenConfirmationDialog(true); // Open the confirmation dialog
-  };
-
   const handleConfirmDelete = async () => {
     await deletePlayerByID(deletePlayerId);
     handlePlayerAdded();
@@ -71,7 +67,7 @@ const Players = () => {
   return (
     <>
       <Navbar />
-      <div className="max-w-[1440px] px-5 py-10 mx-auto">
+      <div className="pl-72 pr-6 py-8">
         <ModalDL
           btn="Create Player"
           content={<AddPlayer onPlayerAdded={handlePlayerAdded} />}
@@ -106,69 +102,7 @@ const Players = () => {
                   </Button>
                 </DialogActions>
               </Dialog>
-              <TableContainer component={Paper}>
-                <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                  <TableHead>
-                    <TableRow>
-                      <TableCell>Player Name</TableCell>
-                      <TableCell align="center">Riot ID</TableCell>
-                      <TableCell align="center">Role</TableCell>
-                      <TableCell align="center">OP.GG</TableCell>
-                      <TableCell align="center">Options</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {players.map((player) => (
-                      <TableRow
-                        key={player.id}
-                        sx={{
-                          "&:last-child td, &:last-child th": { border: 0 },
-                        }}
-                      >
-                        <TableCell component="th" scope="row">
-                          {player.name}
-                        </TableCell>
-                        <TableCell align="center">{player.riot_id}</TableCell>
-                        <TableCell align="center">
-                          <img src={player.image_link}></img>
-                          {player.role.name}
-                        </TableCell>
-                        <TableCell align="center">
-                          <Link
-                            href={generateOpggLink(player.riot_id)}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="bg-blue-600 p-1 rounded-sm hover:"
-                          >
-                            OP.GG
-                          </Link>
-                        </TableCell>
-                        <TableCell align="center">
-                          <div className="flex gap-4 justify-center">
-                            <Button
-                              variant="contained"
-                              color="error"
-                              onClick={() => handleDeletePlayer(player.id)}
-                              size="small"
-                            >
-                              Delete
-                            </Button>
-                            <Button
-                              variant="contained"
-                              color="info"
-                              size="small"
-                            >
-                              <Link href={`/dashboard/players/${player.id}`}>
-                                View
-                              </Link>
-                            </Button>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
+              <PlayerCard players={players}></PlayerCard>
             </>
           ) : (
             <p>No players found.</p>

@@ -11,24 +11,7 @@ import NavbarLink from "./NavbarLink";
 
 const Navbar = () => {
   const [session, setSession] = useState();
-  const [anchorElBasic, setAnchorElBasic] = useState(null);
-  const [anchorElSettings, setAnchorElSettings] = useState(null);
-  const openBasicMenu = Boolean(anchorElBasic);
-  const openSettingsMenu = Boolean(anchorElSettings);
   const router = useRouter();
-
-  const handleClickBasic = (event) => {
-    setAnchorElBasic(event.currentTarget);
-  };
-
-  const handleClickSettings = (event) => {
-    setAnchorElSettings(event.currentTarget);
-  };
-
-  const handleClose = () => {
-    setAnchorElBasic(null);
-    setAnchorElSettings(null);
-  };
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
