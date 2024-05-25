@@ -3,17 +3,11 @@
 import Link from "next/link";
 import Logout from "../auth/Logout";
 import Image from "next/image";
-import Button from "@mui/material/Button";
-import Menu from "@mui/material/Menu";
-import MenuItem from "@mui/material/MenuItem";
-import Divider from "@mui/material/Divider";
-
 import { supabase } from "@/supabase";
-import { FaBars } from "react-icons/fa6";
-import { FaGear } from "react-icons/fa6";
-
+import { FaUserGroup, FaGamepad } from "react-icons/fa6";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import NavbarLink from "./NavbarLink";
 
 const Navbar = () => {
   const [session, setSession] = useState();
@@ -46,67 +40,28 @@ const Navbar = () => {
   }, []);
 
   return (
-    <div className="bg-zinc-900">
-      <div className="max-w-[1440px] mx-auto px-5 py-4 flex justify-between items-center">
-        <div>
-          <Link href="/dashboard">
-            <Image
-              src="/assets/logos/dummylab-logo.svg"
-              width={100}
-              height={80}
-              alt="DummyLab Logo"
-            />
-          </Link>
-        </div>
-        <div>
-          <Button
-            id="basic-button"
-            aria-controls={openBasicMenu ? "basic-menu" : undefined}
-            aria-haspopup="true"
-            aria-expanded={openBasicMenu ? "true" : undefined}
-            onClick={handleClickBasic}
-          >
-            <FaBars className="text-zinc-200 text-xl flex gap-2 items-center justify-center" />
-          </Button>
-          <Menu
-            id="basic-menu"
-            anchorEl={anchorElBasic}
-            open={openBasicMenu}
-            onClose={handleClose}
-            MenuListProps={{
-              "aria-labelledby": "basic-button",
-            }}
-          >
-            <MenuItem onClick={handleClose}>
-              <Link href="/dashboard/players">Players</Link>
-            </MenuItem>
-          </Menu>
-          <Button
-            id="settings-button"
-            aria-controls={openSettingsMenu ? "settings-menu" : undefined}
-            aria-haspopup="true"
-            aria-expanded={openSettingsMenu ? "true" : undefined}
-            onClick={handleClickSettings}
-          >
-            <FaGear className="text-zinc-200 text-xl" />
-          </Button>
-          <Menu
-            id="settings-menu"
-            anchorEl={anchorElSettings}
-            open={openSettingsMenu}
-            onClose={handleClose}
-            MenuListProps={{
-              "aria-labelledby": "settings-button",
-            }}
-          >
-            <MenuItem onClick={handleClose}>Profile</MenuItem>
-            <MenuItem onClick={handleClose}>My account</MenuItem>
-            <Divider />
-            <MenuItem>
-              <Logout />
-            </MenuItem>
-          </Menu>
-        </div>
+    <div className="bg-neutral-800 fixed w-64 h-screen">
+      <div className="flex justify-center py-10">
+        <Link href="/dashboard">
+          <Image
+            src="/assets/logos/dummylab-logo.svg"
+            width={140}
+            height={80}
+            alt="DummyLab Logo"
+          />
+        </Link>
+      </div>
+      <div className="flex flex-col gap-4 px-5">
+        <NavbarLink
+          link="/dashboard"
+          icon={<FaGamepad></FaGamepad>}
+          text="Dashboard"
+        ></NavbarLink>
+        <NavbarLink
+          link="/dashboard/players"
+          icon={<FaUserGroup></FaUserGroup>}
+          text="Players"
+        ></NavbarLink>
       </div>
     </div>
   );

@@ -9,7 +9,7 @@ export default function RootLayout({ children }) {
     <AppRouterCacheProvider>
       <ThemeProvider theme={theme}>
         <html lang="en">
-          <body className="bg-zinc-950">
+          <body className="bg-neutral-950">
             <div>{children}</div>
           </body>
         </html>
