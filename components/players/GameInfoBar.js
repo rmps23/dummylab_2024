@@ -214,7 +214,7 @@ const GameInfoBar = ({ data }) => {
                 alt=""
                 className="border-cyan-500 bg-zinc-900 border rounded-md"
               ></Image>
-              {data.blue_top.champ_name}
+              {lol_champions.data[data.blue_top.champ_name].name}
             </div>
             <div className="flex items-center gap-2">
               <Image
@@ -224,7 +224,7 @@ const GameInfoBar = ({ data }) => {
                 alt=""
                 className="border-cyan-500 bg-zinc-900 border rounded-md"
               ></Image>
-              {data.blue_jungler.champ_name}
+              {lol_champions.data[data.blue_jungler.champ_name]?.name || ""}
             </div>
             <div className="flex items-center gap-2">
               <Image
@@ -234,7 +234,7 @@ const GameInfoBar = ({ data }) => {
                 alt=""
                 className="border-cyan-500 bg-zinc-900 border rounded-md"
               ></Image>
-              {data.blue_mid.champ_name}
+              {lol_champions.data[data.blue_mid.champ_name].name}
             </div>
             <div className="flex items-center gap-2">
               <Image
@@ -244,7 +244,7 @@ const GameInfoBar = ({ data }) => {
                 alt=""
                 className="border-cyan-500 bg-zinc-900 border rounded-md"
               ></Image>
-              {data.blue_bot.champ_name}
+              {lol_champions.data[data.blue_bot.champ_name].name}
             </div>
             <div className="flex items-center gap-2">
               <Image
@@ -254,7 +254,7 @@ const GameInfoBar = ({ data }) => {
                 alt=""
                 className="border-cyan-500 bg-zinc-900 border rounded-md"
               ></Image>
-              {data.blue_sup.champ_name}
+              {lol_champions.data[data.blue_sup.champ_name].name}
             </div>
           </div>
         </div>
@@ -264,7 +264,7 @@ const GameInfoBar = ({ data }) => {
               Red team
             </div>
             <div className="flex justify-end items-center gap-2">
-              {data.red_top.champ_name}
+              {lol_champions.data[data.red_top.champ_name].name}
               <Image
                 src={`https://fpwrnfdqzvztmakmrdnc.supabase.co/storage/v1/object/public/champions_icons/${data.red_top.champ_name}.png`}
                 height={20}
@@ -274,7 +274,7 @@ const GameInfoBar = ({ data }) => {
               ></Image>
             </div>
             <div className="flex justify-end items-center gap-2">
-              {data.red_jungler.champ_name}
+              {lol_champions.data[data.red_jungler.champ_name].name}
               <Image
                 src={`https://fpwrnfdqzvztmakmrdnc.supabase.co/storage/v1/object/public/champions_icons/${data.red_jungler.champ_name}.png`}
                 height={20}
@@ -284,7 +284,7 @@ const GameInfoBar = ({ data }) => {
               ></Image>
             </div>
             <div className="flex justify-end items-center gap-2">
-              {data.red_mid.champ_name}
+              {lol_champions.data[data.red_mid.champ_name].name}
               <Image
                 src={`https://fpwrnfdqzvztmakmrdnc.supabase.co/storage/v1/object/public/champions_icons/${data.red_mid.champ_name}.png`}
                 height={20}
@@ -294,7 +294,7 @@ const GameInfoBar = ({ data }) => {
               ></Image>
             </div>
             <div className="flex justify-end items-center gap-2">
-              {data.red_bot.champ_name}
+              {lol_champions.data[data.red_bot.champ_name].name}
               <Image
                 src={`https://fpwrnfdqzvztmakmrdnc.supabase.co/storage/v1/object/public/champions_icons/${data.red_bot.champ_name}.png`}
                 height={20}
@@ -304,7 +304,7 @@ const GameInfoBar = ({ data }) => {
               ></Image>
             </div>
             <div className="flex justify-end items-center gap-2">
-              {data.red_sup.champ_name}
+              {lol_champions.data[data.red_sup.champ_name].name}
               <Image
                 src={`https://fpwrnfdqzvztmakmrdnc.supabase.co/storage/v1/object/public/champions_icons/${data.red_sup.champ_name}.png`}
                 height={20}

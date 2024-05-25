@@ -15,6 +15,7 @@ const PlayerInfo = () => {
   const [loading, setLoading] = useState(false);
   const [playerInfo, setPlayerInfo] = useState(null);
   const [playerSupaInfo, setPlayerSupaInfo] = useState();
+  const [loadingSupaData, setLoadingSupaData] = useState(false);
   const [champions, setChampions] = useState(champion_json.data);
 
   useEffect(() => {
@@ -22,20 +23,23 @@ const PlayerInfo = () => {
     function_GetSupaPlayerData(params.PlayerID);
   }, [params.PlayerID]);
 
-  const handleUpdate = () => {
-    function_GetPlayerMatchData(playerInfo.riot_id, params.PlayerID);
+  const handleUpdate = async () => {
+    setLoading(true);
+    await function_GetPlayerMatchData(playerInfo.riot_id, params.PlayerID);
+    await function_GetSupaPlayerData(params.PlayerID);
+    setLoading(false);
   };
 
   const function_GetSupaPlayerData = async (player_id) => {
+    setLoadingSupaData(true);
     const supa_player_data = await getSupaPlayerData(player_id);
     setPlayerSupaInfo(supa_player_data);
+    setLoadingSupaData(false);
   };
 
   const function_GetPlayerInfo = async (player_id) => {
-    setLoading(true);
     const player_info = await getPlayerByID(player_id);
     setPlayerInfo(player_info);
-    setLoading(false);
   };
 
   const function_GetPlayerMatchData = async (RiotID, playerID) => {
@@ -84,15 +88,21 @@ const PlayerInfo = () => {
       </div>
       <div className="max-w-[1440px] px-5 mx-auto">
         <div className="flex flex-col gap-4">
-          {playerSupaInfo && playerSupaInfo.length > 0
-            ? playerSupaInfo.map((game_data, index) => {
-                return (
-                  <div key={index}>
-                    <GameInfoBar data={game_data}></GameInfoBar>
-                  </div>
-                );
-              })
-            : "There is no data from this player."}
+          {loadingSupaData ? (
+            <div className="flex justify-center">
+              <CircularProgress />
+            </div>
+          ) : playerSupaInfo && playerSupaInfo.length > 0 ? (
+            playerSupaInfo.map((game_data, index) => {
+              return (
+                <div key={index}>
+                  <GameInfoBar data={game_data}></GameInfoBar>
+                </div>
+              );
+            })
+          ) : (
+            "There is no data from this player."
+          )}
         </div>
       </div>
     </div>
