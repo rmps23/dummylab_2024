@@ -49,7 +49,7 @@ const PlayerInfo = () => {
   return (
     <div>
       <Navbar />
-      <div className="max-w-[1440px] px-5 py-10 mx-auto">
+      <div className="pl-72 pr-8 py-8">
         {playerInfo ? (
           <div className="bg-zinc-900 border-b border-teal-500 flex justify-between gap-3 p-4 rounded-md items-center">
             <div className="flex gap-3">
@@ -86,7 +86,7 @@ const PlayerInfo = () => {
           </p>
         )}
       </div>
-      <div className="max-w-[1440px] px-5 mx-auto">
+      <div className="pl-72 pr-8 py-8">
         <div className="flex flex-col gap-4">
           {loadingSupaData ? (
             <div className="flex justify-center">

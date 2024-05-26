@@ -51,17 +51,19 @@ const Navbar = () => {
           />
         </Link>
       </div>
-      <div className="flex flex-col gap-4 px-5">
-        <NavbarLink
-          link="/dashboard"
-          icon={<FaGamepad></FaGamepad>}
-          text="Dashboard"
-        ></NavbarLink>
-        <NavbarLink
-          link="/dashboard/players"
-          icon={<FaUserGroup></FaUserGroup>}
-          text="Players"
-        ></NavbarLink>
+      <div className="flex">
+        <div className="flex flex-col w-full gap-4 px-5">
+          <NavbarLink
+            link="/dashboard"
+            icon={<FaGamepad></FaGamepad>}
+            text="Dashboard"
+          ></NavbarLink>
+          <NavbarLink
+            link="/dashboard/players"
+            icon={<FaUserGroup></FaUserGroup>}
+            text="Players"
+          ></NavbarLink>
+        </div>
       </div>
     </div>
   );

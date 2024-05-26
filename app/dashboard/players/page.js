@@ -71,7 +71,7 @@ const Players = () => {
   return (
     <>
       <Navbar />
-      <div className="max-w-[1440px] px-5 py-10 mx-auto">
+      <div className="pl-72 pr-8 py-8">
         <ModalDL
           btn="Create Player"
           content={<AddPlayer onPlayerAdded={handlePlayerAdded} />}

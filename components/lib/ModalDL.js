@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-import Button from "@mui/material/Button";
 import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
 import { useState } from "react";
@@ -14,7 +13,6 @@ const style = {
   width: 400,
   bgcolor: "background.paper",
   borderRadius: 2,
-  boxShadow: "0px 2px 10px rgba(0, 128, 128, 0.1)",
   p: 4,
 };
 
@@ -25,14 +23,12 @@ const ModalDL = ({ btn, content }) => {
 
   return (
     <>
-      <Button
+      <button
         onClick={handleOpen}
-        variant="contained"
-        size="small"
-        sx={{ fontSize: "0.6rem", fontWeight: "600" }}
+        className="bg-teal-300 text-neutral-950 px-2 py-2 text-xs uppercase rounded-md font-bold"
       >
         {btn}
-      </Button>
+      </button>
       <Modal
         open={open}
         onClose={handleClose}
