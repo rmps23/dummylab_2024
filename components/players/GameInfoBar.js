@@ -6,7 +6,6 @@ import Image from "next/image";
 import { Tooltip } from "react-tooltip";
 
 const GameInfoBar = ({ data }) => {
-  console.log(data);
   const dateFromTimestamp = new Date(data.game_end_timestamp);
   const currentDate = new Date();
   const timeDifference = currentDate - dateFromTimestamp;

@@ -1,15 +1,16 @@
 import { supabase } from "@/supabase";
 
-async function getSupaPlayerData(playerID) {
+async function getSupaPlayerData(playerID, page) {
   const { data, error } = await supabase
     .from("game_list")
     .select("*")
     .eq("player_id", playerID)
-    .order("game_end_timestamp", { ascending: false }); // Order by game_end_timestamp, descending
+    .order("game_end_timestamp", { ascending: false })
+    .range(page * 10, (page + 1) * 10 - 1); // Adjust the range for pagination
 
   if (error) {
     console.error("Error retrieving player data:", error.message);
-    return null;
+    return [];
   }
 
   return data;

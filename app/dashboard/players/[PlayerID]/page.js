@@ -14,27 +14,40 @@ const PlayerInfo = () => {
   const params = useParams();
   const [loading, setLoading] = useState(false);
   const [playerInfo, setPlayerInfo] = useState(null);
-  const [playerSupaInfo, setPlayerSupaInfo] = useState();
+  const [playerSupaInfo, setPlayerSupaInfo] = useState([]);
   const [loadingSupaData, setLoadingSupaData] = useState(false);
-  const [champions, setChampions] = useState(champion_json.data);
+  const [page, setPage] = useState(0);
+  const [hasMore, setHasMore] = useState(true);
 
   useEffect(() => {
     function_GetPlayerInfo(params.PlayerID);
-    function_GetSupaPlayerData(params.PlayerID);
+    function_GetSupaPlayerData(params.PlayerID, 0, true); // Ensure reset on initial load
   }, [params.PlayerID]);
 
   const handleUpdate = async () => {
     setLoading(true);
     await function_GetPlayerMatchData(playerInfo.riot_id, params.PlayerID);
-    await function_GetSupaPlayerData(params.PlayerID);
+    await function_GetSupaPlayerData(params.PlayerID, 0, true); // Reset to first page on update
     setLoading(false);
   };
 
-  const function_GetSupaPlayerData = async (player_id) => {
+  const function_GetSupaPlayerData = async (player_id, page, reset = false) => {
     setLoadingSupaData(true);
-    const supa_player_data = await getSupaPlayerData(player_id);
-    setPlayerSupaInfo(supa_player_data);
+    const supa_player_data = await getSupaPlayerData(player_id, page);
+    if (reset) {
+      setPlayerSupaInfo(supa_player_data);
+      setPage(0);
+    } else {
+      setPlayerSupaInfo((prevData) => [...prevData, ...supa_player_data]);
+    }
+    setHasMore(supa_player_data.length === 10); // Check if there might be more data
     setLoadingSupaData(false);
+  };
+
+  const loadMore = () => {
+    const nextPage = page + 1;
+    setPage(nextPage);
+    function_GetSupaPlayerData(params.PlayerID, nextPage);
   };
 
   const function_GetPlayerInfo = async (player_id) => {
@@ -88,20 +101,32 @@ const PlayerInfo = () => {
       </div>
       <div className="pl-72 pr-8 py-8">
         <div className="flex flex-col gap-4">
-          {loadingSupaData ? (
+          {playerSupaInfo.length > 0 ? (
+            playerSupaInfo.map((game_data, index) => (
+              <div key={index}>
+                <GameInfoBar data={game_data} />
+              </div>
+            ))
+          ) : (
+            <div className="flex justify-center">
+              {loadingSupaData ? (
+                <CircularProgress />
+              ) : (
+                "There is no data from this player."
+              )}
+            </div>
+          )}
+          {hasMore && !loadingSupaData && (
+            <div className="flex justify-center">
+              <Button onClick={loadMore} variant="contained">
+                Load More
+              </Button>
+            </div>
+          )}
+          {loadingSupaData && (
             <div className="flex justify-center">
               <CircularProgress />
             </div>
-          ) : playerSupaInfo && playerSupaInfo.length > 0 ? (
-            playerSupaInfo.map((game_data, index) => {
-              return (
-                <div key={index}>
-                  <GameInfoBar data={game_data}></GameInfoBar>
-                </div>
-              );
-            })
-          ) : (
-            "There is no data from this player."
           )}
         </div>
       </div>
