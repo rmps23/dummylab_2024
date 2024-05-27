@@ -10,9 +10,106 @@ async function getPlayers() {
     return [];
   }
 
-  console.log(data);
+  const playersWithRank = [];
 
-  return data;
+  for (const player of data) {
+    const [gameName, tagLine] = player.riot_id.split("#");
+    const puuid_url = `/api/riot/${gameName}/${tagLine}`;
+
+    try {
+      const puuid = await getPlayerPuuid(puuid_url);
+      const sumIdData = await getPlayerSummonerID(puuid);
+      const rankData = await getPlayerRank(sumIdData.id);
+
+      const playerWithRank = {
+        ...player,
+        rank: rankData, // assuming rankData contains the rank info
+      };
+
+      playersWithRank.push(playerWithRank);
+
+      console.log(playersWithRank);
+    } catch (error) {
+      console.error("Failed to fetch player data:", error);
+    }
+  }
+
+  return playersWithRank;
+}
+
+async function getPlayerPuuid(puuid_url) {
+  try {
+    const response = await fetch(puuid_url, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`Error: ${response.status} ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    return data.puuid;
+  } catch (error) {
+    console.error("Failed to fetch player PUUID:", error);
+    throw error; // Re-throw the error after logging it
+  }
+}
+
+async function getPlayerSummonerID(puuid) {
+  const sumid_url = `/api/lol/summoner/v4/summoners/by-puuid/${puuid}`;
+
+  try {
+    const response = await fetch(sumid_url, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`Error: ${response.status} ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Failed to fetch player summoner ID:", error);
+    throw error; // Re-throw the error after logging it
+  }
+}
+
+async function getPlayerRank(sum_id) {
+  const rank_url = `/api/lol/league/v4/entries/by-summoner/${sum_id}`;
+
+  try {
+    const response = await fetch(rank_url, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`Error: ${response.status} ${response.statusText}`);
+    }
+    const data = await response.json();
+
+    const soloRank = data.find(
+      (entry) => entry.queueType === "RANKED_SOLO_5x5"
+    );
+
+    if (soloRank) {
+      return soloRank;
+    } else {
+      throw new Error("Player has no rank in RANKED_SOLO_5x5 queue");
+    }
+  } catch (error) {
+    console.error("Failed to fetch player rank:", error);
+    throw error; // Re-throw the error after logging it
+  }
 }
 
 async function getPlayerByID(playerID) {
@@ -40,9 +137,4 @@ async function deletePlayerByID(deletePlayerId) {
   }
 }
 
-
-export {
-  getPlayers,
-  getPlayerByID,
-  deletePlayerByID,
-};
+export { getPlayers, getPlayerByID, deletePlayerByID };
