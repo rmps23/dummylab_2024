@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "../../supabase";
 import CircularProgress from "@mui/material/CircularProgress";
+import { FaRightFromBracket } from "react-icons/fa6";
 
 const Logout = () => {
   const router = useRouter();
@@ -29,11 +30,11 @@ const Logout = () => {
   return (
     <>
       {loading ? (
-        <div className="flex items-center justify-center gap-2">
-          <CircularProgress size={20} color="inherit" /> Logout
+        <div className="bg-red-500 flex items-center gap-3 py-1 px-4 rounded-md justify-center">
+          <CircularProgress size={24} color="inherit" />
         </div>
       ) : (
-        <button onClick={() => signOut()}>Logout</button>
+        <button onClick={() => signOut()} className="bg-red-500 flex items-center gap-3 py-1 px-4 rounded-md"><FaRightFromBracket></FaRightFromBracket> Logout</button>
       )}
     </>
   );

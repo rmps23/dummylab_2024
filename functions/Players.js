@@ -9,6 +9,9 @@ async function getPlayers() {
     console.error("Error fetching players:", error);
     return [];
   }
+
+  console.log(data);
+
   return data;
 }
 

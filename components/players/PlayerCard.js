@@ -22,7 +22,6 @@ const PlayerCard = ({ players }) => {
           }}
         >
           {player.name}
-          <img src={player.image_link}></img>
           {player.role.name}
           <Link
             href={"#"}

@@ -79,6 +79,26 @@ const Players = () => {
             <CircularProgress />
           ) : players.length > 0 ? (
             <>
+
+              {players.map((player) => (
+                <div key={player.id}>
+                  <p component="th" scope="row">
+                    {player.name}
+                  </p>
+                  <a target="_blank" href={generateOpggLink(player.riot_id)}>OPGG</a>
+                  <p align="right">
+                    <button
+                      color="error"
+                      onClick={() => {
+                        setDeletePlayerId(player.id);
+                        setOpenConfirmationDialog(true);
+                      }}
+                    >
+                      Delete
+                    </button>
+                  </p>
+                </div>
+              ))}
               <Dialog
                 open={openConfirmationDialog}
                 onClose={handleCloseDialog}
@@ -102,7 +122,6 @@ const Players = () => {
                   </Button>
                 </DialogActions>
               </Dialog>
-              <PlayerCard players={players}></PlayerCard>
             </>
           ) : (
             <p>No players found.</p>
