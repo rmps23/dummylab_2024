@@ -28,7 +28,6 @@ async function getPlayers() {
 
       playersWithRank.push(playerWithRank);
 
-      console.log(playersWithRank);
     } catch (error) {
       console.error("Failed to fetch player data:", error);
     }

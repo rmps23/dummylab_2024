@@ -117,10 +117,16 @@ const Players = () => {
                           OP.GG
                         </a>
                         <Link
+                          href={`/dashboard/players/stats/${player.id}`}
+                          className="bg-teal-500 text-neutral-950 py-1 px-2 rounded-md text-sm uppercase"
+                        >
+                          Stats
+                        </Link>
+                        <Link
                           href={`/dashboard/players/${player.id}`}
                           className="bg-teal-500 text-neutral-950 py-1 px-2 rounded-md text-sm uppercase"
                         >
-                          View Details
+                          Match History
                         </Link>
                         <button
                           color="error"
