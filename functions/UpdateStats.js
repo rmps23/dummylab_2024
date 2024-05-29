@@ -83,9 +83,13 @@ async function updateStats(playerID) {
       stats.assists += game.assists;
 
       if (stats.championids.hasOwnProperty(game.championId)) {
-        stats.championids[game.championId]++;
+        stats.championids[game.championId].count++;
       } else {
-        stats.championids[game.championId] = 1;
+        stats.championids[game.championId] = {
+          championId: game.championId,
+          championName: game.championName,
+          count: 1
+        };
       }
 
       stats.kill_part += game.killParticipation;
@@ -141,8 +145,8 @@ async function updateStats(playerID) {
     });
 
     let championArray = [];
-    for (let championId in stats.championids) {
-      championArray.push({ championId, count: stats.championids[championId] });
+    for (let key in stats.championids) {
+      championArray.push(stats.championids[key]);
     }
     championArray.sort((a, b) => b.count - a.count);
     const top5Champions = championArray.slice(0, 5);
@@ -209,5 +213,6 @@ async function updateStats(playerID) {
     return null;
   }
 }
+
 
 export { updateStats, getSupaStats };

@@ -38,6 +38,7 @@ async function getPlayerRiotInfo(RiotID, playerID) {
 
     const game_list_url = `/api/lol/match/v5/matches/by-puuid/${puuid}/ids`;
 
+
     try {
       const response = await fetch(game_list_url, {
         method: "GET",
@@ -230,9 +231,9 @@ async function insertGameStats(playerID, matchId, game_details) {
   }
 
   if (existingData && existingData.length > 0) {
-    console.log(
-      `MatchId ${matchId} already exists in the database. Skipping insertion.`
-    );
+    // console.log(
+    //   `MatchId ${matchId} already exists in the database. Skipping insertion.`
+    // );
     return;
   }
 
