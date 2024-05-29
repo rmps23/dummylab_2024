@@ -104,14 +104,7 @@ const Stats = () => {
             </div>
             {dataStat?.championids.map((champion, index) => (
               <div key={index} className="flex gap-4 items-center">
-                <Image
-                  src={`https://fpwrnfdqzvztmakmrdnc.supabase.co/storage/v1/object/public/champions_icons/${lol_champions.data[champion.championName].image.full}`}
-                  height={50}
-                  width={50}
-                  className="scale-110"
-                  alt=""
-                ></Image>
-                <p className="text-2xl text-neutral-200">{champion.count} times</p>
+                <p className="text-2xl text-neutral-200">{champion.championName}{champion.count} times</p>
               </div>
             ))}
           </div>
