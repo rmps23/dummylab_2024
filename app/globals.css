@@ -6,9 +6,20 @@
 
 @layer base {
   html {
-    font-family: "Chakra Petch", sans-serif;
+    font-family: "Inter", Arial, Helvetica, sans-serif;
+    letter-spacing: 0.05em;
   }
   body {
     color: #eee;
   }
+}
+
+.bg-video-home {
+  box-shadow: rgb(0, 0, 0) 100px 100px 100px 50px inner;
+}
+
+html,
+body,
+#__next {
+  height: 100%;
 }

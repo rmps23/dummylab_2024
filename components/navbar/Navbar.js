@@ -1,17 +1,18 @@
 "use client";
 
-import Link from "next/link";
-import Image from "next/image";
 import { supabase } from "@/supabase";
-import { FaUserGroup, FaGamepad } from "react-icons/fa6";
+import { GrGroup, GrShield } from "react-icons/gr";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import NavbarLink from "./NavbarLink";
 import Logout from "../auth/Logout";
+import { usePathname } from "next/navigation";
+import Image from "next/image";
 
 const Navbar = () => {
   const [session, setSession] = useState();
   const router = useRouter();
+  const path = usePathname();
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -23,39 +24,37 @@ const Navbar = () => {
   }, []);
 
   return (
-    <div className="bg-neutral-800 fixed w-64 h-screen justify-between">
-      <div className="flex flex-col justify-between h-full pb-10">
-        <div>
-          <div className="flex justify-center py-10">
-            <Link href="/dashboard">
-              <Image
-                src="/assets/logos/dummylab-logo.svg"
-                width={140}
-                height={80}
-                alt="DummyLab Logo"
-              />
-            </Link>
+    <>
+      <div className="flex flex-col w-72 bg-neutral-950 justify-between shadow-md shadow-neutral-950 gap-4 pt-4 pl-4 pb-4">
+        <div className="flex flex-col gap-4">
+          <div className="flex gap-4 items-center p-2 bg-cyan-400/70 shadow-lg shadow-cyan-500/20 rounded-l-md mb-4">
+            <Image
+              src={`/assets/logos/dummylogo.png`}
+              height={40}
+              width={40}
+              alt=""
+              className="bg-neutral-900 p-2 rounded-md"
+            ></Image>
+            <p className="pt-1 text-neutral-900 font-bold">DUMMYLAB</p>
           </div>
-          <div className="flex">
-            <div className="flex flex-col w-full gap-4 px-5">
-              <NavbarLink
-                link="/dashboard"
-                icon={<FaGamepad></FaGamepad>}
-                text="Dashboard"
-              ></NavbarLink>
-              <NavbarLink
-                link="/dashboard/players"
-                icon={<FaUserGroup></FaUserGroup>}
-                text="Players"
-              ></NavbarLink>
-            </div>
+          <div className="flex flex-col gap-2 pr-4">
+            <NavbarLink
+              link="/teams"
+              icon={<GrShield></GrShield>}
+              text="Teams"
+            ></NavbarLink>
+            <NavbarLink
+              link="/dashboard/players"
+              icon={<GrGroup></GrGroup>}
+              text="Players"
+            ></NavbarLink>
           </div>
         </div>
-        <div className="flex flex-col w-full gap-4 px-5">
-          <Logout></Logout>
+        <div>
+          <Logout />
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

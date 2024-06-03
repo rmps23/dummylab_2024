@@ -1,12 +1,48 @@
-import Navbar from "@/components/navbar/Navbar";
+import TeamList from "@/components/teams/TeamList";
 
 const Dashboard = () => {
   return (
     <div>
-      <Navbar />
-      <div className="pl-72 py-8">
-        <p>This page is under construction!</p>
-      </div>
+      <TeamList></TeamList>
+      <p>This page is under construction!</p>
+      <p>This page is under construction!</p>
+      <p>This page is under construction!</p>
+      <p>This page is under construction!</p>
+      <p>This page is under construction!</p>
+      <p>This page is under construction!</p>
+      <p>This page is under construction!</p>
+      <p>This page is under construction!</p>
+      <p>This page is under construction!</p>
+      <p>This page is under construction!</p>
+      <p>This page is under construction!</p>
+      <p>This page is under construction!</p>
+      <p>This page is under construction!</p>
+      <p>This page is under construction!</p>
+      <p>This page is under construction!</p>
+      <p>This page is under construction!</p>
+      <p>This page is under construction!</p>
+      <p>This page is under construction!</p>
+      <p>This page is under construction!</p>
+      <p>This page is under construction!</p>
+      <p>This page is under construction!</p>
+      <p>This page is under construction!</p>
+      <p>This page is under construction!</p>
+      <p>This page is under construction!</p>
+      <p>This page is under construction!</p>
+      <p>This page is under construction!</p>
+      <p>This page is under construction!</p>
+      <p>This page is under construction!</p>
+      <p>This page is under construction!</p>
+      <p>This page is under construction!</p>
+      <p>This page is under construction!</p>
+      <p>This page is under construction!</p>
+      <p>This page is under construction!</p>
+      <p>This page is under construction!</p>
+      <p>This page is under construction!</p>
+      <p>This page is under construction!</p>
+      <p>This page is under construction!</p>
+      <p>This page is under construction!</p>
+      <p>This page is under construction!</p>
     </div>
   );
 };

@@ -52,6 +52,7 @@ const PlayerInfo = () => {
 
   const function_GetPlayerInfo = async (player_id) => {
     const player_info = await getPlayerByID(player_id);
+    console.log(player_info);
     setPlayerInfo(player_info);
   };
 
@@ -64,34 +65,63 @@ const PlayerInfo = () => {
       <Navbar />
       <div className="pl-72 pr-8 py-8">
         {playerInfo ? (
-          <div className="bg-zinc-900 border-b border-teal-500 flex justify-between gap-3 p-4 rounded-md items-center">
-            <div className="flex gap-3">
-              {playerInfo.role && (
-                <Image
-                  src={playerInfo.role.image_link}
-                  alt={playerInfo.role.name}
-                  width={25}
-                  height={25}
-                />
-              )}
-              <p className="uppercase text-zinc-200 font-medium text-md">
-                {playerInfo.name}
-              </p>
-            </div>
-            <div>
-              <Button
-                variant="contained"
-                size="small"
-                sx={{ fontSize: "0.7rem", fontWeight: "600" }}
+          <div>
+            <div className="flex items-end gap-4">
+              <Image
+                src={playerInfo.role.image_link}
+                alt={playerInfo.role.name}
+                width={60}
+                height={60}
+                className="bg-neutral-900 p-3 rounded-full"
+              />
+              <div className="flex flex-col">
+                <p className="font-medium text-xl text-teal-400">
+                  {playerInfo.name}
+                </p>
+                <span className="text-xs text-neutral-500">
+                  {playerInfo.riot_id}
+                </span>
+              </div>
+              <button
                 onClick={handleUpdate}
+                className="bg-teal-400 text-neutral-950 px-2 py-1 rounded-md min-w-20 min-h-8 text-sm"
               >
                 {loading ? (
-                  <CircularProgress size={24} color="warning" />
+                  <CircularProgress size={14} color="inherit" />
                 ) : (
                   "Update"
                 )}
-              </Button>
+              </button>
             </div>
+            {/* <div className="bg-zinc-900 border-b border-teal-500 flex justify-between gap-3 p-4 rounded-md items-center">
+              <div className="flex gap-3">
+                {playerInfo.role && (
+                  <Image
+                    src={playerInfo.role.image_link}
+                    alt={playerInfo.role.name}
+                    width={25}
+                    height={25}
+                  />
+                )}
+                <p className="uppercase text-zinc-200 font-medium text-md">
+                  {playerInfo.name}
+                </p>
+              </div>
+              <div>
+                <Button
+                  variant="contained"
+                  size="small"
+                  sx={{ fontSize: "0.7rem", fontWeight: "600" }}
+                  onClick={handleUpdate}
+                >
+                  {loading ? (
+                    <CircularProgress size={24} color="warning" />
+                  ) : (
+                    "Update"
+                  )}
+                </Button>
+              </div>
+            </div> */}
           </div>
         ) : (
           <p className="flex justify-center">

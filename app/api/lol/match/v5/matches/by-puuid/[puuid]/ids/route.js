@@ -2,17 +2,39 @@ export async function GET(request, { params }) {
   const { puuid } = params;
   const apiKey = process.env.NEXT_PUBLIC_RIOT_API_KEY;
 
-  const gameList = `https://europe.api.riotgames.com/lol/match/v5/matches/by-puuid/${puuid}/ids?start=0&count=30&api_key=${apiKey}`;
+  // Convert the date to a UNIX timestamp
+  const startDate = new Date("2024-05-15");
+  const startTime = Math.floor(startDate.getTime() / 1000);
+
+  let start = 0;
+  const count = 100; // Maximum allowed by Riot API
+  let allMatchIds = [];
 
   try {
-    const response = await fetch(gameList);
+    while (true) {
+      const gameList = `https://europe.api.riotgames.com/lol/match/v5/matches/by-puuid/${puuid}/ids?start=${start}&count=${count}&startTime=${startTime}&api_key=${apiKey}`;
+      const response = await fetch(gameList);
 
-    if (!response.ok) {
-      throw new Error(`Error fetching data: ${response.statusText}`);
+      if (!response.ok) {
+        throw new Error(`Error fetching data: ${response.statusText}`);
+      }
+
+      const matchIds = await response.json();
+
+      if (matchIds.length === 0) {
+        break;
+      }
+
+      allMatchIds = allMatchIds.concat(matchIds);
+      start += count; // Move to the next set of matches
+
+      // If the number of matches returned is less than the count, we can break early
+      if (matchIds.length < count) {
+        break;
+      }
     }
 
-    const data = await response.json();
-    return new Response(JSON.stringify(data), {
+    return new Response(JSON.stringify(allMatchIds), {
       status: 200,
       headers: {
         "Content-Type": "application/json",

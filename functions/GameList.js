@@ -38,7 +38,6 @@ async function getPlayerRiotInfo(RiotID, playerID) {
 
     const game_list_url = `/api/lol/match/v5/matches/by-puuid/${puuid}/ids`;
 
-
     try {
       const response = await fetch(game_list_url, {
         method: "GET",

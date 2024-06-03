@@ -21,9 +21,12 @@ async function getPlayers() {
       const sumIdData = await getPlayerSummonerID(puuid);
       const rankData = await getPlayerRank(sumIdData.id);
 
+      player.icon = sumIdData.profileIconId;
+      player.level = sumIdData.summonerLevel;
+
       const playerWithRank = {
         ...player,
-        rank: rankData, // assuming rankData contains the rank info
+        rank: rankData || null, // assuming rankData contains the rank info or is null if not found
       };
 
       playersWithRank.push(playerWithRank);
@@ -99,11 +102,7 @@ async function getPlayerRank(sum_id) {
       (entry) => entry.queueType === "RANKED_SOLO_5x5"
     );
 
-    if (soloRank) {
-      return soloRank;
-    } else {
-      throw new Error("Player has no rank in RANKED_SOLO_5x5 queue");
-    }
+    return soloRank || null; // Return null if no solo rank found
   } catch (error) {
     console.error("Failed to fetch player rank:", error);
     throw error; // Re-throw the error after logging it

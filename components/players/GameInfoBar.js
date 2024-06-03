@@ -11,10 +11,12 @@ const GameInfoBar = ({ data }) => {
   const timeDifference = currentDate - dateFromTimestamp;
   const daysDifference = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
   const gameVersion = data.gameVersion.split(".").slice(0, 2).join(".");
+
   const champIcon =
     "https://fpwrnfdqzvztmakmrdnc.supabase.co/storage/v1/object/public/champions_icons/" +
     lol_champions.data[data.championName].image.full;
   const champName = lol_champions.data[data.championName].name;
+
   const role =
     "https://fpwrnfdqzvztmakmrdnc.supabase.co/storage/v1/object/public/roles/" +
     data.teamPosition.toLowerCase() +

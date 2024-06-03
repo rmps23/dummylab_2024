@@ -16,7 +16,7 @@ const style = {
   p: 4,
 };
 
-const ModalDL = ({ btn, content }) => {
+const ModalAddTeam = ({ btn, content }) => {
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -25,7 +25,7 @@ const ModalDL = ({ btn, content }) => {
     <>
       <button
         onClick={handleOpen}
-        className="bg-zinc-900 text-zinc-300 w-full p-2 rounded-md font-normal text-xs"
+        className="bg-zinc-900 h-10 w-10 rounded-md border border-neutral-900"
       >
         {btn}
       </button>
@@ -42,4 +42,4 @@ const ModalDL = ({ btn, content }) => {
   );
 };
 
-export default ModalDL;
+export default ModalAddTeam;

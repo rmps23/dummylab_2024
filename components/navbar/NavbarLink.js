@@ -7,12 +7,14 @@ const NavbarLink = ({ link, icon, text }) => {
   return (
     <Link
       href={link}
-      className={`rounded-md w-full py-1 px-4 flex items-center gap-3 ${
-        path == link ? `bg-teal-300 text-neutral-950` : `bg-neutral-900`
+      className={`flex py-2 px-4 rounded-md gap-3 items-center ${
+        path == link
+          ? `text-cyan-400 bg-neutral-900 border-cyan-400 hover:bg-neutral-800 hover:text-neutral-300`
+          : `text-neutral-400 bg-neutral-950 border-neutral-950 hover:bg-neutral-800 hover:text-neutral-300`
       }`}
     >
-      {icon}
-      <span>{text}</span>
+      <p className="text-md">{icon}</p>
+      <p className="text-sm pt-[1px]">{text}</p>
     </Link>
   );
 };

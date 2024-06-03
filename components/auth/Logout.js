@@ -28,15 +28,24 @@ const Logout = () => {
   };
 
   return (
-    <>
+    <div className="mr-4">
       {loading ? (
-        <div className="bg-red-500 flex items-center gap-3 py-1 px-4 rounded-md justify-center">
-          <CircularProgress size={24} color="inherit" />
+        <div className="bg-neutral-900 flex py-2 px-4 rounded-md gap-3 items-center w-full justify-center">
+          <span className="text-sm flex">
+            <CircularProgress size={20} color="inherit" />
+          </span>
         </div>
       ) : (
-        <button onClick={() => signOut()} className="bg-red-500 flex items-center gap-3 py-1 px-4 rounded-md"><FaRightFromBracket></FaRightFromBracket> Logout</button>
+        <button
+          onClick={() => signOut()}
+          className="bg-neutral-900 flex py-2 px-4 rounded-md gap-3 items-center w-full"
+        >
+          <span className="text-sm flex items-center gap-4">
+            <FaRightFromBracket></FaRightFromBracket> Logout
+          </span>
+        </button>
       )}
-    </>
+    </div>
   );
 };
 
