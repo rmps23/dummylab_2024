@@ -6,9 +6,10 @@
 
 @layer base {
   html {
-    font-family: "Inter", Arial, Helvetica, sans-serif;
+    font-family: "Chakra Petch", Inter, Arial, Helvetica, sans-serif;
     letter-spacing: 0.05em;
   }
+
   body {
     color: #eee;
   }
@@ -22,4 +23,29 @@ html,
 body,
 #__next {
   height: 100%;
+}
+
+.t-deGdmh {
+  background-color: #09090b;
+  border-radius: 6px;
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: "Chakra Petch", Arial, Helvetica, sans-serif;
+}
+
+.t-deGdmh .supabase-auth-ui_ui-button {
+  font-family: "Chakra Petch", Arial, Helvetica, sans-serif;
+}
+
+.t-deGdmh #auth-sign-in label,
+.t-deGdmh #auth-sign-in input {
+  font-family: "Chakra Petch", Arial, Helvetica, sans-serif;
+}
+
+.t-deGdmh #auth-sign-in button {
+  background-color: #06b6d4;
+  border-color: #06b6d4;
+  color: #000;
+  font-weight: bold;
 }

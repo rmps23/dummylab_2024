@@ -13,29 +13,37 @@ export default function Login() {
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
+      if (!session) {
+        router.push("/");
+      } else {
+        router.push("/dashboard");
+      }
     });
 
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
+      if (!session) {
+        router.push("/");
+      } else {
+        router.push("/dashboard");
+      }
     });
 
     return () => subscription.unsubscribe();
   }, []);
 
-  if (!session) {
-    return (
-      <div className="max-w-80 mx-auto">
-        <Auth
-          supabaseClient={supabase}
-          appearance={{ theme: ThemeSupa }}
-          theme="dark"
-          providers={["twitch", "discord"]}
-        />
-      </div>
-    );
-  } else {
-    router.push("/dashboard");
-  }
+  return (
+    <div className="">
+      < Auth
+        supabaseClient={supabase}
+        appearance={{ theme: ThemeSupa }
+        }
+        theme="dark"
+        providers={["twitch", "discord"]}
+      />
+    </div >
+  );
+
 }

@@ -11,7 +11,6 @@ export default function RootLayout({ children }) {
       <ThemeProvider theme={theme}>
         <html lang="en" className="h-full">
           <body className="bg-zinc-900 flex h-full overflow-hidden">
-            <Navbar></Navbar>
             <div className="overflow-y-scroll w-full">{children}</div>
           </body>
         </html>
