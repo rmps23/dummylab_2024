@@ -25,6 +25,18 @@ body,
   height: 100%;
 }
 
+/* Ensure the html and body elements take up the full height */
+html,
+body {
+  height: 100%;
+  margin: 0;
+}
+
+/* Style the div to take up the full viewport */
+.full-screen {
+  height: 100vh; /* Viewport height */
+}
+
 .t-deGdmh {
   background-color: #09090b;
   border-radius: 6px;
@@ -48,4 +60,24 @@ body,
   border-color: #06b6d4;
   color: #000;
   font-weight: bold;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #0c0c0e;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #1dbbd3;
+  border-radius: 20px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #158596;
 }
