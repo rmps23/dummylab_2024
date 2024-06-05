@@ -13,4 +13,11 @@ async function TeamRegions() {
     return data;
 }
 
-export { TeamRegions };
+
+async function InsertTeam(name, region_id) {
+    const { error } = await supabase
+        .from('teams')
+        .insert({ name: name, region: region_id })
+}
+
+export { TeamRegions, InsertTeam };
