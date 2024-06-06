@@ -5,7 +5,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" className="h-full">
       <body className="bg-zinc-950">
-        <div className="overflow-y-scroll w-full">{children}</div>
+        <div className="w-full">{children}</div>
       </body>
     </html>
   );

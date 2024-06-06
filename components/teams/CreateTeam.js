@@ -1,10 +1,12 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-import { TeamRegions, InsertTeam } from "@/functions/regions/Regions";
+import { TeamRegions } from "@/functions/regions/Regions";
+import { InsertTeam } from "@/functions/teams/Teams";
 import { CircularProgress } from "@mui/material";
 import { ToastContainer, Zoom, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useRouter } from "next/navigation";
 
 const CreateTeam = () => {
   const [regions, setRegions] = useState([]);
@@ -12,6 +14,7 @@ const CreateTeam = () => {
   const [isInserting, setIsInserting] = useState(false);
   const [selectedRegionIndex, setSelectedRegionIndex] = useState(null);
   const teamNameRef = useRef();
+  const router = useRouter();
 
   const fetchTeamRegions = async () => {
     setIsLoading(true);
@@ -48,14 +51,19 @@ const CreateTeam = () => {
     }
 
     try {
-      await InsertTeam(teamName, regions[selectedRegionIndex].id);
-      toast.success("Team created successfully");
+      const team_id = await InsertTeam(teamName, regions[selectedRegionIndex].id);
+      if (team_id) {
+        toast.success("Team created successfully");
+        router.push(`/dashboard/${team_id.id}`);
+      }
     } catch (error) {
-      toast.error("Failed to create team");
+      toast.error(error);
     } finally {
+      toast.success("All g");
       setIsInserting(false);
     }
   };
+
 
   return (
     <div className="flex flex-col justify-center gap-4">
@@ -72,7 +80,7 @@ const CreateTeam = () => {
         theme="dark"
         transition={Zoom}
       />
-      <div className="mb-10">
+      <div className="mb-4">
         <p className="mb-2">Team Name</p>
         <input
           ref={teamNameRef}
@@ -81,18 +89,17 @@ const CreateTeam = () => {
         />
       </div>
       <p className="flex">Region</p>
-      <div className="flex flex-col sm:flex-row gap-10">
+      <div className="flex flex-col sm:flex-row gap-2">
         {isLoading ? (
           <CircularProgress color="inherit" />
         ) : (
           regions.map((region, index) => (
             <div
               key={index}
-              className={`p-2 sm:w-1/4 rounded-md cursor-pointer hover:opacity-80 transition-all ease-in-out duration-100 outline-1 outline-zinc-700 outline outline-offset-4 text-center ${
-                selectedRegionIndex === index
-                  ? "bg-cyan-400 text-zinc-950"
-                  : "bg-zinc-950 text-zinc-300"
-              }`}
+              className={`p-2 w-1/4 rounded-md cursor-pointer hover:opacity-80 transition-all ease-in-out duration-100 text-center ${selectedRegionIndex === index
+                ? "bg-cyan-400 text-zinc-950"
+                : "bg-zinc-950 text-zinc-300"
+                }`}
               onClick={() => handleRegionSelect(index)}
             >
               <input

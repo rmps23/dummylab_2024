@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { Auth } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
 import { useRouter } from "next/navigation";
-import { supabase } from "../../supabase";
+import { supabase } from "@/supabase";
 
 export default function Login() {
   const [session, setSession] = useState(null);

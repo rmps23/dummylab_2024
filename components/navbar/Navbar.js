@@ -3,13 +3,14 @@
 import { useState, useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { supabase } from "@/supabase";
-import ModalAddTeam from "../lib/ModalAddTeam";
-import CreateTeam from "../teams/CreateTeam";
+import { UserTeams } from "@/functions/teams/Teams";
 
-const Navbar = () => {
+const Navbar = ({ navteams }) => {
   const [session, setSession] = useState(null);
   const router = useRouter();
   const path = usePathname();
+
+  console.log(navteams);
 
   useEffect(() => {
     const checkSession = async () => {
@@ -25,9 +26,9 @@ const Navbar = () => {
   }, [router]);
 
   return (
-    <div className="flex flex-col w-60 fixed h-screen bg-zinc-950 p-6 gap-4">
+    <div className="w-60 bg-zinc-900 p-6 gap-4">
       <div>
-        <ModalAddTeam btn={"Create Team"} content={<CreateTeam />} />
+        tes
       </div>
     </div>
   );

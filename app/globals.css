@@ -30,11 +30,13 @@ html,
 body {
   height: 100%;
   margin: 0;
+  overflow: hidden;
 }
 
 /* Style the div to take up the full viewport */
 .full-screen {
-  height: 100vh; /* Viewport height */
+  height: 100vh;
+  /* Viewport height */
 }
 
 .t-deGdmh {

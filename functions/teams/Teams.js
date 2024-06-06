@@ -14,4 +14,20 @@ async function UserTeams(user_id) {
     return data;
 }
 
-export { UserTeams };
+async function InsertTeam(name, region_id) {
+    const { data, error } = await supabase
+        .from("teams")
+        .insert({ name: name, region: region_id })
+        .select()
+        .limit(1)
+        .single()
+
+    if (error) {
+        console.error("Error inserting team:", error.message);
+        return null;
+    }
+
+    return data;
+}
+
+export { UserTeams, InsertTeam };

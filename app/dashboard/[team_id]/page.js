@@ -11,7 +11,7 @@ const Dashboard = () => {
     <>
       <TopBar />
       <Navbar />
-      <div className="pl-64 py-3">{teamID}</div>
+      <div className="pl-64 py-3">Equipa {teamID}</div>
     </>
   );
 };
