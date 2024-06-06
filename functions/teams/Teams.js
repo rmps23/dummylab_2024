@@ -1,10 +1,11 @@
 import { supabase } from "@/supabase";
 
-async function UserTeams(user_id) {
+async function UserTeams() {
+    const { data: { user } } = await supabase.auth.getUser()
     const { data, error } = await supabase
         .from("teams")
         .select("*")
-        .eq("owner", user_id)
+        .eq("owner", user.id)
 
     if (error) {
         console.error("Error retrieving player data:", error.message);

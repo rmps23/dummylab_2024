@@ -9,8 +9,6 @@ const Dashboard = () => {
   const teamID = params.team_id;
   return (
     <>
-      <TopBar />
-      <Navbar />
       <div className="pl-64 py-3">Equipa {teamID}</div>
     </>
   );

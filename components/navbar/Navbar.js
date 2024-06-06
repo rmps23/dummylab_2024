@@ -1,35 +1,16 @@
-"use client";
+import useUserStore from "@/store/useStore";
 
-import { useState, useEffect } from "react";
-import { useRouter, usePathname } from "next/navigation";
-import { supabase } from "@/supabase";
-import { UserTeams } from "@/functions/teams/Teams";
+const Navbar = () => {
+  const user = useUserStore((data) => data.user);
 
-const Navbar = ({ navteams }) => {
-  const [session, setSession] = useState(null);
-  const router = useRouter();
-  const path = usePathname();
-
-  console.log(navteams);
-
-  useEffect(() => {
-    const checkSession = async () => {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
-      setSession(session);
-      if (!session) {
-        router.push("/");
-      }
-    };
-    checkSession();
-  }, [router]);
+  if (!user) {
+    return <div>Loading...</div>;
+  }
 
   return (
-    <div className="w-60 bg-zinc-900 p-6 gap-4">
-      <div>
-        tes
-      </div>
+    <div>
+      <h1>Welcome, {user.email}</h1>
+      {/* Display more user info here */}
     </div>
   );
 };
