@@ -1,23 +1,13 @@
-'use client'
+"use client";
 
-import React from 'react';
-import TopBar from '@/components/navbar/TopBar';
-import Navbar from '@/components/navbar/Navbar';
+import React from "react";
 
 const Dashboard = () => {
-
-    return (
-        <>
-            {/* <TopBar /> */}
-            <div className='flex'>
-                <div className='h-screen overflow-y-scroll w-full p-4'>
-                    <p className='w-full bg-red-700'>teste</p>
-
-                </div>
-
-            </div>
-        </>
-    );
+  return (
+    <>
+      <div className="flex flex-col">teste</div>
+    </>
+  );
 };
 
 export default Dashboard;
