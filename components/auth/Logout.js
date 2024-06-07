@@ -28,7 +28,7 @@ const Logout = () => {
   };
 
   return (
-    <div>
+    <>
       {loading ? (
         <div className="bg-neutral-900 flex py-2 px-4 rounded-md gap-3 items-center w-full justify-center">
           <span className="text-sm flex">
@@ -38,14 +38,12 @@ const Logout = () => {
       ) : (
         <button
           onClick={() => signOut()}
-          className="bg-neutral-800 flex py-2 px-4 rounded-md gap-3 items-center w-full"
+          className="flex w-1/3 bg-zinc-800 rounded-md items-center justify-center py-2"
         >
-          <span className="text-sm flex items-center gap-4">
-            <FaRightFromBracket></FaRightFromBracket> Logout
-          </span>
+          <FaRightFromBracket></FaRightFromBracket>
         </button>
       )}
-    </div>
+    </>
   );
 };
 

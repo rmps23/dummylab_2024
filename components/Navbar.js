@@ -15,17 +15,17 @@ const Navbar = () => {
   const team_id = params.team_id;
 
   return (
-    <div className="w-60 bg-neutral-900 px-4 py-6 h-screen flex flex-col justify-between">
+    <div className="w-72 bg-neutral-900 px-4 py-6 h-screen flex flex-col justify-between">
       <div className='flex flex-col gap-6'>
         <div className="flex items-center justify-center flex-col">
-          <Link href="/dashboard" className='flex items-center gap-1'>
+          <Link href="/dashboard" className='flex items-center gap-1 text-2xl'>
             DUMMY
             <span className="bg-cyan-400 text-neutral-950 px-1 rounded-sm font-bold">
               LAB
             </span>
           </Link>
         </div>
-        <div>
+        <div className='bg-gradient-to-br from-cyan-300 to-cyan-500 p-2 rounded-md max-h-48 overflow-y-auto'>
           <TeamSelector user={user} />
         </div>
         <div>
@@ -49,13 +49,16 @@ const Navbar = () => {
               </Link>
             </div>
             :
-            <div className='p-2 bg-cyan-400/40 rounded-md flex items-center justify-center'>
-              <p className='text-xs'>Select a team to start managing it!</p>
+            <div className='p-2 bg-zinc-300 text-zinc-950 rounded-md flex items-center justify-center'>
+              <p className='text-sm'>Select a team to start managing it!</p>
             </div>
           }
         </div>
       </div>
-      <div>
+      <div className='flex gap-4'>
+        <Link href={`/settings`} className='flex w-2/3 bg-zinc-800 rounded-md items-center justify-center py-2'>
+          <FaGear />
+        </Link>
         <Logout></Logout>
       </div>
     </div>
