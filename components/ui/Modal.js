@@ -12,12 +12,11 @@ const Modal = ({ show, onClose, children }) => {
         }
     };
 
-    // Update modal visibility when show prop changes
     useEffect(() => {
         if (show) {
             setModalVisible(true);
         } else {
-            setTimeout(() => setModalVisible(false), 100); // Adjust this timeout to match your animation duration
+            setTimeout(() => setModalVisible(false), 100);
         }
     }, [show]);
 
