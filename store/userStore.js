@@ -5,9 +5,10 @@ export const userStore = create((set) => ({
   user: null,
   updateUser: (new_user) => set({ user: new_user }),
   getUser: async () => {
-    if (userStore.getState().user === null) {
+    const currentUser = userStore.getState().user;
+    if (!currentUser) {
       const response = await fetchUser();
-      set({ user: response });
+      set({ user: response.user });
     }
   },
 }));

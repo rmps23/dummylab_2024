@@ -41,7 +41,7 @@ const Logout = () => {
           className="bg-neutral-800 flex py-2 px-4 rounded-md gap-3 items-center w-full"
         >
           <span className="text-sm flex items-center gap-4">
-            <FaRightFromBracket></FaRightFromBracket>
+            <FaRightFromBracket></FaRightFromBracket> Logout
           </span>
         </button>
       )}

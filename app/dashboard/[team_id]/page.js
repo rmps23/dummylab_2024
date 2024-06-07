@@ -1,7 +1,5 @@
 "use client";
 
-import Navbar from "@/components/navbar/Navbar";
-import TopBar from "@/components/navbar/TopBar";
 import { useParams } from "next/navigation";
 
 const Dashboard = () => {
