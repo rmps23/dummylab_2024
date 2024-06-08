@@ -16,4 +16,12 @@ export const teamStore = create((set) => ({
       set({ teams: [], loading: false });
     }
   },
+  refreshTeams: async (userId) => {
+    try {
+      const response = await fetchTeams(userId);
+      set({ teams: response });
+    } catch (error) {
+      console.error("Failed to refresh teams", error);
+    }
+  },
 }));
