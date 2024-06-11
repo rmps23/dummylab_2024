@@ -30,15 +30,15 @@ const Logout = () => {
   return (
     <>
       {loading ? (
-        <div className="bg-neutral-900 flex py-2 px-4 rounded-md gap-3 items-center w-full justify-center">
+        <div className="flex p-3 sm:w-1/3 bg-zinc-800 rounded-md items-center justify-center text-xs">
           <span className="text-sm flex">
-            <CircularProgress size={20} color="inherit" />
+            <CircularProgress size={12} color="inherit" />
           </span>
         </div>
       ) : (
         <button
           onClick={() => signOut()}
-          className="flex w-1/3 bg-zinc-800 rounded-md items-center justify-center py-2"
+          className="flex p-3 sm:w-1/3 bg-zinc-800 rounded-md items-center justify-center  text-xs"
         >
           <FaRightFromBracket></FaRightFromBracket>
         </button>

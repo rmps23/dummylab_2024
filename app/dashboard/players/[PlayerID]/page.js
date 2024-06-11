@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
-import Navbar from "@/components/navbar/Navbar";
 import Image from "next/image";
 import { getPlayerByID } from "@/functions/Players";
 import { getSupaPlayerData, getPlayerRiotInfo } from "@/functions/GameList";
@@ -62,7 +61,6 @@ const PlayerInfo = () => {
 
   return (
     <div>
-      <Navbar />
       <div className="pl-72 pr-8 py-8">
         {playerInfo ? (
           <div>

@@ -24,7 +24,9 @@ export default function DashboardLayout({ children }) {
   return (
     <div className="flex">
       <Navbar />
-      <div className="w-full h-screen overflow-y-scroll p-4">{children}</div>
+      <div className="w-full h-screen overflow-y-scroll sm:p-4 py-14 px-2">
+        {children}
+      </div>
     </div>
   );
 }
