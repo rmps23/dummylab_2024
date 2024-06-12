@@ -1,12 +1,12 @@
-'use client'
+"use client";
 
 import Modal from "@/components/ui/Modal";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { userStore } from "@/store/userStore";
+import { playerStore } from "@/store/playerStore";
 import { useParams } from "next/navigation";
-import { insertTeam } from "@/hooks/insertPlayer";
-import { ToastContainer, toast, Bounce } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer, toast, Bounce } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Management = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -14,9 +14,19 @@ const Management = () => {
   const [riotId, setRiotId] = useState("");
   const [tagLine, setTagLine] = useState("");
   const [role, setRole] = useState("1");
-  const [loading, setLoading] = useState(false);
+
   const user = userStore((state) => state.user);
   const params = useParams();
+  const { players, loading, getPlayers, addPlayer } = playerStore((state) => ({
+    players: state.players,
+    loading: state.loading,
+    getPlayers: state.getPlayers,
+    addPlayer: state.addPlayer,
+  }));
+
+  useEffect(() => {
+    getPlayers(params.team_id);
+  }, [params.team_id, getPlayers]);
 
   const handleOpenModal = () => {
     setIsModalOpen(true);
@@ -27,52 +37,12 @@ const Management = () => {
   };
 
   const handlePlayerSubmit = async () => {
-    if (playerName == "" || riotId == "" || tagLine == "") {
-      toast.error('Empty fields', {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "dark",
-        transition: Bounce,
-      });
-      return
+    if (playerName === "" || riotId === "" || tagLine === "") {
+      return;
     }
     const riotID = riotId + "#" + tagLine;
-    setLoading(true);
-    try {
-      const result = await insertTeam(playerName, role, riotID, user.id, params.team_id);
-
-    } catch (error) {
-      toast.error('🚨 Error adding player. Please try again.', {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "dark",
-        transition: Bounce,
-      });
-    } finally {
-      setLoading(false);
-      handleCloseModal();
-      toast('🦄 Player added successfully!', {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "dark",
-        transition: Bounce,
-      });
-    }
+    await addPlayer(playerName, role, riotID, user.id, params.team_id);
+    handleCloseModal();
   };
 
   return (
@@ -132,12 +102,20 @@ const Management = () => {
               onClick={handlePlayerSubmit}
               disabled={loading}
             >
-              {loading ? 'Loading...' : 'Confirm'}
+              {loading ? "Loading..." : "Confirm"}
             </button>
           </div>
         </div>
       </Modal>
-      <ToastContainer />
+      <div>
+        {loading ? (
+          <p>Loading...</p>
+        ) : players.length > 0 ? (
+          players.map((player) => <div key={player.id}>{player.name}</div>)
+        ) : (
+          <p>No players found</p>
+        )}
+      </div>
     </>
   );
 };
