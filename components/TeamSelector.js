@@ -6,6 +6,7 @@ import Modal from "./ui/Modal";
 import { useParams } from "next/navigation";
 import Dropdown from "./ui/Dropdown";
 import { useInsertTeam } from "@/hooks/useInsertTeam";
+import CircularProgress from "@mui/material/CircularProgress";
 
 const TeamSelector = ({ user }) => {
   const teams = teamStore((state) => state.teams);
@@ -90,11 +91,10 @@ const TeamSelector = ({ user }) => {
                     <Link
                       key={team.id}
                       href={`/dashboard/${team.id}`}
-                      className={`text-sm px-2 py-2 bg-zinc-950 rounded-md hover:bg-zinc-900 ${
-                        paramTeamID == team.id
-                          ? "text-cyan-500 font-bold"
-                          : "text-zinc-400"
-                      }`}
+                      className={`text-sm px-2 py-2 bg-zinc-950 rounded-md hover:bg-zinc-900 ${paramTeamID == team.id
+                        ? "text-cyan-500 font-bold"
+                        : "text-zinc-400"
+                        }`}
                     >
                       {team.name}
                     </Link>
@@ -147,31 +147,32 @@ const TeamSelector = ({ user }) => {
           </>
         )}
       </div>
-      <div className="flex-col flex sm:hidden w-full bg-zinc-800">
+      <div className="flex-col flex sm:hidden w-full">
         {loading ? (
-          <p>Loading...</p>
+          <div
+            className="relative cursor-pointer px-2 py-2 bg-zinc-950 rounded-md text-zinc-400 w-full flex justify-between items-center text-center">
+            <CircularProgress size={24} color="inherit" className="mx-auto" /></div>
         ) : (
           <>
             {teams.length > 0 ? (
               <div className="gap-2 flex flex-col">
                 <div
-                  className="relative cursor-pointer px-2 py-2 bg-zinc-950 rounded-md text-zinc-400 mb-2 w-full flex justify-between items-center"
+                  className="relative cursor-pointer px-2 py-2 bg-zinc-950 rounded-md text-zinc-400 w-full flex justify-between items-center"
                   onClick={() => setDropdownOpen(!dropdownOpen)}
                 >
                   <span>Select a team</span>
                   <FaChevronUp />
                 </div>
                 {dropdownOpen && (
-                  <div className="absolute bottom-16 bg-zinc-950 rounded-md mt-2 w-full max-h-60 overflow-y-auto z-10">
+                  <div className="absolute top-24 left-0 gap-2 flex p-2 flex-col bg-cyan-500 sm:bg-zinc-950 sm:mt-2 w-full max-h-52 overflow-y-auto z-10">
                     {filteredTeams.length > 0 ? (
                       filteredTeams.map((team) => (
                         <div
                           key={team.id}
-                          className={`text-sm px-2 py-2 hover:bg-zinc-900 ${
-                            paramTeamID == team.id
-                              ? "text-cyan-500 font-bold"
-                              : "text-zinc-400"
-                          }`}
+                          className={`text-sm px-2 py-2 bg-zinc-950 rounded-md ${paramTeamID == team.id
+                            ? "text-cyan-500 font-bold"
+                            : "text-zinc-400"
+                            }`}
                           onClick={() => handleTeamSelect(team.id)}
                         >
                           {team.name}

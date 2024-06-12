@@ -19,7 +19,7 @@ const Navbar = () => {
     <>
       <div className="w-72 bg-neutral-900 px-4 py-6 h-screen sm:flex flex-col justify-between hidden">
         <div className="flex flex-col gap-6">
-          <div className="flex items-center justify-center flex-col">
+          <div className="flex items-center justify-center flex-col relative">
             <Link
               href="/dashboard"
               className="flex items-center gap-1 text-2xl"
@@ -27,6 +27,9 @@ const Navbar = () => {
               DUMMY
               <span className="bg-cyan-400 text-neutral-950 px-1 rounded-sm font-bold">
                 LAB
+              </span>
+              <span className="text-xs">
+                beta
               </span>
             </Link>
           </div>
@@ -92,57 +95,52 @@ const Navbar = () => {
           <div className="fixed p-2 bottom-0 bg-neutral-900 w-full flex gap-4 items-center justify-center sm:hidden">
             <Link
               href={`/dashboard/${team_id}`}
-              className={`flex flex-1 items-center justify-center p-2 text-sm rounded-md ${
-                path == `/dashboard/${team_id}` ? "bg-cyan-500" : "bg-zinc-800"
-              }`}
+              className={`flex flex-1 items-center justify-center p-2 text-sm rounded-md ${path == `/dashboard/${team_id}` ? "bg-cyan-500" : "bg-zinc-800"
+                }`}
             >
               <FaHouse />
             </Link>
             <Link
               href={`/dashboard/${team_id}/management`}
-              className={`flex flex-1 items-center justify-center p-2 text-sm rounded-md ${
-                path === `/dashboard/${team_id}/management`
-                  ? "bg-cyan-500"
-                  : "bg-zinc-800"
-              }`}
+              className={`flex flex-1 items-center justify-center p-2 text-sm rounded-md ${path === `/dashboard/${team_id}/management`
+                ? "bg-cyan-500"
+                : "bg-zinc-800"
+                }`}
             >
               <FaUsers />
             </Link>
 
             <Link
               href={`/dashboard/${team_id}/analytics`}
-              className={`flex flex-1 items-center justify-center p-2 text-sm rounded-md ${
-                path == `/dashboard/${team_id}/analytics`
-                  ? "bg-cyan-500"
-                  : "bg-zinc-800"
-              }`}
+              className={`flex flex-1 items-center justify-center p-2 text-sm rounded-md ${path == `/dashboard/${team_id}/analytics`
+                ? "bg-cyan-500"
+                : "bg-zinc-800"
+                }`}
             >
               <FaChartSimple />
             </Link>
             <Link
               href={`/dashboard/${team_id}/schedule`}
-              className={`flex flex-1 items-center justify-center p-2 text-sm rounded-md ${
-                path == `/dashboard/${team_id}/schedule`
-                  ? "bg-cyan-500"
-                  : "bg-zinc-800"
-              }`}
+              className={`flex flex-1 items-center justify-center p-2 text-sm rounded-md ${path == `/dashboard/${team_id}/schedule`
+                ? "bg-cyan-500"
+                : "bg-zinc-800"
+                }`}
             >
               <FaCalendar />
             </Link>
             <Link
               href={`/dashboard/${team_id}/champion_pool`}
-              className={`flex flex-1 items-center justify-center p-2 text-sm rounded-md ${
-                path == `/dashboard/${team_id}/champion_pool`
-                  ? "bg-cyan-500"
-                  : "bg-zinc-800"
-              }`}
+              className={`flex flex-1 items-center justify-center p-2 text-sm rounded-md ${path == `/dashboard/${team_id}/champion_pool`
+                ? "bg-cyan-500"
+                : "bg-zinc-800"
+                }`}
             >
               <FaStar />
             </Link>
           </div>
         </>
       )}
-      <div className="sm:hidden flex flex-col justify-between fixed top-0 w-full bg-zinc-900 p-2">
+      <div className="sm:hidden flex flex-col justify-between fixed top-0 w-full bg-zinc-900 p-2 gap-2 sm:gap-0">
         <div className="flex items-center justify-between">
           <Link
             href="/dashboard"
@@ -156,9 +154,8 @@ const Navbar = () => {
           <div className="flex gap-2">
             <Link
               href={`/dashboard/settings`}
-              className={`flex items-center justify-center p-2 px-2 text-sm rounded-md ${
-                path == `/dashboard/settings` ? "bg-cyan-500" : "bg-zinc-800"
-              }`}
+              className={`flex items-center justify-center p-2 px-2 text-sm rounded-md ${path == `/dashboard/settings` ? "bg-cyan-500" : "bg-zinc-800"
+                }`}
             >
               <FaGear />
             </Link>
