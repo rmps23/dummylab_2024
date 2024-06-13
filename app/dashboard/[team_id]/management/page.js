@@ -2,26 +2,33 @@
 
 import Modal from "@/components/ui/Modal";
 import { useState, useEffect } from "react";
-import { userStore } from "@/store/userStore";
 import { playerStore } from "@/store/playerStore";
 import { useParams } from "next/navigation";
 import AddPlayer from "@/components/AddPlayer";
+import { fetchPlayers } from "@/hooks/fetchPlayers";
 
 const Management = () => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const user = userStore((state) => state.user);
   const params = useParams();
-  const { players, loading, getPlayers, addPlayer } = playerStore((state) => ({
-    players: state.players,
-    loading: state.loading,
-    getPlayers: state.getPlayers,
-    addPlayer: state.addPlayer,
-  }));
+  const { players, addPlayer } = playerStore(); // Destructure players and addPlayer from playerStore
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [loading, setLoading] = useState(true); // Set loading to true initially
 
   useEffect(() => {
-    getPlayers(params.team_id);
-  }, [params.team_id, getPlayers]);
+    const fetchData = async () => {
+      setLoading(true); // Set loading to true before fetching data
+      try {
+        const result = await fetchPlayers(params.team_id);
+        addPlayer(result); // Update players state with fetched data
+      } catch (error) {
+        console.error("Error fetching players:", error);
+      } finally {
+        setLoading(false); // Set loading to false after data is fetched
+      }
+    };
+
+    fetchData();
+  }, [params.team_id, addPlayer]);
 
   const handleOpenModal = () => {
     setIsModalOpen(true);
@@ -39,22 +46,29 @@ const Management = () => {
       >
         Add Player
       </button>
-      <Modal show={isModalOpen} onClose={handleCloseModal} content={<AddPlayer onClose={handleCloseModal} />}></Modal>
+      <Modal
+        show={isModalOpen}
+        onClose={handleCloseModal}
+        content={<AddPlayer onClose={handleCloseModal} />}
+      />
       <div>
         {loading ? (
           <p>Loading...</p>
-        ) : players.length > 0 ? (
-          players.map((player) =>
-            <div key={player.id}>
-              <div>
-                <p>{player.name}</p>
-                <p>{player.riot_id}</p>
-                <p>{player.role.name}</p>
-                <p>{player.role.image_link}</p>
-              </div>
-            </div>)
         ) : (
-          <p>No players found</p>
+          <>
+            {players && players.length > 0 ? (
+              players.map((player) => (
+                <div key={player.riot_id}>
+                  <div>
+                    <p>{player.name}</p>
+                    <p>{player.riot_id}</p>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <>No results found</>
+            )}
+          </>
         )}
       </div>
     </>
