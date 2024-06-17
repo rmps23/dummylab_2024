@@ -2,15 +2,16 @@
 
 import { FaUsers } from "react-icons/fa6";
 import { useState, useEffect } from "react";
-import { fetchTeams } from "@/hooks/fetchTeams";
 import { userStore } from "@/store/userStore";
+import { teamStore } from "@/store/teamStore";
 import Modal from "@/components/ui/Modal";
+import Image from "next/image";
+import { fetchTeams } from "@/hooks/fetchTeams";
 
 const Teams = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [teams, setTeams] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const user = userStore((state) => state.user);
 
   const handleOpenModal = () => {
@@ -23,21 +24,37 @@ const Teams = () => {
 
   useEffect(() => {
     const getTeams = async () => {
-      try {
+      if (user) {
         setLoading(true);
-        const teams = await fetchTeams(user.id);
-        setTeams(teams);
-        setLoading(false);
-      } catch (error) {
-        setError(error);
-        setLoading(false);
+        try {
+          const response = await fetchTeams();
+          setTeams(response.teams);
+        } catch (error) {
+          console.error("Failed to fetch teams:", error);
+        } finally {
+          setLoading(false);
+          console.log(teams);
+        }
       }
     };
 
-    if (user?.id) {
-      getTeams();
-    }
+    getTeams();
   }, [user]);
+
+  if (loading) {
+    return (
+      <div className="w-full pt-40 flex flex-col items-center justify-center">
+        <Image
+          src="/assets/logos/dummylab_logo_solo.png"
+          height={40}
+          width={40}
+          alt="Loading"
+          className="animate-bounce pb-4"
+        />
+        <p className="animate-pulse text-xl">Loading</p>
+      </div>
+    );
+  }
 
   return (
     <>
@@ -55,18 +72,6 @@ const Teams = () => {
           </button>
           <Modal show={isModalOpen} onClose={handleCloseModal} />
         </div>
-      </div>
-      <div className="py-4">
-        {loading && <p>Loading teams...</p>}
-        {error && <p>Error loading teams: {error.message}</p>}
-        {!loading && !error && teams.length === 0 && <p>No teams available.</p>}
-        {!loading && !error && teams.length > 0 && (
-          <ul>
-            {teams.map((team) => (
-              <li key={team.id}>{team.name}</li>
-            ))}
-          </ul>
-        )}
       </div>
     </>
   );

@@ -30,19 +30,33 @@ const Logout = () => {
   return (
     <>
       {loading ? (
-        <div className="bg-zinc-900 flex items-center w-2/3 rounded-md h-8 justify-center"
-        >
-          <span className="text-sm flex">
-            <CircularProgress size={12} color="inherit" />
-          </span>
-        </div>
+        <>
+          <div className="bg-zinc-900 sm:flex hidden items-center w-2/3 rounded-md h-8 justify-center">
+            <span className="text-sm flex">
+              <CircularProgress size={12} color="inherit" />
+            </span>
+          </div>
+          <div className="flex flex-col items-center justify-center gap-1 w-full rounded-md text-xs sm:hidden text-zinc-400">
+            <span className="text-sm flex">
+              <CircularProgress size={12} color="inherit" />
+            </span>
+          </div>
+        </>
       ) : (
-        <button
-          onClick={() => signOut()}
-          className="bg-zinc-950 flex items-center w-2/3 rounded-md h-8 justify-center hover:bg-zinc-900"
-        >
-          <FaRightFromBracket></FaRightFromBracket>
-        </button>
+        <>
+          <button
+            onClick={() => signOut()}
+            className="bg-zinc-950 sm:flex items-center sm:w-2/3 rounded-md h-8 justify-center hover:bg-zinc-900 text-xl sm:text-sm hidden"
+          >
+            <FaRightFromBracket></FaRightFromBracket>
+          </button>
+          <button
+            onClick={() => signOut()}
+            className="flex flex-col items-center gap-1 w-full rounded-md text-xs sm:hidden text-zinc-400"
+          >
+            <FaRightFromBracket></FaRightFromBracket> Logout
+          </button>
+        </>
       )}
     </>
   );
