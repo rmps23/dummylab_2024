@@ -6,8 +6,7 @@ import TeamSelector from "./TeamSelector";
 import Link from "next/link";
 import Logout from "./auth/Logout";
 import { useParams, usePathname } from "next/navigation";
-import { FaChartSimple, FaGear, FaHouse, FaUsers } from "react-icons/fa6";
-import { FaCalendar, FaStar } from "react-icons/fa";
+import { FaChartSimple, FaCalendar, FaShield, FaUsers, FaGear } from "react-icons/fa6";
 import Image from "next/image";
 
 const Navbar = () => {
@@ -18,37 +17,69 @@ const Navbar = () => {
 
   return (
     <>
-      <div className="w-60 flex flex-col gap-4 px-4 py-10 items-center h-screen border-r border-zinc-900">
-        <div className="mb-4">
-          <Link href="/dashboard">
-            <Image
-              src="/assets/logos/dummylab_logo.png"
-              width={140}
-              height={0}
-            ></Image>
-          </Link>
+      <div className="w-60 flex flex-col justify-between gap-4 px-4 py-10 items-center h-screen border-r border-zinc-900">
+        <div className="w-full flex flex-col gap-4 items-center">
+          <div className="mb-4">
+            <Link href="/dashboard">
+              <Image
+                src="/assets/logos/dummylab_logo.png"
+                width={140}
+                height={0}
+                alt=""
+              ></Image>
+            </Link>
+          </div>
+          <div className="flex flex-col gap-2 w-full">
+            <Link
+              href="/dashboard/teams"
+              className={`flex items-center gap-4 w-full px-3 py-1 rounded-md ${path == "/dashboard/teams"
+                ? "bg-zinc-900 text-zinc-100"
+                : "bg-zinc-950 text-zinc-400"
+                } hover:bg-zinc-900`}
+            >
+              <FaShield></FaShield> <span className="pt-[1px]">Teams</span>
+            </Link>
+            <Link
+              href="/dashboard/players"
+              className={`flex items-center gap-4 w-full px-3 py-1 rounded-md ${path == "/dashboard/players"
+                ? "bg-zinc-900 text-zinc-100"
+                : "bg-zinc-950 text-zinc-400"
+                } hover:bg-zinc-900`}
+            >
+              <FaUsers></FaUsers> <span className="pt-[1px]">Players</span>
+            </Link>
+            <Link
+              href="/dashboard/analytics"
+              className={`flex items-center gap-4 w-full px-3 py-1 rounded-md ${path == "/dashboard/analytics"
+                ? "bg-zinc-900 text-zinc-100"
+                : "bg-zinc-950 text-zinc-400"
+                } hover:bg-zinc-900`}
+            >
+              <FaChartSimple></FaChartSimple> <span className="pt-[1px]">Analytics</span>
+            </Link>
+            <Link
+              href="/dashboard/schedule"
+              className={`flex items-center gap-4 w-full px-3 py-1 rounded-md ${path == "/dashboard/schedule"
+                ? "bg-zinc-900 text-zinc-100"
+                : "bg-zinc-950 text-zinc-400"
+                } hover:bg-zinc-900`}
+            >
+              <FaCalendar></FaCalendar> <span className="pt-[1px]">Schedule</span>
+            </Link>
+
+          </div>
         </div>
-        <div className="flex flex-col gap-2 w-full">
-          {/* <Link
-            href="/dashboard"
-            className={`flex items-center gap-4 w-full px-3 py-1 rounded-md ${
-              path == "/dashboard"
-                ? "bg-zinc-900 text-zinc-100"
-                : "bg-zinc-950 text-zinc-400"
-            } hover:bg-zinc-900`}
-          >
-            <FaHouse></FaHouse> <span className="pt-[2px]">Dashboard</span>
-          </Link> */}
+        <div className="w-full flex gap-4 items-center">
           <Link
-            href="/dashboard/teams"
-            className={`flex items-center gap-4 w-full px-3 py-1 rounded-md ${
-              path == "/dashboard/teams"
-                ? "bg-zinc-900 text-zinc-100"
-                : "bg-zinc-950 text-zinc-400"
-            } hover:bg-zinc-900`}
+            href="/dashboard/settings"
+            className={`flex items-center gap-4 w-2/3 h-8 px-3 rounded-md ${path == "/dashboard/settings"
+              ? "bg-zinc-900 text-zinc-100"
+              : "bg-zinc-950 text-zinc-400"
+              } hover:bg-zinc-900`}
           >
-            <FaUsers></FaUsers> <span className="pt-[1px]">Teams</span>
+            <FaGear></FaGear> <span className="pt-[1px]">Settings</span>
           </Link>
+          <Logout></Logout>
         </div>
       </div>
     </>
