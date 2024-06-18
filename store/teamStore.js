@@ -11,6 +11,13 @@ export const teamStore = create((set) => ({
     }))
   },
 
+  editTeamName: (team_id, newName) =>
+    set((state) => ({
+      teams: state.teams.map((team) =>
+        team.id === team_id ? { ...team, name: newName } : team
+      ),
+    })),
+
   removeTeam: (team_id) =>
     set((state) => ({
       teams: state.teams.filter((team) => team.id !== team_id),

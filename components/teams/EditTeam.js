@@ -1,17 +1,19 @@
 'use client'
 
-import { editTeam } from '@/hooks/editTeam';
+import { editTeam } from '@/hooks/teams/editTeam';
 import { useState } from 'react';
+import { teamStore } from '@/store/teamStore';
 
-const EditTeam = ({ team_name, team_id }) => {
+const EditTeam = ({ team_name, team_id, setEditTeamModal }) => {
     const [teamName, setTeamName] = useState(team_name);
+    const { editTeamName } = teamStore();
+
 
     async function handleEditTeam() {
         try {
             const response = await editTeam(teamName, team_id);
-            // Assuming addTeam and setAddTeamModal are functions defined elsewhere
-            // addTeam(response);
-            // setAddTeamModal(false);
+            editTeamName(response.id, response.name);
+            setEditTeamModal(false);
         } catch (error) {
             console.error('Error editing team:', error);
         }

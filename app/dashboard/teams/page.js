@@ -6,7 +6,7 @@ import { userStore } from "@/store/userStore";
 import { teamStore } from "@/store/teamStore";
 import Modal from "@/components/ui/Modal";
 import Image from "next/image";
-import { fetchTeams } from "@/hooks/fetchTeams";
+import { fetchTeams } from "@/hooks/teams/fetchTeams";
 import AddTeam from "@/components/teams/AddTeam";
 import EditTeam from "@/components/teams/EditTeam";
 
@@ -106,7 +106,7 @@ const Teams = () => {
               <Modal
                 show={editTeamModal && editTeamId === team.id} // Show modal if editTeamModal is true and editTeamId matches current team.id
                 onClose={handleCloseEditModal}
-                content={<EditTeam team_name={team.name} team_id={team.id} />}
+                content={<EditTeam team_name={team.name} team_id={team.id} setEditTeamModal={setEditTeamModal} />}
               />
             </div>
           ))

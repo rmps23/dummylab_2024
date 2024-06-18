@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react';
-import { insertTeam } from "@/hooks/insertTeam";
+import { insertTeam } from "@/hooks/teams/insertTeam";
 import { teamStore } from '@/store/teamStore';
 
 const AddTeam = ({ user_id, setAddTeamModal }) => {
