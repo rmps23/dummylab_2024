@@ -30,7 +30,7 @@ const EditTeam = ({ team_name, team_id, setEditTeamModal }) => {
             <p>Team Name</p>
             <input
                 type="text"
-                className="bg-zinc-950 p-2 rounded-md outline-none"
+                className="bg-zinc-900 p-2 rounded-md outline-none"
                 placeholder="Insert team name..."
                 value={teamName}
                 onChange={(e) => setTeamName(e.target.value)}

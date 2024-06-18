@@ -9,10 +9,13 @@ import Image from "next/image";
 import { fetchTeams } from "@/hooks/teams/fetchTeams";
 import AddTeam from "@/components/teams/AddTeam";
 import EditTeam from "@/components/teams/EditTeam";
+import RemoveTeam from "@/components/teams/RemoveTeam";
 
 const Teams = () => {
   const [addTeamModal, setAddTeamModal] = useState(false);
   const [editTeamModal, setEditTeamModal] = useState(false);
+  const [removeTeamModal, setRemoveTeamModal] = useState(false);
+
   const [editTeamId, setEditTeamId] = useState(null); // Track the team ID for editing
   const [loading, setLoading] = useState(true);
 
@@ -35,6 +38,16 @@ const Teams = () => {
   const handleCloseEditModal = () => {
     setEditTeamModal(false);
     setEditTeamId(null); // Reset the team ID when closing the modal
+  };
+
+  const handleOpenRemoveModal = (teamId) => { // Receive teamId as parameter
+    setEditTeamId(teamId); // Set the team ID for the edit modal
+    setRemoveTeamModal(true);
+  };
+
+  const handleCloseRemoveModal = () => {
+    setEditTeamId(null); // Reset the team ID when closing the modal
+    setRemoveTeamModal(false);
   };
 
   const fetchTeamsData = async () => {
@@ -73,7 +86,7 @@ const Teams = () => {
 
   return (
     <>
-      <div className="flex items-center gap-6 w-full pb-4 border-b border-zinc-900">
+      <div className="flex items-center gap-6 w-full pb-4 mb-8 border-b border-zinc-900">
         <div className="flex items-center gap-4">
           <FaUsers className="bg-zinc-900 p-2 text-4xl rounded-md" />
           <span className="text-lg">Teams</span>
@@ -92,22 +105,37 @@ const Teams = () => {
           />
         </div>
       </div>
-      <div className="grid grid-cols-2 gap-4 mt-4">
+      <div className="flex flex-col gap-4 max-w-[800px]">
         {teams.length > 0 ? (
           teams.map((team) => (
-            <div key={team.id} className="border border-zinc-900 p-4 rounded-md">
-              {team.name}
-              <button
-                onClick={() => handleOpenEditModal(team.id)} // Pass team.id to handler
-                className="text-sm bg-zinc-50 text-zinc-950 px-2 py-1 rounded-md hover:bg-zinc-100"
-              >
-                Edit
-              </button>
-              <Modal
-                show={editTeamModal && editTeamId === team.id} // Show modal if editTeamModal is true and editTeamId matches current team.id
-                onClose={handleCloseEditModal}
-                content={<EditTeam team_name={team.name} team_id={team.id} setEditTeamModal={setEditTeamModal} />}
-              />
+            <div key={team.id} className="border border-zinc-900 p-4 rounded-md flex justify-between">
+              <div>
+                {team.name}
+              </div>
+              <div>
+                <button
+                  onClick={() => handleOpenEditModal(team.id)} // Pass team.id to handler
+                  className="text-sm text-zinc-200 px-2 py-1 rounded-md"
+                >
+                  Edit
+                </button>
+                <button
+                  onClick={() => handleOpenRemoveModal(team.id)} // Pass team.id to handler
+                  className="text-sm text-zinc-200 px-2 py-1 rounded-md"
+                >
+                  Remove
+                </button>
+                <Modal
+                  show={editTeamModal && editTeamId === team.id}
+                  onClose={handleCloseEditModal}
+                  content={<EditTeam team_name={team.name} team_id={team.id} setEditTeamModal={setEditTeamModal} />}
+                />
+                <Modal
+                  show={removeTeamModal && editTeamId === team.id}
+                  onClose={handleCloseRemoveModal}
+                  content={<RemoveTeam team_id={team.id} setRemoveTeamModal={setRemoveTeamModal} />}
+                />
+              </div>
             </div>
           ))
         ) : (

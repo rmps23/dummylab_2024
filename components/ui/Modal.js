@@ -22,12 +22,12 @@ const Modal = ({ show, onClose, content }) => {
 
   return (
     <div
-      className={`fixed inset-0 flex items-start justify-center z-50 bg-black bg-opacity-50 transition-opacity ${modalVisible ? "opacity-100" : "opacity-0 pointer-events-none"
+      className={`fixed inset-0 flex items-start justify-center z-50 bg-black bg-opacity-80 backdrop-blur-sm transition-opacity ${modalVisible ? "opacity-100" : "opacity-0 pointer-events-none"
         }`}
       onClick={handleOverlayClick}
     >
       <div
-        className={`bg-zinc-900 border border-zinc-700 rounded-lg shadow-lg w-full h-full max-w-lg md:h-auto md:max-w-md mx-2 md:mx-auto mt-20 md:mt-40 transition-transform ${modalVisible ? "scale-100" : "scale-95"
+        className={`bg-zinc-950 border border-zinc-700 rounded-lg shadow-lg w-full h-full max-w-lg md:h-auto md:max-w-md mx-2 md:mx-auto mt-20 md:mt-40 transition-transform ${modalVisible ? "scale-100" : "scale-95"
           }`}
       >
         <div className="p-6">
