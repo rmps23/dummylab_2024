@@ -2,15 +2,15 @@
 
 import { useState } from 'react';
 import { teamStore } from '@/store/teamStore';
-import { removeTeam } from '@/hooks/teams/removeTeam';
+import { deleteTeam } from '@/hooks/teams/deleteTeam';
 
 const RemoveTeam = ({ team_id, setRemoveTeamModal }) => {
     const { removeTeam } = teamStore();
 
     async function handleRemoveTeam() {
         try {
-            const response = await removeTeam(team_id);
-            removeTeam(response);
+            await deleteTeam(team_id);
+            removeTeam(team_id);
         } catch (error) {
             console.error('Error adding team:', error);
         } finally {
