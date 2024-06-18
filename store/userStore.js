@@ -3,7 +3,6 @@ import { create } from "zustand";
 
 export const userStore = create((set) => ({
   user: null,
-  userFetched: false,
   updateUser: (new_user) => set({ user: new_user, userFetched: true }),
   getUser: async () => {
     const { user, userFetched } = userStore.getState();

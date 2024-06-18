@@ -16,7 +16,7 @@ export default function Login() {
       if (!session) {
         router.push("/");
       } else {
-        router.push("/dashboard");
+        router.push("/dashboard/teams");
       }
     });
 
@@ -27,7 +27,7 @@ export default function Login() {
       if (!session) {
         router.push("/");
       } else {
-        router.push("/dashboard");
+        router.push("/dashboard/teams");
       }
     });
 

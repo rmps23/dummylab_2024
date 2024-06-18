@@ -34,7 +34,7 @@ const Modal = ({ show, onClose, content }) => {
           <button className="absolute top-4 right-4" onClick={onClose}>
             <GrClose />
           </button>
-          <div className="mt-4">{content}</div>
+          <div className="px-4 py-10">{content}</div>
         </div>
       </div>
     </div>

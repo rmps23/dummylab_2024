@@ -1,4 +1,4 @@
-"use client";
+'use client'
 
 import { FaUsers } from "react-icons/fa6";
 import { useState, useEffect } from "react";
@@ -7,38 +7,53 @@ import { teamStore } from "@/store/teamStore";
 import Modal from "@/components/ui/Modal";
 import Image from "next/image";
 import { fetchTeams } from "@/hooks/fetchTeams";
+import AddTeam from "@/components/teams/AddTeam";
+import EditTeam from "@/components/teams/EditTeam";
 
 const Teams = () => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [teams, setTeams] = useState([]);
+  const [addTeamModal, setAddTeamModal] = useState(false);
+  const [editTeamModal, setEditTeamModal] = useState(false);
+  const [editTeamId, setEditTeamId] = useState(null); // Track the team ID for editing
+  const [loading, setLoading] = useState(true);
+
   const user = userStore((state) => state.user);
+  const { teams, setTeams } = teamStore();
 
   const handleOpenModal = () => {
-    setIsModalOpen(true);
+    setAddTeamModal(true);
   };
 
   const handleCloseModal = () => {
-    setIsModalOpen(false);
+    setAddTeamModal(false);
+  };
+
+  const handleOpenEditModal = (teamId) => { // Receive teamId as parameter
+    setEditTeamId(teamId); // Set the team ID for the edit modal
+    setEditTeamModal(true);
+  };
+
+  const handleCloseEditModal = () => {
+    setEditTeamModal(false);
+    setEditTeamId(null); // Reset the team ID when closing the modal
+  };
+
+  const fetchTeamsData = async () => {
+    if (!user) {
+      return;
+    }
+    try {
+      setLoading(true);
+      const data = await fetchTeams(user.id);
+      setTeams(data);
+    } catch (error) {
+      console.error("Failed to fetch teams:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
-    const getTeams = async () => {
-      if (user) {
-        setLoading(true);
-        try {
-          const response = await fetchTeams();
-          setTeams(response.teams);
-        } catch (error) {
-          console.error("Failed to fetch teams:", error);
-        } finally {
-          setLoading(false);
-          console.log(teams);
-        }
-      }
-    };
-
-    getTeams();
+    fetchTeamsData();
   }, [user]);
 
   if (loading) {
@@ -70,8 +85,34 @@ const Teams = () => {
           >
             Create Team
           </button>
-          <Modal show={isModalOpen} onClose={handleCloseModal} />
+          <Modal
+            show={addTeamModal}
+            onClose={handleCloseModal}
+            content={<AddTeam user_id={user.id} setAddTeamModal={setAddTeamModal} edit={false} />}
+          />
         </div>
+      </div>
+      <div className="grid grid-cols-2 gap-4 mt-4">
+        {teams.length > 0 ? (
+          teams.map((team) => (
+            <div key={team.id} className="border border-zinc-900 p-4 rounded-md">
+              {team.name}
+              <button
+                onClick={() => handleOpenEditModal(team.id)} // Pass team.id to handler
+                className="text-sm bg-zinc-50 text-zinc-950 px-2 py-1 rounded-md hover:bg-zinc-100"
+              >
+                Edit
+              </button>
+              <Modal
+                show={editTeamModal && editTeamId === team.id} // Show modal if editTeamModal is true and editTeamId matches current team.id
+                onClose={handleCloseEditModal}
+                content={<EditTeam team_name={team.name} team_id={team.id} />}
+              />
+            </div>
+          ))
+        ) : (
+          <p>No teams available</p>
+        )}
       </div>
     </>
   );

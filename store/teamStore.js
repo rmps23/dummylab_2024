@@ -5,10 +5,11 @@ export const teamStore = create((set) => ({
 
   setTeams: (teams) => set({ teams }),
 
-  addTeam: (newTeam) =>
+  addTeam: (newTeam) => {
     set((state) => ({
       teams: [...state.teams, newTeam],
-    })),
+    }))
+  },
 
   removeTeam: (team_id) =>
     set((state) => ({
