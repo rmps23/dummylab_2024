@@ -133,7 +133,7 @@ const Teams = () => {
                 <Modal
                   show={removeTeamModal && editTeamId === team.id}
                   onClose={handleCloseRemoveModal}
-                  content={<RemoveTeam team_id={team.id} setRemoveTeamModal={setRemoveTeamModal} />}
+                  content={<RemoveTeam team_name={team.name} team_id={team.id} setRemoveTeamModal={setRemoveTeamModal} />}
                 />
               </div>
             </div>

@@ -1,10 +1,7 @@
-'use client'
-
-import { useState } from 'react';
 import { teamStore } from '@/store/teamStore';
 import { deleteTeam } from '@/hooks/teams/deleteTeam';
 
-const RemoveTeam = ({ team_id, setRemoveTeamModal }) => {
+const RemoveTeam = ({ team_name, team_id, setRemoveTeamModal }) => {
     const { removeTeam } = teamStore();
 
     async function handleRemoveTeam() {
@@ -18,12 +15,18 @@ const RemoveTeam = ({ team_id, setRemoveTeamModal }) => {
         }
     }
 
+    function handleClose() {
+        setRemoveTeamModal(false);
+    }
+
 
     return (
-        <div className="flex flex-col gap-4">
-            <p>{team_id}</p>
-
-            <button className="bg-cyan-500 p-1 rounded-md" onClick={handleRemoveTeam}>Confirm</button>
+        <div className="flex flex-col gap-8">
+            <p className='mx-auto'>Are you sure u want to delete {team_name}?</p>
+            <div className='flex gap-4 justify-center'>
+                <button className="bg-zinc-900 py-1 px-2 rounded-md" onClick={handleRemoveTeam}>Confirm</button>
+                <button className="bg-zinc-100 text-zinc-950 py-1 px-2 rounded-md" onClick={handleClose}>Cancel</button>
+            </div>
         </div>
     );
 };

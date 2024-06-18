@@ -1,4 +1,4 @@
-import { fetchUser } from "@/hooks/fetchUser";
+import { fetchUser } from "@/hooks/users/fetchUser";
 import { create } from "zustand";
 
 export const userStore = create((set) => ({
