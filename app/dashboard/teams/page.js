@@ -1,6 +1,5 @@
-'use client'
+"use client";
 
-import { FaUsers } from "react-icons/fa6";
 import { useState, useEffect } from "react";
 import { userStore } from "@/store/userStore";
 import { teamStore } from "@/store/teamStore";
@@ -10,6 +9,8 @@ import { fetchTeams } from "@/hooks/teams/fetchTeams";
 import AddTeam from "@/components/teams/AddTeam";
 import EditTeam from "@/components/teams/EditTeam";
 import RemoveTeam from "@/components/teams/RemoveTeam";
+import { FaTrash, FaPen } from "react-icons/fa";
+import { FaShield } from "react-icons/fa6";
 
 const Teams = () => {
   const [addTeamModal, setAddTeamModal] = useState(false);
@@ -30,7 +31,8 @@ const Teams = () => {
     setAddTeamModal(false);
   };
 
-  const handleOpenEditModal = (teamId) => { // Receive teamId as parameter
+  const handleOpenEditModal = (teamId) => {
+    // Receive teamId as parameter
     setEditTeamId(teamId); // Set the team ID for the edit modal
     setEditTeamModal(true);
   };
@@ -40,7 +42,8 @@ const Teams = () => {
     setEditTeamId(null); // Reset the team ID when closing the modal
   };
 
-  const handleOpenRemoveModal = (teamId) => { // Receive teamId as parameter
+  const handleOpenRemoveModal = (teamId) => {
+    // Receive teamId as parameter
     setEditTeamId(teamId); // Set the team ID for the edit modal
     setRemoveTeamModal(true);
   };
@@ -88,7 +91,7 @@ const Teams = () => {
     <>
       <div className="flex items-center gap-6 w-full pb-4 mb-8 border-b border-zinc-900">
         <div className="flex items-center gap-4">
-          <FaUsers className="bg-zinc-900 p-2 text-4xl rounded-md" />
+          <FaShield className="bg-zinc-900 p-2 text-4xl rounded-md" />
           <span className="text-lg">Teams</span>
         </div>
         <div>
@@ -101,39 +104,58 @@ const Teams = () => {
           <Modal
             show={addTeamModal}
             onClose={handleCloseModal}
-            content={<AddTeam user_id={user.id} setAddTeamModal={setAddTeamModal} edit={false} />}
+            content={
+              <AddTeam
+                user_id={user.id}
+                setAddTeamModal={setAddTeamModal}
+                edit={false}
+              />
+            }
           />
         </div>
       </div>
       <div className="flex flex-col gap-4 max-w-[800px]">
         {teams.length > 0 ? (
           teams.map((team) => (
-            <div key={team.id} className="border border-zinc-900 p-4 rounded-md flex justify-between">
-              <div>
-                {team.name}
-              </div>
-              <div>
+            <div
+              key={team.id}
+              className="border border-zinc-900 p-4 rounded-md flex justify-between"
+            >
+              <div className="flex items-center">{team.name}</div>
+              <div className="flex items-center gap-2">
                 <button
                   onClick={() => handleOpenEditModal(team.id)} // Pass team.id to handler
-                  className="text-sm text-zinc-200 px-2 py-1 rounded-md"
+                  className="text-sm text-zinc-200 p-2 rounded-md bg-zinc-900"
                 >
-                  Edit
+                  <FaPen />
                 </button>
                 <button
                   onClick={() => handleOpenRemoveModal(team.id)} // Pass team.id to handler
-                  className="text-sm text-zinc-200 px-2 py-1 rounded-md"
+                  className="text-sm text-zinc-200 p-2 rounded-md bg-zinc-900"
                 >
-                  Remove
+                  <FaTrash />
                 </button>
                 <Modal
                   show={editTeamModal && editTeamId === team.id}
                   onClose={handleCloseEditModal}
-                  content={<EditTeam team_name={team.name} team_id={team.id} setEditTeamModal={setEditTeamModal} />}
+                  content={
+                    <EditTeam
+                      team_name={team.name}
+                      team_id={team.id}
+                      setEditTeamModal={setEditTeamModal}
+                    />
+                  }
                 />
                 <Modal
                   show={removeTeamModal && editTeamId === team.id}
                   onClose={handleCloseRemoveModal}
-                  content={<RemoveTeam team_name={team.name} team_id={team.id} setRemoveTeamModal={setRemoveTeamModal} />}
+                  content={
+                    <RemoveTeam
+                      team_name={team.name}
+                      team_id={team.id}
+                      setRemoveTeamModal={setRemoveTeamModal}
+                    />
+                  }
                 />
               </div>
             </div>

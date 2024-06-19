@@ -1,88 +1,50 @@
 "use client";
 
-import TextField from "@mui/material/TextField";
-import Select from "@mui/material/Select";
-import MenuItem from "@mui/material/MenuItem";
-import Button from "@mui/material/Button";
-import CircularProgress from "@mui/material/CircularProgress";
-import { supabase } from "@/supabase";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
-const AddPlayer = ({ onClose, onPlayerAdded }) => {
-  const [playerName, setPlayerName] = useState("");
-  const [riotId, setRiotId] = useState("");
-  const [role, setRole] = useState(1);
-  const [loading, setLoading] = useState(false);
+const AddPlayer = ({ user_id, teams }) => {
+  const [teamName, setTeamName] = useState("");
 
-  const handleSubmit = async () => {
-    setLoading(true);
-    const { data, error } = await supabase
-      .from("player")
-      .insert([{ name: playerName, riot_id: riotId, role }]);
-    setLoading(false);
+  useEffect(() => {
+    // const response = await fetchTeams(user_id);
+  }, []);
 
-    if (error) {
-      console.error("Error inserting player:", error);
-    } else {
-      setPlayerName("");
-      setRiotId("");
-      setRole(1);
-      if (onPlayerAdded) {
-        onPlayerAdded();
-      }
-      if (onClose) {
-        onClose();
-      }
+  async function handleAddTeam() {
+    // try {
+    //   const response = await insertTeam(teamName, user_id);
+    //   addTeam(response);
+    // } catch (error) {
+    //   console.error("Error adding team:", error);
+    // } finally {
+    //   setAddTeamModal(false);
+    //   setTeamName("");
+    // }
+    console.log(teams);
+  }
+
+  const handleKeyDown = async (e) => {
+    if (e.key === "Enter") {
+      await handleAddTeam();
     }
   };
 
   return (
-    <div className="flex flex-col">
-      <p className="text-sm mb-1 uppercase">Player Name</p>
-      <TextField
-        id="name"
-        color="primary"
-        size="small"
-        value={playerName}
-        onChange={(e) => setPlayerName(e.target.value)}
-        style={{ forcedColorAdjust: "#008080" }}
+    <div className="flex flex-col gap-4">
+      <p>Player Name</p>
+      <input
+        type="text"
+        className="bg-zinc-900 p-2 rounded-md outline-none"
+        placeholder="Insert team name..."
+        value={teamName}
+        onChange={(e) => setTeamName(e.target.value)}
+        onKeyDown={handleKeyDown} // Handle Enter key press
       />
-
-      <p className="text-sm mb-1 mt-4 uppercase">RIOT ID</p>
-      <TextField
-        id="riot"
-        color="primary"
-        size="small"
-        style={{ forcedColorAdjust: "#008080" }}
-        value={riotId}
-        onChange={(e) => setRiotId(e.target.value)}
-      />
-
-      <p className="text-sm mb-1 mt-4 uppercase">Role</p>
-      <Select
-        id="role"
-        color="primary"
-        size="small"
-        value={role}
-        onChange={(e) => setRole(e.target.value)}
-        style={{ forcedColorAdjust: "#008080" }}
+      <button
+        className="bg-zinc-200 text-zinc-950 p-1 rounded-md"
+        onClick={handleAddTeam}
       >
-        <MenuItem value={1}>Top</MenuItem>
-        <MenuItem value={2}>Jungler</MenuItem>
-        <MenuItem value={3}>Mid</MenuItem>
-        <MenuItem value={4}>Bottom</MenuItem>
-        <MenuItem value={5}>Support</MenuItem>
-      </Select>
-
-      <Button
-        variant="contained"
-        size="medium"
-        sx={{ fontSize: "0.7rem", fontWeight: "600", marginTop: "30px" }}
-        onClick={handleSubmit}
-        disabled={loading}
-      >
-        {loading ? <CircularProgress size={24} /> : "Submit"}
-      </Button>
+        Confirm
+      </button>
     </div>
   );
 };
