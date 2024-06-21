@@ -108,7 +108,6 @@ const Teams = () => {
               <AddTeam
                 user_id={user.id}
                 setAddTeamModal={setAddTeamModal}
-                edit={false}
               />
             }
           />
