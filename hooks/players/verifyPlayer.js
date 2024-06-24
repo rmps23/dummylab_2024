@@ -1,4 +1,39 @@
+export async function verifyPlayer(gameName, tagLine, region) {
+  let riot_data = {};
 
-export async function verifyPlayer() {
+  try {
+    const response = await fetch(
+      `/api/riot/${gameName}/${tagLine}/${region.zone}`
+    );
 
+    if (!response.ok) {
+      throw new Error(`Error fetching player: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    riot_data = {
+      puuid: data.puuid,
+    };
+  } catch (error) {
+    console.error("Error fetching player:", error);
+    return { error: error.message };
+  }
+
+  try {
+    const response = await fetch(
+      `/api/lol/summoner/v4/summoners/by-puuid/${riot_data.puuid}/${region.code}`
+    );
+
+    if (!response.ok) {
+      throw new Error(`Error fetching player: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    riot_data.acc_id = data.id;
+
+    return riot_data;
+  } catch (error) {
+    console.error("Error fetching player:", error);
+    return { error: error.message };
+  }
 }
