@@ -1,8 +1,9 @@
 export async function GET(request, { params }) {
-  const { puuid } = params;
+  const { puuid, region } = params;
   const apiKey = process.env.NEXT_PUBLIC_RIOT_API_KEY;
 
-  const gameList = `https://euw1.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/${puuid}?api_key=${apiKey}`;
+
+  const gameList = `https://${region}.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/${puuid}?api_key=${apiKey}`;
 
   try {
     const response = await fetch(gameList);

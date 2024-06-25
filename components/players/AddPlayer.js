@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { verifyPlayer } from "@/hooks/players/verifyPlayer";
 import { regionStore } from "@/store/regionStore";
+import { FaCircleCheck, FaCircleExclamation } from "react-icons/fa6";
 
 const AddPlayer = () => {
   const { regions } = regionStore();
@@ -11,10 +12,22 @@ const AddPlayer = () => {
   const [playerRegion, setPlayerRegion] = useState(regions[0].code);
   const [gameName, setGameName] = useState("");
   const [tagLine, setTagLine] = useState("");
+  const [verified, setVerified] = useState(false);
+  const [verError, setVerError] = useState(false);
 
   const [riot_id, set_riot_id] = useState("");
   const [riot_puuid, set_riot_puuid] = useState("");
   const [riot_acc_id, set_riot_acc_id] = useState("");
+
+  async function resetVerify() {
+    setGameName("");
+    setTagLine("");
+    setVerified("");
+    set_riot_id("");
+    set_riot_puuid("");
+    set_riot_acc_id("");
+    setVerified(false);
+  }
 
   async function verPlayer() {
     setVerPlayerLOAD(true);
@@ -24,18 +37,21 @@ const AddPlayer = () => {
     try {
       const response = await verifyPlayer(gameName, tagLine, regionCode);
 
-      // set_riot_id(gameName + "#" + tagLine);
-      // set_riot_puuid(response.puuid);
-      // set_riot_acc_id(response.acc_id);
+      if (!response.error) {
+        set_riot_id(gameName + "#" + tagLine);
+        set_riot_puuid(response.puuid);
+        set_riot_acc_id(response.acc_id);
 
-      // console.log(riot_id);
-      // console.log(riot_puuid);
-      // console.log(riot_acc_id);
-
-      console.log(response);
-      setVerPlayerLOAD(false);
+        setVerified(true);
+        setVerPlayerLOAD(false);
+        setVerError(false);
+      } else {
+        setVerError(true);
+      }
     } catch (error) {
-      console.error("Error adding team:", error);
+      setVerPlayerLOAD(false);
+      setVerified(false);
+    } finally {
       setVerPlayerLOAD(false);
     }
   }
@@ -55,8 +71,9 @@ const AddPlayer = () => {
           "Loading..."
         ) : (
           <>
-            <div className="flex flex-col gap-4">
+            {verified == false ? <><div className="flex flex-col gap-4">
               <p>Riot ID</p>
+              {verError === true && <div className="bg-red-600/20 border-2 border-red-600 rounded-md p-3 flex items-center justify-between"><span>Couldn't find the player</span><span><FaCircleExclamation className="text-red-500 text-xl" /></span></div>}
               <div className="flex space-x-2">
                 <input
                   type="text"
@@ -87,16 +104,24 @@ const AddPlayer = () => {
                   ))}
                 </select>
               </div>
-
               <button
                 className="bg-zinc-200 text-zinc-950 p-1 rounded-md"
                 onClick={verPlayer}
               >
                 Verify Player
               </button>
-
-              <span>----------------</span>
             </div>
+            </>
+              :
+              <div className="flex justify-between items-center gap-2">
+                <div className="flex items-center gap-2">
+                  {riot_id} is verified <FaCircleCheck className="text-cyan-400 text-xl" />
+                </div>
+                <div>
+                  <button className="bg-zinc-200 text-zinc-900 py-1 px-2 rounded-md text-sm" onClick={resetVerify}>Undo</button>
+                </div>
+              </div>
+            }
           </>
         )}
       </div>
