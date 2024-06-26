@@ -7,7 +7,7 @@ import { teamStore } from "@/store/teamStore";
 import { FaCircleCheck, FaCircleExclamation } from "react-icons/fa6";
 import { insertPlayer } from "@/hooks/players/insertPlayer";
 
-const AddPlayer = () => {
+const AddPlayer = ({ setCreatePlayerModal }) => {
   const { regions } = regionStore();
   const { teams } = teamStore();
 
@@ -33,6 +33,7 @@ const AddPlayer = () => {
     set_riot_puuid("");
     set_riot_acc_id("");
     setVerified(false);
+    setVerError(false);
   }
 
   async function handleInsertPlayer() {
@@ -58,32 +59,11 @@ const AddPlayer = () => {
         riot_acc_id
       );
 
-      if (!response) {
-        console.log("Error: Response is null or undefined");
-        setVerError(true);
-        return;
-      }
-
-      if (!response.error) {
-        if (response.puuid && response.acc_id) {
-          set_riot_id(gameName + "#" + tagLine);
-          set_riot_puuid(response.puuid);
-          set_riot_acc_id(response.acc_id);
-
-          setVerified(true);
-          setVerPlayerLOAD(false);
-          setVerError(false);
-        } else {
-          console.log("Error: Missing response data (puuid or acc_id)");
-          setVerError(true);
-        }
-      } else {
-        console.log("Error: Response contains an error", response.error);
-        setVerError(true);
-      }
     } catch (error) {
-      console.log("Error during player insertion:", error);
+      console.error("Error during player insertion:", error);
       setVerError(true);
+    } finally {
+      setCreatePlayerModal(false);
     }
   }
 
@@ -109,6 +89,7 @@ const AddPlayer = () => {
     } catch (error) {
       setVerPlayerLOAD(false);
       setVerified(false);
+      setVerError(true);
     } finally {
       setVerPlayerLOAD(false);
     }
@@ -166,7 +147,7 @@ const AddPlayer = () => {
                   <p>Riot ID</p>
                   {verError === true && (
                     <div className="bg-red-600/20 border-2 border-red-600 rounded-md p-3 flex items-center justify-between">
-                      <span>Couldn't find the player</span>
+                      <span>Couldnt find the player</span>
                       <span>
                         <FaCircleExclamation className="text-red-500 text-xl" />
                       </span>
@@ -231,9 +212,8 @@ const AddPlayer = () => {
       </div>
 
       <button
-        className={` text-zinc-950 p-1 rounded-md ${
-          verified ? "bg-zinc-200" : "bg-zinc-200/20"
-        }`}
+        className={` text-zinc-950 p-1 rounded-md ${verified ? "bg-zinc-200" : "bg-zinc-200/20"
+          }`}
         disabled={!verified}
         onClick={handleInsertPlayer}
       >

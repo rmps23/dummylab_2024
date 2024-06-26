@@ -6,14 +6,11 @@ export async function verifyPlayer(gameName, tagLine, region) {
       `/api/riot/${gameName}/${tagLine}/${region.zone}`
     );
 
-    if (!response.ok) {
-      throw new Error(`Error fetching player: ${response.statusText}`);
-    }
-
     const data = await response.json();
     riot_data = {
       puuid: data.puuid,
     };
+
   } catch (error) {
     console.error("Error fetching player:", error);
     return { error: error.message };
@@ -24,12 +21,12 @@ export async function verifyPlayer(gameName, tagLine, region) {
       `/api/lol/summoner/v4/summoners/by-puuid/${riot_data.puuid}/${region.code}`
     );
 
-    if (!response.ok) {
-      throw new Error(`Error fetching player: ${response.statusText}`);
-    }
-
     const data = await response.json();
     riot_data.acc_id = data.id;
+
+    if (!riot_data.puuid || !riot_data.acc_id) {
+      return { error: "Error fetching player" };
+    }
 
     return riot_data;
   } catch (error) {

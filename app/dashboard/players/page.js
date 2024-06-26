@@ -59,7 +59,7 @@ const Players = () => {
           <Modal
             show={createPlayerModal}
             onClose={handleCloseCreate}
-            content={<AddPlayer user_id={user.id} teams={teams} />}
+            content={<AddPlayer user_id={user.id} teams={teams} setCreatePlayerModal={setCreatePlayerModal} />}
           />
         )}
       </div>
