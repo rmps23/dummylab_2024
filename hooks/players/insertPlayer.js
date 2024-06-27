@@ -7,7 +7,8 @@ export async function insertPlayer(
   role_id,
   riot_id,
   riot_puuid,
-  riot_acc_id
+  riot_acc_id,
+  user_id
 ) {
   const { data, error } = await supabase.from("players")
     .insert([
@@ -19,6 +20,7 @@ export async function insertPlayer(
         riot_id: riot_id,
         riot_puuid: riot_puuid,
         riot_acc_id: riot_acc_id,
+        owner: user_id
       },
     ])
     .single().select();

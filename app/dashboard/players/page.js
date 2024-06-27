@@ -7,6 +7,7 @@ import { teamStore } from "@/store/teamStore";
 import { fetchTeams } from "@/hooks/teams/fetchTeams";
 import Modal from "@/components/ui/Modal";
 import AddPlayer from "@/components/players/AddPlayer";
+import { fetchPlayers } from "@/hooks/players/fetchPlayers";
 
 const Players = () => {
   const user = userStore((state) => state.user);
@@ -30,8 +31,25 @@ const Players = () => {
     }
   };
 
+  const fetchPlayersData = async () => {
+    if (!user) {
+      return;
+    }
+    try {
+      setLoading(true);
+      const data = await fetchPlayers(user.id);
+      console.log(data);
+      // setTeams(data);
+    } catch (error) {
+      console.error("Failed to fetch teams:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     fetchTeamsData();
+    fetchPlayersData();
   }, [user]);
 
   const handleOpenCreate = () => {

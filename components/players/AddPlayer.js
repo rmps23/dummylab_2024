@@ -7,7 +7,7 @@ import { teamStore } from "@/store/teamStore";
 import { FaCircleCheck, FaCircleExclamation } from "react-icons/fa6";
 import { insertPlayer } from "@/hooks/players/insertPlayer";
 
-const AddPlayer = ({ setCreatePlayerModal }) => {
+const AddPlayer = ({ user_id, setCreatePlayerModal }) => {
   const { regions } = regionStore();
   const { teams } = teamStore();
 
@@ -56,7 +56,8 @@ const AddPlayer = ({ setCreatePlayerModal }) => {
         role,
         riot_id,
         riot_puuid,
-        riot_acc_id
+        riot_acc_id,
+        user_id
       );
 
     } catch (error) {
