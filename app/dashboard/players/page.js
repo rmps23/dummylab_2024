@@ -8,13 +8,18 @@ import { fetchTeams } from "@/hooks/teams/fetchTeams";
 import Modal from "@/components/ui/Modal";
 import AddPlayer from "@/components/players/AddPlayer";
 import { fetchPlayers } from "@/hooks/players/fetchPlayers";
+import { playerStore } from "@/store/playerStore";
+import EditPlayer from "@/components/players/EditPlayer";
 
 const Players = () => {
   const user = userStore((state) => state.user);
   const { teams, setTeams } = teamStore();
+  const { players, setPlayers } = playerStore();
 
   const [loading, setLoading] = useState(true);
   const [createPlayerModal, setCreatePlayerModal] = useState(false);
+  const [editPlayerModal, setEditPlayerModal] = useState(false);
+
 
   const fetchTeamsData = async () => {
     if (!user) {
@@ -38,8 +43,8 @@ const Players = () => {
     try {
       setLoading(true);
       const data = await fetchPlayers(user.id);
+      setPlayers(data);
       console.log(data);
-      // setTeams(data);
     } catch (error) {
       console.error("Failed to fetch teams:", error);
     } finally {
@@ -58,6 +63,14 @@ const Players = () => {
 
   const handleCloseCreate = () => {
     setCreatePlayerModal(false);
+  };
+
+  const handleOpenEdit = () => {
+    setEditPlayerModal(true);
+  };
+
+  const handleCloseEdit = () => {
+    setEditPlayerModal(false);
   };
 
   return (
@@ -81,6 +94,22 @@ const Players = () => {
           />
         )}
       </div>
+      {players && players.length > 0 ?
+        <div className="flex flex-col gap-2">
+          {players.map((player) => (
+            <div key={player.id} className="p-4 rounded-md bg-zinc-900 max-w-3xl flex gap-2">
+              {player.name}
+              <button onClick={handleOpenEdit}>
+                Edit
+              </button>
+              <Modal
+                show={editPlayerModal}
+                onClose={handleCloseEdit}
+                content={<EditPlayer player_name={player.name} player_id={player.id} teams={teams} setEditPlayerModal={setEditPlayerModal} />}
+              />
+            </div>
+          ))}
+        </div> : "No players found"}
     </>
   );
 };
