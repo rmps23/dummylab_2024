@@ -1,13 +1,25 @@
 "use client";
 
 import { editTeam } from "@/hooks/teams/editTeam";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { teamStore } from "@/store/teamStore";
 
-const EditPlayer = ({ player_name, player_id, teams, setEditPlayerModal }) => {
+const EditPlayer = ({
+  player_name,
+  player_id,
+  teams,
+  setEditPlayerModal,
+  team_id,
+}) => {
   const [playerName, setPlayerName] = useState(player_name);
-  const [team, setTeam] = useState();
+  const [team, setTeam] = useState(team_id);
   const { editTeamName } = teamStore();
+
+  useEffect(() => {
+    setTeam(team_id);
+  }, [team_id]);
+
+  console.log(team_id);
 
   // async function handleEditTeam() {
   //   try {
@@ -31,26 +43,23 @@ const EditPlayer = ({ player_name, player_id, teams, setEditPlayerModal }) => {
       <input
         type="text"
         className="bg-zinc-900 p-2 rounded-md outline-none"
-        placeholder="Insert team name..."
+        placeholder="Insert player name..."
         value={playerName}
         onChange={(e) => setPlayerName(e.target.value)}
-      // onKeyDown={handleKeyDown}
+        // onKeyDown={handleKeyDown}
       />
       <select
         className="p-2 rounded-md flex w-full bg-zinc-900 cursor-pointer"
         value={team}
         onChange={(e) => setTeam(e.target.value)}
       >
-        <option value={0}>Select a team</option>
         {teams.map((team, index) => (
           <option key={index} value={team.id}>
             {team.name}
           </option>
         ))}
       </select>
-      <button
-        className="bg-zinc-200 text-zinc-950 p-1 rounded-md"
-      >
+      <button className="bg-zinc-200 text-zinc-950 p-1 rounded-md">
         Confirm
       </button>
     </div>

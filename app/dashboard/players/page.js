@@ -19,7 +19,7 @@ const Players = () => {
   const [loading, setLoading] = useState(true);
   const [createPlayerModal, setCreatePlayerModal] = useState(false);
   const [editPlayerModal, setEditPlayerModal] = useState(false);
-
+  const [currentPlayer, setCurrentPlayer] = useState(null);
 
   const fetchTeamsData = async () => {
     if (!user) {
@@ -65,12 +65,14 @@ const Players = () => {
     setCreatePlayerModal(false);
   };
 
-  const handleOpenEdit = () => {
+  const handleOpenEdit = (player) => {
+    setCurrentPlayer(player);
     setEditPlayerModal(true);
   };
 
   const handleCloseEdit = () => {
     setEditPlayerModal(false);
+    setCurrentPlayer(null);
   };
 
   return (
@@ -90,26 +92,46 @@ const Players = () => {
           <Modal
             show={createPlayerModal}
             onClose={handleCloseCreate}
-            content={<AddPlayer user_id={user.id} teams={teams} setCreatePlayerModal={setCreatePlayerModal} />}
+            content={
+              <AddPlayer
+                user_id={user.id}
+                teams={teams}
+                setCreatePlayerModal={setCreatePlayerModal}
+              />
+            }
           />
         )}
       </div>
-      {players && players.length > 0 ?
+      {players && players.length > 0 ? (
         <div className="flex flex-col gap-2">
           {players.map((player) => (
-            <div key={player.id} className="p-4 rounded-md bg-zinc-900 max-w-3xl flex gap-2">
+            <div
+              key={player.id}
+              className="p-4 rounded-md bg-zinc-900 max-w-3xl flex gap-2"
+            >
               {player.name}
-              <button onClick={handleOpenEdit}>
-                Edit
-              </button>
-              <Modal
-                show={editPlayerModal}
-                onClose={handleCloseEdit}
-                content={<EditPlayer player_name={player.name} player_id={player.id} teams={teams} setEditPlayerModal={setEditPlayerModal} />}
-              />
+              <button onClick={() => handleOpenEdit(player)}>Edit</button>
             </div>
           ))}
-        </div> : "No players found"}
+          {currentPlayer && (
+            <Modal
+              show={editPlayerModal}
+              onClose={handleCloseEdit}
+              content={
+                <EditPlayer
+                  player_name={currentPlayer.name}
+                  player_id={currentPlayer.id}
+                  teams={teams}
+                  team_id={currentPlayer.team_id.id}
+                  setEditPlayerModal={setEditPlayerModal}
+                />
+              }
+            />
+          )}
+        </div>
+      ) : (
+        "No players found"
+      )}
     </>
   );
 };
