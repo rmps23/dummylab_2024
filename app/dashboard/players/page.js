@@ -1,4 +1,4 @@
-"use client";
+'use client'
 
 import { FaUsers } from "react-icons/fa6";
 import { useEffect, useState } from "react";
@@ -10,6 +10,7 @@ import AddPlayer from "@/components/players/AddPlayer";
 import { fetchPlayers } from "@/hooks/players/fetchPlayers";
 import { playerStore } from "@/store/playerStore";
 import EditPlayer from "@/components/players/EditPlayer";
+import RemovePlayer from "@/components/players/RemovePlayer";
 
 const Players = () => {
   const user = userStore((state) => state.user);
@@ -19,6 +20,7 @@ const Players = () => {
   const [loading, setLoading] = useState(true);
   const [createPlayerModal, setCreatePlayerModal] = useState(false);
   const [editPlayerModal, setEditPlayerModal] = useState(false);
+  const [removePlayerModal, setRemovePlayerModal] = useState(false);
   const [currentPlayer, setCurrentPlayer] = useState(null);
 
   const fetchTeamsData = async () => {
@@ -44,9 +46,8 @@ const Players = () => {
       setLoading(true);
       const data = await fetchPlayers(user.id);
       setPlayers(data);
-      console.log(data);
     } catch (error) {
-      console.error("Failed to fetch teams:", error);
+      console.error("Failed to fetch players:", error);
     } finally {
       setLoading(false);
     }
@@ -72,6 +73,16 @@ const Players = () => {
 
   const handleCloseEdit = () => {
     setEditPlayerModal(false);
+    setCurrentPlayer(null);
+  };
+
+  const handleOpenRemove = (player) => {
+    setCurrentPlayer(player);
+    setRemovePlayerModal(true);
+  };
+
+  const handleCloseRemove = () => {
+    setRemovePlayerModal(false);
     setCurrentPlayer(null);
   };
 
@@ -107,26 +118,42 @@ const Players = () => {
           {players.map((player) => (
             <div
               key={player.id}
-              className="p-4 rounded-md bg-zinc-900 max-w-3xl flex gap-2"
+              className="p-4 rounded-md bg-zinc-900 max-w-3xl flex gap-2 items-center justify-between"
             >
-              {player.name}
-              <button onClick={() => handleOpenEdit(player)}>Edit</button>
+              <span>{player.name}</span>
+              <div className="flex gap-2">
+                <button onClick={() => handleOpenEdit(player)}>Edit</button>
+                <button onClick={() => handleOpenRemove(player)}>Remove</button>
+              </div>
             </div>
           ))}
           {currentPlayer && (
-            <Modal
-              show={editPlayerModal}
-              onClose={handleCloseEdit}
-              content={
-                <EditPlayer
-                  player_name={currentPlayer.name}
-                  player_id={currentPlayer.id}
-                  teams={teams}
-                  team_id={currentPlayer.team_id.id}
-                  setEditPlayerModal={setEditPlayerModal}
-                />
-              }
-            />
+            <>
+              <Modal
+                show={editPlayerModal}
+                onClose={handleCloseEdit}
+                content={
+                  <EditPlayer
+                    player_name={currentPlayer.name}
+                    player_id={currentPlayer.id}
+                    teams={teams}
+                    team_id={currentPlayer.team_id.id}
+                    setEditPlayerModal={setEditPlayerModal}
+                  />
+                }
+              />
+              <Modal
+                show={removePlayerModal}
+                onClose={handleCloseRemove}
+                content={
+                  <RemovePlayer
+                    player_name={currentPlayer.name}
+                    player_id={currentPlayer.id}
+                    setRemovePlayerModal={setRemovePlayerModal}
+                  />
+                }
+              />
+            </>
           )}
         </div>
       ) : (
