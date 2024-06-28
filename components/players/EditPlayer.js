@@ -1,8 +1,8 @@
 "use client";
 
-import { editTeam } from "@/hooks/teams/editTeam";
 import { useState, useEffect } from "react";
-import { teamStore } from "@/store/teamStore";
+import { editPlayer } from "@/hooks/players/editPlayer";
+import { playerStore } from "@/store/playerStore";
 
 const EditPlayer = ({
   player_name,
@@ -13,29 +13,28 @@ const EditPlayer = ({
 }) => {
   const [playerName, setPlayerName] = useState(player_name);
   const [team, setTeam] = useState(team_id);
-  const { editTeamName } = teamStore();
+  const { editPlayerStore } = playerStore();
 
-  useEffect(() => {
-    setTeam(team_id);
-  }, [team_id]);
+  async function handleEditPlayer() {
+    try {
+      const response = await editPlayer(playerName, team, player_id);
+      if (response && response.length > 0) {
+        const updatedPlayer = response[0];
+        editPlayerStore(updatedPlayer.name, updatedPlayer.team_id.id, updatedPlayer.id);
+        setEditPlayerModal(false);
+      } else {
+        console.error("Failed to update player: No data returned");
+      }
+    } catch (error) {
+      console.error("Error editing player:", error);
+    }
+  }
 
-  console.log(team_id);
-
-  // async function handleEditTeam() {
-  //   try {
-  //     const response = await editTeam(teamName, team_id);
-  //     editTeamName(response.id, response.name);
-  //     setEditTeamModal(false);
-  //   } catch (error) {
-  //     console.error("Error editing team:", error);
-  //   }
-  // }
-
-  // const handleKeyDown = async (e) => {
-  //   if (e.key === "Enter") {
-  //     await handleEditTeam();
-  //   }
-  // };
+  const handleKeyDown = async (e) => {
+    if (e.key === "Enter") {
+      await handleEditPlayer();
+    }
+  };
 
   return (
     <div className="flex flex-col gap-4">
@@ -46,7 +45,7 @@ const EditPlayer = ({
         placeholder="Insert player name..."
         value={playerName}
         onChange={(e) => setPlayerName(e.target.value)}
-        // onKeyDown={handleKeyDown}
+        onKeyDown={handleKeyDown}
       />
       <select
         className="p-2 rounded-md flex w-full bg-zinc-900 cursor-pointer"
@@ -59,7 +58,7 @@ const EditPlayer = ({
           </option>
         ))}
       </select>
-      <button className="bg-zinc-200 text-zinc-950 p-1 rounded-md">
+      <button className="bg-zinc-200 text-zinc-950 p-1 rounded-md" onClick={handleEditPlayer}>
         Confirm
       </button>
     </div>

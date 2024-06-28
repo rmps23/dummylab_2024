@@ -11,4 +11,10 @@ export const playerStore = create((set) => ({
     }))
   },
 
+  editPlayerStore: (newName, team_id, player_id) =>
+    set((state) => ({
+      players: state.players.map((player) =>
+        player.id === player_id ? { ...player, name: newName, team_id: team_id } : player
+      ),
+    })),
 }));
