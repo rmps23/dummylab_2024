@@ -11,6 +11,7 @@ import { fetchPlayers } from "@/hooks/players/fetchPlayers";
 import { playerStore } from "@/store/playerStore";
 import EditPlayer from "@/components/players/EditPlayer";
 import RemovePlayer from "@/components/players/RemovePlayer";
+import Link from "next/link";
 
 const Players = () => {
   const user = userStore((state) => state.user);
@@ -124,6 +125,9 @@ const Players = () => {
               <div className="flex gap-2">
                 <button onClick={() => handleOpenEdit(player)}>Edit</button>
                 <button onClick={() => handleOpenRemove(player)}>Remove</button>
+              </div>
+              <div>
+                <Link href={`/dashboard/players/${player.id}`}>Match History</Link>
               </div>
             </div>
           ))}
