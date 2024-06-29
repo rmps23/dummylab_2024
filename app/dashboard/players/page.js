@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import { FaUsers } from "react-icons/fa6";
 import { useEffect, useState } from "react";
@@ -126,8 +126,11 @@ const Players = () => {
                 <button onClick={() => handleOpenEdit(player)}>Edit</button>
                 <button onClick={() => handleOpenRemove(player)}>Remove</button>
               </div>
-              <div>
-                <Link href={`/dashboard/players/${player.id}`}>Match History</Link>
+              <div className="flex items-center gap-2">
+                <Link href={`/dashboard/players/${player.id}`}>
+                  Match History
+                </Link>
+                <Link href={`/dashboard/players/${player.id}`}>Stats</Link>
               </div>
             </div>
           ))}
