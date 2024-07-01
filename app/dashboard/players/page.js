@@ -46,7 +46,6 @@ const Players = () => {
     try {
       setLoading(true);
       const data = await fetchPlayers(user.id);
-      console.log(data);
       setPlayers(data);
     } catch (error) {
       console.error("Failed to fetch players:", error);
@@ -118,11 +117,8 @@ const Players = () => {
       {players && players.length > 0 ? (
         <div className="flex flex-col max-w-3xl gap-2 p-4 rounded-md bg-zinc-900">
           {players.map((player) => (
-            <>
-              <div
-                key={player.id}
-                className="flex gap-2 items-center justify-between"
-              >
+            <div key={player.id} className="flex flex-col gap-2">
+              <div className="flex gap-2 items-center justify-between">
                 <span>{player.role_id.name} - {player.name}</span>
                 <div className="flex items-center gap-2 text-right">
                   <Link href={`/dashboard/players/match_history/${player.id}`}>
@@ -135,8 +131,7 @@ const Players = () => {
                 <button onClick={() => handleOpenEdit(player)}>Edit</button>
                 <button onClick={() => handleOpenRemove(player)}>Remove</button>
               </div>
-
-            </>
+            </div>
           ))}
           {currentPlayer && (
             <>
