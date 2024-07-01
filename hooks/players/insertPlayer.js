@@ -23,7 +23,8 @@ export async function insertPlayer(
         owner: user_id
       },
     ])
-    .single().select();
+    .single().select("id, name, region, team_id(id, owner, name), role_id(name, image_link), riot_id, riot_puuid, riot_acc_id")
+    ;
 
   if (error) {
     console.error("Error fetching user data:", error.message);

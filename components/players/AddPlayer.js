@@ -6,10 +6,12 @@ import { regionStore } from "@/store/regionStore";
 import { teamStore } from "@/store/teamStore";
 import { FaCircleCheck, FaCircleExclamation } from "react-icons/fa6";
 import { insertPlayer } from "@/hooks/players/insertPlayer";
+import { playerStore } from "@/store/playerStore";
 
 const AddPlayer = ({ user_id, setCreatePlayerModal }) => {
   const { regions } = regionStore();
   const { teams } = teamStore();
+  const { addPlayer } = playerStore();
 
   const [verPlayerLOAD, setVerPlayerLOAD] = useState(false);
   const [playerRegion, setPlayerRegion] = useState(regions[0].code);
@@ -59,6 +61,7 @@ const AddPlayer = ({ user_id, setCreatePlayerModal }) => {
         riot_acc_id,
         user_id
       );
+      addPlayer(response);
 
     } catch (error) {
       console.error("Error during player insertion:", error);
@@ -130,11 +133,11 @@ const AddPlayer = ({ user_id, setCreatePlayerModal }) => {
           value={role}
           onChange={(e) => setRole(e.target.value)}
         >
-          <option value={0}>Top</option>
-          <option value={1}>Jungler</option>
-          <option value={2}>Mid</option>
-          <option value={3}>Bottom</option>
-          <option value={4}>Support</option>
+          <option value={1}>Top</option>
+          <option value={2}>Jungler</option>
+          <option value={3}>Mid</option>
+          <option value={4}>Bottom</option>
+          <option value={5}>Support</option>
         </select>
       </div>
       <div className="bg-zinc-900 p-4 rounded-md">
