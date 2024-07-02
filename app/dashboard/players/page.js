@@ -119,12 +119,16 @@ const Players = () => {
           {players.map((player) => (
             <div key={player.id} className="flex flex-col gap-2">
               <div className="flex gap-2 items-center justify-between">
-                <span>{player.role_id.name} - {player.name}</span>
+                <span>
+                  {player.role_id.name} - {player.name}
+                </span>
                 <div className="flex items-center gap-2 text-right">
                   <Link href={`/dashboard/players/match_history/${player.id}`}>
                     Match History
                   </Link>
-                  <Link href={`/dashboard/players/stats/${player.id}`}>Stats</Link>
+                  <Link href={`/dashboard/players/stats/${player.id}`}>
+                    Stats
+                  </Link>
                 </div>
               </div>
               <div className="flex gap-2">

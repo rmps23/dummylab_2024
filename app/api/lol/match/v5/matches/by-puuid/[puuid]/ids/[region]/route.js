@@ -1,10 +1,12 @@
 export async function GET(request, { params }) {
-  const { puuid } = params;
+  const { puuid, region } = params;
   const apiKey = process.env.NEXT_PUBLIC_RIOT_API_KEY;
 
   // Convert the date to a UNIX timestamp
   const startDate = new Date("2024-05-15");
   const startTime = Math.floor(startDate.getTime() / 1000);
+
+  const region_lower = region.toLowerCase();
 
   let start = 0;
   const count = 100; // Maximum allowed by Riot API
@@ -12,7 +14,8 @@ export async function GET(request, { params }) {
 
   try {
     while (true) {
-      const gameList = `https://europe.api.riotgames.com/lol/match/v5/matches/by-puuid/${puuid}/ids?start=${start}&count=${count}&startTime=${startTime}&api_key=${apiKey}`;
+      // const gameList = `https://${region_lower}.api.riotgames.com/lol/match/v5/matches/by-puuid/${puuid}/ids?start=${start}&count=${count}&startTime=${startTime}&api_key=${apiKey}`;
+      const gameList = `https://${region_lower}.api.riotgames.com/lol/match/v5/matches/by-puuid/${puuid}/ids?start=${start}&count=${5}&api_key=${apiKey}`;
       const response = await fetch(gameList);
 
       if (!response.ok) {
