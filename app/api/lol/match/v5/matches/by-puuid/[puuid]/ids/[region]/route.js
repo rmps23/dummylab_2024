@@ -15,7 +15,7 @@ export async function GET(request, { params }) {
   try {
     while (true) {
       // const gameList = `https://${region_lower}.api.riotgames.com/lol/match/v5/matches/by-puuid/${puuid}/ids?start=${start}&count=${count}&startTime=${startTime}&api_key=${apiKey}`;
-      const gameList = `https://${region_lower}.api.riotgames.com/lol/match/v5/matches/by-puuid/${puuid}/ids?start=${start}&count=${5}&api_key=${apiKey}`;
+      const gameList = `https://${region_lower}.api.riotgames.com/lol/match/v5/matches/by-puuid/${puuid}/ids?start=${start}&count=${10}&api_key=${apiKey}`;
       const response = await fetch(gameList);
 
       if (!response.ok) {

@@ -3,6 +3,14 @@ import { supabase } from "@/supabase";
 export async function fetchGames(puuid, acc_id, player_id, region) {
   // FETCH GAME LIST IDS
   try {
+    let lastGameDate = await fetchLastGame(player_id);
+
+    if (!lastGameDate) {
+      lastGameDate = {
+        end_timestamp: 0
+      }
+    }
+
     let game_list = await fetchGameList(puuid, region);
 
     for (const game of game_list) {
@@ -10,17 +18,24 @@ export async function fetchGames(puuid, acc_id, player_id, region) {
         game,
         region,
         player_id,
-        puuid
+        puuid,
+        lastGameDate
       );
-      console.log(game_details);
+
+      if (game_details) {
+        await insertGameSupa(game_details);
+      }
     }
+
+    return game_list;
+
   } catch (error) {
     console.error("", error);
     throw error;
   }
 }
 
-async function fetchGameDetails(gameId, region, player_id, puuid) {
+async function fetchGameDetails(gameId, region, player_id, puuid, last_game) {
   try {
     const response = await fetch(
       `/api/lol/match/v5/matches/${gameId}/${region}`
@@ -28,10 +43,14 @@ async function fetchGameDetails(gameId, region, player_id, puuid) {
     if (!response.ok) {
       throw new Error(`Error fetching game ${gameId}: ${response.statusText}`);
     }
+
     const details = await response.json();
+
     let gameDetail = {};
 
-    if (details.info.queueId === 420) {
+
+    if (details.info.queueId === 420 && last_game.end_timestamp < details.info.gameEndTimestamp) {
+
       gameDetail = {
         id: gameId,
         player_id: player_id,
@@ -92,12 +111,13 @@ async function fetchGameDetails(gameId, region, player_id, puuid) {
         team_dmg_percentage: participant?.challenges.teamDamagePercentage,
         vision_score_min: participant?.challenges.visionScorePerMinute,
       };
+
+      let timeline_fetch = await fetchGameTimeline(gameId, puuid, region, gameDetail);
+      gameDetail.timeline_stats = timeline_fetch;
+
+      return gameDetail;
     }
 
-    let timeline_fetch = await fetchGameTimeline(gameId, puuid, region);
-    gameDetail.timeline_stats = timeline_fetch;
-
-    return gameDetail;
   } catch (error) {
     console.error(`Failed to fetch game ${gameId}:`, error);
     throw error; // Re-throw the error for the caller to handle
@@ -229,110 +249,105 @@ async function fetchGameList(puuid, region) {
   }
 }
 
-// // Helper function to check if a game already exists
-// async function gameExists(gameId) {
-//   const { data, error } = await supabase
-//     .from("soloq")
-//     .select("id")
-//     .eq("id", gameId)
-//     .single();
+async function fetchLastGame(player_id) {
+  try {
+    const { data, error } = await supabase
+      .from("soloq")
+      .select("end_timestamp")
+      .eq("player_id", player_id)
+      .order("end_timestamp", { ascending: false })
+      .limit(1)
+      .single();
 
-//   if (error) {
-//     if (error.code === "PGRST116") {
-//       // Handle the case where the record is not found
-//       return false;
-//     } else {
-//       console.error("Error checking if game exists:", error.message);
-//       throw error;
-//     }
-//   }
+    if (error) {
+      // console.error("Error fetching the last game:", error);
+      return null;
+    }
+    return data;
+  } catch (err) {
+    // console.error("Unexpected error fetching the last game:", err);
+    return null;
+  }
+}
 
-//   return data !== null;
-// }
+async function insertGameSupa(game) {
 
-// async function insertGameSupa(game, stats) {
-//   const exists = await gameExists(game.id);
-//   if (exists) {
-//     console.log(`Game with ID ${game.id} already exists. Skipping insertion.`);
-//     return;
-//   }
+  const { data, error } = await supabase.from("soloq").insert({
+    id: game.id,
+    player_id: game.player_id,
+    game_time: game.game_time,
+    blue_top: game.blue_top,
+    blue_jungler: game.blue_jungler,
+    blue_mid: game.blue_mid,
+    blue_bottom: game.blue_bottom,
+    blue_support: game.blue_support,
+    red_top: game.red_top,
+    red_jungler: game.red_jungler,
+    red_mid: game.red_mid,
+    red_bottom: game.red_bottom,
+    red_support: game.red_support,
+    end_timestamp: game.end_timestamp,
+    patch: game.patch,
+    win: game.win,
+  });
 
-//   const { data, error } = await supabase.from("soloq").insert({
-//     id: game.id,
-//     player_id: game.player_id,
-//     game_time: game.game_time,
-//     blue_top: game.blue_top,
-//     blue_jungler: game.blue_jungler,
-//     blue_mid: game.blue_mid,
-//     blue_bottom: game.blue_bottom,
-//     blue_support: game.blue_support,
-//     red_top: game.red_top,
-//     red_jungler: game.red_jungler,
-//     red_mid: game.red_mid,
-//     red_bottom: game.red_bottom,
-//     red_support: game.red_support,
-//     end_timestamp: game.end_timestamp,
-//     patch: game.patch,
-//     win: game.win,
-//   });
+  if (error) {
+    console.error("Error inserting game data:", error.message);
+    return null;
+  }
 
-//   if (error) {
-//     console.error("Error inserting game data:", error.message);
-//     return null;
-//   }
+  const { data_stats, error_stats } = await supabase
+    .from("soloq_stats")
+    .insert({
+      soloq_id: game.id,
+      kills: game.player_stats.kills,
+      deaths: game.player_stats.deaths,
+      assists: game.player_stats.assists,
+      champion_name: game.player_stats.champion_name,
+      sum_spell_1: game.player_stats.sum_spell_1,
+      sum_spell_2: game.player_stats.sum_spell_2,
+      kill_part: game.player_stats.kill_part,
+      total_minions_killed: game.player_stats.total_minions_killed,
+      dmg_dealt_turrets: game.player_stats.dmg_dealt_turrets,
+      dmg_dealt_objectives: game.player_stats.dmg_dealt_objectives,
+      gold_earned: game.player_stats.gold_earned,
+      role_pos: game.player_stats.role_pos,
+      item_0: game.player_stats.item_0,
+      item_1: game.player_stats.item_1,
+      item_2: game.player_stats.item_2,
+      item_3: game.player_stats.item_3,
+      item_4: game.player_stats.item_4,
+      item_5: game.player_stats.item_5,
+      trinket: game.player_stats.trinket,
+      total_dmg_dealt_champ: game.player_stats.total_dmg_dealt_champ,
+      total_dmg_taken: game.player_stats.total_dmg_taken,
+      turret_kills: game.player_stats.turret_kills,
+      vision_score: game.player_stats.vision_score,
+      total_vision_wards: game.player_stats.total_vision_wards,
+      wards_killed: game.player_stats.wards_killed,
+      wards_placed: game.player_stats.wards_placed,
+      dmg_min: game.player_stats.dmg_min,
+      gold_min: game.player_stats.gold_min,
+      team_dmg_percentage: game.player_stats.team_dmg_percentage,
+      vision_score_min: game.player_stats.vision_score_min,
+      assists_at_10: game.player_stats.timeline_stats.assists_at_10,
+      assists_at_20: game.player_stats.timeline_stats.assists_at_20,
+      deaths_at_10: game.player_stats.timeline_stats.deaths_at_10,
+      deaths_at_20: game.player_stats.timeline_stats.deaths_at_20,
+      dmg_at_10: game.player_stats.timeline_stats.dmg_at_10,
+      dmg_at_20: game.player_stats.timeline_stats.dmg_at_20,
+      gold_at_10: game.player_stats.timeline_stats.gold_at_10,
+      gold_at_20: game.player_stats.timeline_stats.gold_at_20,
+      kills_at_10: game.player_stats.timeline_stats.kills_at_10,
+      kills_at_20: game.player_stats.timeline_stats.kills_at_20,
+      wards_at_10: game.player_stats.timeline_stats.wards_at_10,
+      wards_at_20: game.player_stats.timeline_stats.wards_at_20,
+    });
 
-//   const { data_stats, error_stats } = await supabase
-//     .from("soloq_stats")
-//     .insert({
-//       soloq_id: game.id,
-//       kills: stats.kills,
-//       deaths: stats.deaths,
-//       assists: stats.assists,
-//       champion_name: stats.champion_name,
-//       sum_spell_1: stats.sum_spell_1,
-//       sum_spell_2: stats.sum_spell_2,
-//       kill_part: stats.kill_part,
-//       total_minions_killed: stats.total_minions_killed,
-//       dmg_dealt_turrets: stats.dmg_dealt_turrets,
-//       dmg_dealt_objectives: stats.dmg_dealt_objectives,
-//       gold_earned: stats.gold_earned,
-//       role_pos: stats.role_pos,
-//       item_0: stats.item_0,
-//       item_1: stats.item_1,
-//       item_2: stats.item_2,
-//       item_3: stats.item_3,
-//       item_4: stats.item_4,
-//       item_5: stats.item_5,
-//       trinket: stats.trinket,
-//       total_dmg_dealt_champ: stats.total_dmg_dealt_champ,
-//       total_dmg_taken: stats.total_dmg_taken,
-//       turret_kills: stats.turret_kills,
-//       vision_score: stats.vision_score,
-//       total_vision_wards: stats.total_vision_wards,
-//       wards_killed: stats.wards_killed,
-//       wards_placed: stats.wards_placed,
-//       dmg_min: stats.dmg_min,
-//       gold_min: stats.gold_min,
-//       team_dmg_percentage: stats.team_dmg_percentage,
-//       vision_score_min: stats.vision_score_min,
-//       assists_at_10: stats.timeline_stats.assists_at_10,
-//       assists_at_20: stats.timeline_stats.assists_at_20,
-//       deaths_at_10: stats.timeline_stats.deaths_at_10,
-//       deaths_at_20: stats.timeline_stats.deaths_at_20,
-//       dmg_at_10: stats.timeline_stats.dmg_at_10,
-//       dmg_at_20: stats.timeline_stats.dmg_at_20,
-//       gold_at_10: stats.timeline_stats.gold_at_10,
-//       gold_at_20: stats.timeline_stats.gold_at_20,
-//       kills_at_10: stats.timeline_stats.kills_at_10,
-//       kills_at_20: stats.timeline_stats.kills_at_20,
-//       wards_at_10: stats.timeline_stats.wards_at_10,
-//       wards_at_20: stats.timeline_stats.wards_at_20,
-//     });
+  if (error_stats) {
+    console.error("Error inserting game stats data:", error_stats.message);
+    return null;
+  }
 
-//   if (error_stats) {
-//     console.error("Error inserting game stats data:", error_stats.message);
-//     return null;
-//   }
-
-//   return data_stats;
-// }
+  return data;
+}
