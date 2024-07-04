@@ -1,6 +1,6 @@
 import { supabase } from "@/supabase";
 
-export async function fetchGames(puuid, acc_id, player_id, region) {
+export async function fetchGames(puuid, acc_id, player_id, region, progressCallback) {
   try {
     let lastGameDate = await fetchLastGame(player_id);
     let LG_timestamp;
@@ -15,6 +15,9 @@ export async function fetchGames(puuid, acc_id, player_id, region) {
     }
 
     let game_list = await fetchGameList(puuid, region);
+    let progress_game = 0;
+    let total_games = game_list.length;
+
     let existingGameIds = await fetchExistingGameIds(game_list);
     let newGameIds = game_list.filter(gameId => !existingGameIds.includes(gameId));
 
@@ -23,15 +26,22 @@ export async function fetchGames(puuid, acc_id, player_id, region) {
 
       if (game_details && game_details.end_timestamp > LG_timestamp) {
         await insertGameSupa(game_details);
+
+      }
+      progress_game += 1;
+      // Update progress here
+      if (progressCallback) {
+        progressCallback((progress_game / total_games) * 100);
       }
     }
 
-    return game_list;
+    return game_details;
   } catch (error) {
     console.error("Error fetching games:", error);
     throw error;
   }
 }
+
 
 async function fetchExistingGameIds(gameIds) {
   try {
@@ -323,3 +333,38 @@ async function insertGameSupa(game) {
 
   return data_stats;
 }
+
+
+
+
+
+
+
+
+
+
+export async function fetchMatchHistory(player_id) {
+  try {
+    const { data, error } = await supabase
+      .from('soloq')
+      .select(`
+        *,
+        soloq_stats (
+          *
+        )
+      `)
+      .eq('player_id', player_id)
+      .order('end_timestamp', { ascending: false });
+
+    if (error) {
+      console.error('Error fetching match history:', error);
+      return [];
+    }
+
+    return data;
+  } catch (error) {
+    console.error('Unexpected error fetching match history:', error);
+    return [];
+  }
+}
+

@@ -5,11 +5,15 @@ import { fetchPlayer } from "@/hooks/players/fetchPlayer";
 import { fetchGames } from "@/hooks/players/fetchGames";
 import { useParams } from "next/navigation";
 import { regionStore } from "@/store/regionStore";
+import LinearProgress from '@mui/material/LinearProgress';
+import { fetchMatchHistory } from "@/hooks/players/fetchGames";
 
 const MatchHistory = () => {
   const [player, setPlayer] = useState(null);
   const [loading, setLoading] = useState(true);
   const [updateLoading, setUpdateLoading] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [mH, setMH] = useState();
 
   const params = useParams();
   const player_id = params.player_id;
@@ -26,6 +30,19 @@ const MatchHistory = () => {
     }
   };
 
+  const getMatchHistory = async () => {
+    try {
+      const data = await fetchMatchHistory(player_id);
+
+
+      setMH(data);
+    } catch (error) {
+      console.error("Failed to fetch player:", error);
+    } finally {
+      setLoading(false);
+    }
+  }
+
   const handleUpdate = async () => {
     const player_region = regions.find(
       (region) => region.code === player.region
@@ -36,7 +53,8 @@ const MatchHistory = () => {
         player.riot_puuid,
         player.riot_acc_id,
         player_id,
-        player_region.zone
+        player_region.zone,
+        (progress) => setProgress(progress) // Pass progress callback
       );
 
       if (games) {
@@ -49,6 +67,7 @@ const MatchHistory = () => {
 
   useEffect(() => {
     getPlayerData();
+    getMatchHistory();
   }, []);
 
   if (loading) {
@@ -63,8 +82,36 @@ const MatchHistory = () => {
         <div>No player data found.</div>
       )}
       <button onClick={handleUpdate}>Update</button>
-      <br></br>
-      {updateLoading ? "sim" : "nao"}
+      <br />
+      {updateLoading && (
+        <div>
+          <LinearProgress variant="determinate" value={parseInt(progress)} />
+        </div>
+      )}
+
+      <div className="p-4"></div>
+
+      {mH && mH.length > 0 ? (
+        <div className="flex flex-col gap-2">
+          {mH.map((game) => {
+            const date = new Date(game.end_timestamp);
+            const formattedDate = date.toLocaleDateString('en-GB');  // en-GB for "DD/MM/YYYY"
+
+            return (
+              <div key={game.id} className="bg-zinc-800 max-w-[800px] p-2 flex gap-2">
+                <div>{formattedDate}</div>
+                <div>teste</div>
+                <div>asd</div>
+                <div>ggg</div>
+              </div>
+            );
+          })}
+        </div>
+      ) : (
+        <>No match history</>
+      )}
+
+
     </div>
   );
 };

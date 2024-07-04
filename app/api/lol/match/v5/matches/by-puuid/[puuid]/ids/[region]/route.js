@@ -9,13 +9,12 @@ export async function GET(request, { params }) {
   const region_lower = region.toLowerCase();
 
   let start = 0;
-  const count = 100; // Maximum allowed by Riot API
+  const count = 100;
   let allMatchIds = [];
 
   try {
     while (true) {
-      const gameList = `https://${region_lower}.api.riotgames.com/lol/match/v5/matches/by-puuid/${puuid}/ids?start=${start}&count=${count}&startTime=${startTime}&api_key=${apiKey}`;
-      // const gameList = `https://${region_lower}.api.riotgames.com/lol/match/v5/matches/by-puuid/${puuid}/ids?start=${start}&count=${50}&api_key=${apiKey}`;
+      const gameList = `https://${region_lower}.api.riotgames.com/lol/match/v5/matches/by-puuid/${puuid}/ids?start=${start}&queue=420&count=${count}&startTime=${startTime}&api_key=${apiKey}`;
       const response = await fetch(gameList);
 
       if (!response.ok) {
@@ -31,7 +30,6 @@ export async function GET(request, { params }) {
       allMatchIds = allMatchIds.concat(matchIds);
       start += count; // Move to the next set of matches
 
-      // If the number of matches returned is less than the count, we can break early
       if (matchIds.length < count) {
         break;
       }
