@@ -119,7 +119,7 @@ const AddPlayer = ({ user_id, setCreatePlayerModal }) => {
           onChange={(e) => setTeam(e.target.value)}
         >
           <option value={0}>Select a team</option>
-          {teams.map((team, index) => (
+          {(teams || []).map((team, index) => (
             <option key={index} value={team.id}>
               {team.name}
             </option>
