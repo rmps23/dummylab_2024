@@ -27,10 +27,10 @@ const Modal = ({ show, onClose, content }) => {
       onClick={handleOverlayClick}
     >
       <div
-        className={`bg-zinc-950/80 backdrop-blur-sm border border-zinc-700 rounded-lg shadow-lg w-full h-screen pt-10 transition-transform overflow-y-scroll ${modalVisible ? "scale-100" : "scale-95"
+        className={`bg-zinc-800/80 backdrop-blur-sm rounded-lg shadow-lg w-full h-screen pt-10 transition-transform overflow-y-scroll ${modalVisible ? "scale-100" : "scale-95"
           }`}
       >
-        <div className="p-6 max-w-2xl mx-auto">
+        <div className="p-6 max-w-2xl mx-auto border bg-zinc-950 rounded-lg border-zinc-800">
           <button className="w-full px-4 flex justify-end" onClick={onClose}>
             <GrClose />
           </button>

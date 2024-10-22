@@ -3,7 +3,7 @@ import { supabase } from "@/supabase";
 export async function insertTeam(name, owner_id) {
 
   const { data, error } = await supabase
-    .from("teams")
+    .from("team")
     .insert([
       {
         name: name,

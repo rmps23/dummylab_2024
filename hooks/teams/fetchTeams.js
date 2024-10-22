@@ -2,7 +2,7 @@ import { supabase } from "@/supabase";
 
 export async function fetchTeams(user_id) {
   const { data, error } = await supabase
-    .from('teams')
+    .from('team')
     .select()
     .eq('owner_id', user_id)
     .order('id', { ascending: true });

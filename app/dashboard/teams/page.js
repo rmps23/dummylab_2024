@@ -89,7 +89,7 @@ const Teams = () => {
 
   return (
     <>
-      <div className="flex items-center gap-6 w-full pb-4 mb-8 border-b border-zinc-900">
+      <div className="flex items-center gap-6 w-full pt-4 px-6 pb-4 border-b border-zinc-900 bg-cyan-600">
         <div className="flex items-center gap-4">
           <FaShield className="bg-zinc-900 p-2 text-4xl rounded-md" />
           <span className="text-lg">Teams</span>
@@ -113,12 +113,12 @@ const Teams = () => {
           />
         </div>
       </div>
-      <div className="flex flex-col gap-4 max-w-[800px]">
+      <div className="flex flex-col p-4 gap-4">
         {teams.length > 0 ? (
           teams.map((team) => (
             <div
               key={team.id}
-              className="border border-zinc-900 p-4 rounded-md flex justify-between"
+              className="border border-zinc-900 bg-zinc-800 p-4 rounded-md flex justify-between"
             >
               <div className="flex items-center">{team.name}</div>
               <div className="flex items-center gap-2">

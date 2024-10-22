@@ -2,7 +2,7 @@ import { supabase } from "@/supabase";
 
 export async function deleteTeam(team_id) {
   const { data, error } = await supabase
-    .from("teams")
+    .from("team")
     .delete()
     .eq('id', team_id)
 

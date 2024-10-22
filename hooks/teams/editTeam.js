@@ -3,7 +3,7 @@ import { supabase } from "@/supabase"; // Assuming this is correctly imported
 export async function editTeam(name, team_id) {
   try {
     const { data, error } = await supabase
-      .from("teams")
+      .from("team")
       .update({ name: name })
       .eq('id', team_id)
       .single()

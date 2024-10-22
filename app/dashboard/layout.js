@@ -7,7 +7,7 @@ export default function DashboardLayout({ children }) {
   return (
     <div className="flex">
       <Navbar />
-      <div className="w-full h-screen overflow-y-scroll p-6">{children}</div>
+      <div className="w-full h-screen overflow-y-scroll bg-zinc-900">{children}</div>
     </div>
   );
 }
