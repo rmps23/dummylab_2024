@@ -12,6 +12,7 @@ import { playerStore } from "@/store/playerStore";
 import EditPlayer from "@/components/players/EditPlayer";
 import RemovePlayer from "@/components/players/RemovePlayer";
 import Link from "next/link";
+import { PlayerCard } from "@/components/players/PlayerCard";
 
 const Players = () => {
   const user = userStore((state) => state.user);
@@ -25,9 +26,8 @@ const Players = () => {
   const [currentPlayer, setCurrentPlayer] = useState(null);
 
   const fetchTeamsData = async () => {
-    if (!user) {
-      return;
-    }
+    if (!user) return;
+
     try {
       setLoading(true);
       const data = await fetchTeams(user.id);
@@ -40,9 +40,8 @@ const Players = () => {
   };
 
   const fetchPlayersData = async () => {
-    if (!user) {
-      return;
-    }
+    if (!user) return;
+
     try {
       setLoading(true);
       const data = await fetchPlayers(user.id);
@@ -59,19 +58,13 @@ const Players = () => {
     fetchPlayersData();
   }, [user]);
 
-  const handleOpenCreate = () => {
-    setCreatePlayerModal(true);
-  };
-
-  const handleCloseCreate = () => {
-    setCreatePlayerModal(false);
-  };
+  const handleOpenCreate = () => setCreatePlayerModal(true);
+  const handleCloseCreate = () => setCreatePlayerModal(false);
 
   const handleOpenEdit = (player) => {
     setCurrentPlayer(player);
     setEditPlayerModal(true);
   };
-
   const handleCloseEdit = () => {
     setEditPlayerModal(false);
     setCurrentPlayer(null);
@@ -81,7 +74,6 @@ const Players = () => {
     setCurrentPlayer(player);
     setRemovePlayerModal(true);
   };
-
   const handleCloseRemove = () => {
     setRemovePlayerModal(false);
     setCurrentPlayer(null);
@@ -89,7 +81,7 @@ const Players = () => {
 
   return (
     <>
-      <div className="flex items-center gap-6 w-full pb-4 mb-8 border-b border-zinc-900">
+      <div className="flex items-center gap-6 w-full pt-4 px-6 pb-4 border-b border-zinc-900 bg-cyan-600">
         <div className="flex items-center gap-4">
           <FaUsers className="bg-zinc-900 p-2 text-4xl rounded-md" />
           <span className="text-lg">Players</span>
@@ -114,60 +106,42 @@ const Players = () => {
           />
         )}
       </div>
-      {players && players.length > 0 ? (
-        <div className="flex flex-col max-w-3xl gap-2 p-4 rounded-md bg-zinc-900">
-          {players.map((player) => (
-            <div key={player.id} className="flex flex-col gap-2">
-              <div className="flex gap-2 items-center justify-between">
-                <span>
-                  {player.role_id.name} - {player.name}
-                </span>
-                <div className="flex items-center gap-2 text-right">
-                  <Link href={`/dashboard/players/match_history/${player.id}`}>
-                    Match History
-                  </Link>
-                  <Link href={`/dashboard/players/stats/${player.id}`}>
-                    Stats
-                  </Link>
-                </div>
-              </div>
-              <div className="flex gap-2">
-                <button onClick={() => handleOpenEdit(player)}>Edit</button>
-                <button onClick={() => handleOpenRemove(player)}>Remove</button>
-              </div>
-            </div>
-          ))}
-          {currentPlayer && (
-            <>
-              <Modal
-                show={editPlayerModal}
-                onClose={handleCloseEdit}
-                content={
-                  <EditPlayer
-                    player_name={currentPlayer.name}
-                    player_id={currentPlayer.id}
-                    teams={teams}
-                    team_id={currentPlayer.team_id.id}
-                    setEditPlayerModal={setEditPlayerModal}
-                  />
-                }
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 p-4">
+        {players && players.length > 0 ? (
+          players.map((player) => (
+            <PlayerCard key={player.id} player={player} />
+          ))
+        ) : (
+          <p>No players found</p>
+        )}
+      </div>
+      {currentPlayer && (
+        <>
+          <Modal
+            show={editPlayerModal}
+            onClose={handleCloseEdit}
+            content={
+              <EditPlayer
+                player_name={currentPlayer.name}
+                player_id={currentPlayer.id}
+                teams={teams}
+                team_id={currentPlayer.team_id.id}
+                setEditPlayerModal={setEditPlayerModal}
               />
-              <Modal
-                show={removePlayerModal}
-                onClose={handleCloseRemove}
-                content={
-                  <RemovePlayer
-                    player_name={currentPlayer.name}
-                    player_id={currentPlayer.id}
-                    setRemovePlayerModal={setRemovePlayerModal}
-                  />
-                }
+            }
+          />
+          <Modal
+            show={removePlayerModal}
+            onClose={handleCloseRemove}
+            content={
+              <RemovePlayer
+                player_name={currentPlayer.name}
+                player_id={currentPlayer.id}
+                setRemovePlayerModal={setRemovePlayerModal}
               />
-            </>
-          )}
-        </div>
-      ) : (
-        "No players found"
+            }
+          />
+        </>
       )}
     </>
   );
