@@ -1,28 +1,24 @@
 "use client";
 
-import { editTeam } from "@/hooks/teams/editTeam";
 import { useState } from "react";
+import { toast } from "react-toastify";
+import { editTeam } from "@/hooks/teams";
 import { teamStore } from "@/store/teamStore";
 
 const EditTeam = ({ team_name, team_id, setEditTeamModal }) => {
   const [teamName, setTeamName] = useState(team_name);
-  const { editTeamName } = teamStore();
+  const editTeamName = teamStore((s) => s.editTeamName);
 
   async function handleEditTeam() {
+    if (!teamName.trim()) return;
     try {
-      const response = await editTeam(teamName, team_id);
-      editTeamName(response.id, response.name);
+      const team = await editTeam(teamName.trim(), team_id);
+      editTeamName(team.id, team.name);
       setEditTeamModal(false);
     } catch (error) {
-      console.error("Error editing team:", error);
+      toast.error(`Could not update the team: ${error.message}`);
     }
   }
-
-  const handleKeyDown = async (e) => {
-    if (e.key === "Enter") {
-      await handleEditTeam();
-    }
-  };
 
   return (
     <div className="flex flex-col gap-4">
@@ -30,15 +26,12 @@ const EditTeam = ({ team_name, team_id, setEditTeamModal }) => {
       <input
         type="text"
         className="bg-zinc-900 p-2 rounded-md outline-none"
-        placeholder="Insert team name..."
         value={teamName}
+        maxLength={60}
         onChange={(e) => setTeamName(e.target.value)}
-        onKeyDown={handleKeyDown}
+        onKeyDown={(e) => e.key === "Enter" && handleEditTeam()}
       />
-      <button
-        className="bg-zinc-200 text-zinc-950 p-1 rounded-md"
-        onClick={handleEditTeam}
-      >
+      <button className="bg-zinc-200 text-zinc-950 p-1 rounded-md" onClick={handleEditTeam}>
         Confirm
       </button>
     </div>

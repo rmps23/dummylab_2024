@@ -1,72 +1,72 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { FaGear, FaUser, FaBan } from "react-icons/fa6";
-import { userStore } from "@/store/userStore";
-import { updateUserEmail } from "@/hooks/users/updateUserEmail";
+import { toast } from "react-toastify";
+import { isDemo, userStore } from "@/store/userStore";
+import { updateUserEmail } from "@/hooks/users";
 import Modal from "@/components/ui/Modal";
+import PageHeader from "@/components/ui/PageHeader";
 import RemoveAcc from "@/components/auth/RemoveAcc";
 
 const Settings = () => {
-  const user = userStore((state) => state.user);
+  const user = userStore((s) => s.user);
   const [newEmail, setNewEmail] = useState("");
-  const [isEditing, setIsEditing] = useState(false);
   const [removeAccModal, setRemoveAccModal] = useState(false);
 
-  const handleOpenModal = () => {
-    setRemoveAccModal(true);
-  };
-
-  const handleCloseModal = () => {
-    setRemoveAccModal(false);
-  };
-
   useEffect(() => {
-    if (user && user.identities && user.identities[0]) {
-      setNewEmail(user.identities[0].email);
-    }
+    if (user?.email) setNewEmail(user.email);
   }, [user]);
 
-  const handleEmailChange = (e) => {
-    setNewEmail(e.target.value);
-    setIsEditing(true);
-  };
+  if (!user) return <p className="p-6 text-zinc-400">Loading...</p>;
+
+  const demo = isDemo(user);
+  const changed = newEmail.trim() !== user.email;
+  const displayName = user.user_metadata?.custom_claims?.global_name || user.user_metadata?.name;
 
   async function handleEditEmail() {
-    setIsEditing(false);
-    await updateUserEmail(newEmail);
-  }
-
-  if (!user) {
-    return <div>Loading...</div>;
+    try {
+      await updateUserEmail(newEmail.trim());
+      toast.success("Check your inbox to confirm the new email.");
+    } catch (error) {
+      toast.error(error.message);
+    }
   }
 
   return (
     <>
-      <div className="flex items-center gap-6 w-full pb-4 mb-20 border-b border-zinc-900">
-        <div className="flex items-center gap-4">
-          <FaGear className="bg-zinc-900 p-2 text-4xl rounded-md" />
-          <span className="text-lg">Settings</span>
-        </div>
-      </div>
+      <PageHeader icon={FaGear} title="Settings" />
 
-      <div className="flex flex-col max-w-[800px] mx-auto justify-center w-full mb-10">
-        <h3 className="pb-2 font-bold flex items-center gap-2"><FaUser /> My Account</h3>
-        <div className="flex flex-col gap-2 p-4 border border-zinc-900 rounded-md">
-          <p>Username</p>
-          <input type="text" value={user.identities[0].identity_data.custom_claims.global_name} className="bg-zinc-800 p-2 rounded-md outline-none" disabled />
+      {demo && (
+        <p className="max-w-[800px] mx-auto mt-6 px-4 text-sm text-amber-400">
+          This is the demo account: email and account deletion are disabled.
+        </p>
+      )}
+
+      <div className="flex flex-col max-w-[800px] mx-auto justify-center w-full my-10 px-4">
+        <h2 className="pb-2 font-bold flex items-center gap-2">
+          <FaUser /> My Account
+        </h2>
+        <div className="flex flex-col gap-2 p-4 border border-zinc-800 rounded-md">
+          {displayName && (
+            <>
+              <p>Username</p>
+              <input type="text" value={displayName} className="bg-zinc-800 p-2 rounded-md outline-none" disabled />
+            </>
+          )}
           <p>Email</p>
           <div className="relative">
             <input
-              type="text"
-              onChange={handleEmailChange}
+              type="email"
+              onChange={(e) => setNewEmail(e.target.value)}
               value={newEmail}
-              className="bg-zinc-800 p-2 pr-24 rounded-md outline-none w-full"
+              disabled={demo}
+              className="bg-zinc-800 p-2 pr-24 rounded-md outline-none w-full disabled:opacity-50"
             />
-            {isEditing && (
+            {changed && !demo && (
               <button
                 onClick={handleEditEmail}
-                className="absolute right-1 top-1/2 transform -translate-y-1/2 bg-cyan-500 text-white py-1 px-2 rounded-md"
+                className="absolute right-1 top-1/2 -translate-y-1/2 bg-cyan-500 text-zinc-950 py-1 px-2 rounded-md"
               >
                 Confirm
               </button>
@@ -75,26 +75,21 @@ const Settings = () => {
         </div>
       </div>
 
-      <div className="flex flex-col max-w-[800px] mx-auto justify-center w-full">
-        <h3 className="pb-2 font-bold flex items-center gap-2"><FaBan /> Delete Account</h3>
-        <div className="p-4 border border-zinc-900 rounded-md">
+      <div className="flex flex-col max-w-[800px] mx-auto justify-center w-full px-4">
+        <h2 className="pb-2 font-bold flex items-center gap-2">
+          <FaBan /> Delete Account
+        </h2>
+        <div className="p-4 border border-zinc-800 rounded-md">
           <button
-            onClick={handleOpenModal}
-            className="text-sm bg-red-700 text-zinc-100 px-4 py-1 rounded-md"
+            onClick={() => setRemoveAccModal(true)}
+            disabled={demo}
+            className="text-sm bg-red-700 text-zinc-100 px-4 py-1 rounded-md disabled:opacity-30"
           >
             Delete
           </button>
-          <Modal
-            show={removeAccModal}
-            onClose={handleCloseModal}
-            content={
-              <RemoveAcc setRemoveAccModal={setRemoveAccModal}
-              />
-            }
-          />
+          <Modal show={removeAccModal} onClose={() => setRemoveAccModal(false)} content={<RemoveAcc setRemoveAccModal={setRemoveAccModal} />} />
         </div>
       </div>
-
     </>
   );
 };

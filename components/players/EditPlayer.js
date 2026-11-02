@@ -1,40 +1,30 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { editPlayer } from "@/hooks/players/editPlayer";
+import { useState } from "react";
+import { toast } from "react-toastify";
+import { editPlayer } from "@/hooks/players";
 import { playerStore } from "@/store/playerStore";
+import { teamStore } from "@/store/teamStore";
+import { ROLES } from "@/lib/constants";
 
-const EditPlayer = ({
-  player_name,
-  player_id,
-  teams,
-  setEditPlayerModal,
-  team_id,
-}) => {
-  const [playerName, setPlayerName] = useState(player_name);
-  const [team, setTeam] = useState(team_id);
-  const { editPlayerStore } = playerStore();
+const field = "p-2 rounded-md flex w-full bg-zinc-900 cursor-pointer";
+
+const EditPlayer = ({ player, setEditPlayerModal }) => {
+  const teams = teamStore((s) => s.teams);
+  const updatePlayer = playerStore((s) => s.updatePlayer);
+  const [name, setName] = useState(player.name);
+  const [team, setTeam] = useState(player.team_id);
+  const [role, setRole] = useState(player.role_id);
 
   async function handleEditPlayer() {
+    if (!name.trim()) return;
     try {
-      const response = await editPlayer(playerName, team, player_id);
-      if (response && response.length > 0) {
-        const updatedPlayer = response[0];
-        editPlayerStore(updatedPlayer.name, updatedPlayer.team_id.id, updatedPlayer.id);
-        setEditPlayerModal(false);
-      } else {
-        console.error("Failed to update player: No data returned");
-      }
+      updatePlayer(await editPlayer(player.id, { name: name.trim(), team_id: Number(team), role_id: Number(role) }));
+      setEditPlayerModal(false);
     } catch (error) {
-      console.error("Error editing player:", error);
+      toast.error(`Could not update the player: ${error.message}`);
     }
   }
-
-  const handleKeyDown = async (e) => {
-    if (e.key === "Enter") {
-      await handleEditPlayer();
-    }
-  };
 
   return (
     <div className="flex flex-col gap-4">
@@ -42,19 +32,22 @@ const EditPlayer = ({
       <input
         type="text"
         className="bg-zinc-900 p-2 rounded-md outline-none"
-        placeholder="Insert player name..."
-        value={playerName}
-        onChange={(e) => setPlayerName(e.target.value)}
-        onKeyDown={handleKeyDown}
+        value={name}
+        maxLength={40}
+        onChange={(e) => setName(e.target.value)}
+        onKeyDown={(e) => e.key === "Enter" && handleEditPlayer()}
       />
-      <select
-        className="p-2 rounded-md flex w-full bg-zinc-900 cursor-pointer"
-        value={team}
-        onChange={(e) => setTeam(e.target.value)}
-      >
-        {teams.map((team, index) => (
-          <option key={index} value={team.id}>
-            {team.name}
+      <select className={field} value={team} onChange={(e) => setTeam(e.target.value)}>
+        {teams.map((t) => (
+          <option key={t.id} value={t.id}>
+            {t.name}
+          </option>
+        ))}
+      </select>
+      <select className={field} value={role} onChange={(e) => setRole(e.target.value)}>
+        {ROLES.map((r) => (
+          <option key={r.id} value={r.id}>
+            {r.name}
           </option>
         ))}
       </select>
