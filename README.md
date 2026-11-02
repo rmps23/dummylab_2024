@@ -1,36 +1,42 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# DummyLab
 
-## Getting Started
+A management dashboard for **League of Legends** team coaches: keep your teams and players in one place and pull each player's ranked data and match history straight from the Riot Games API.
 
-First, run the development server:
+> Work in progress. Teams, players and match history are working; the schedule and analytics pages are planned next.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## Features
+
+- **Accounts** – sign up and log in with Supabase Auth; change email or delete the account from settings.
+- **Teams** – create, edit and remove teams.
+- **Players** – add players by Riot ID (`gameName#tagLine`), verified against the Riot Account API before they're saved.
+- **Match history** – recent matches, match details and timelines per player (Match-V5), plus ranked entries (League-V4).
+- **Regions** – switch the region used for Riot API calls.
+
+## Stack
+
+Next.js 14 (App Router) · React 18 · Tailwind CSS · MUI · Zustand · Supabase (Auth + Postgres) · Riot Games API
+
+## How it's built
+
+- Riot API calls go through Next.js route handlers in `app/api`, so the API key stays on the server.
+- Client state (teams, players, user, region) lives in small Zustand stores in `store/`.
+- Data fetching and mutations are kept in reusable hooks under `hooks/`.
+
+## Running locally
+
+Create `.env.local` with:
+
+```
+NEXT_PUBLIC_SUPABASE_URL=...
+NEXT_PUBLIC_SUPABASE_ANON_KEY=...
+NEXT_PUBLIC_RIOT_API_KEY=...
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+```bash
+npm install
+npm run dev
+```
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+## History
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+This is a rewrite of the first version ([dummylab](https://github.com/rmps23/dummylab), 2023), which also had champion pool tracking and a team schedule calendar.
