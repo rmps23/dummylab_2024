@@ -187,7 +187,8 @@ language sql stable security invoker as $$
   from player_match pm
   join match m on m.id = pm.match_id
   join player p on p.id = pm.player_id
-  where (p_team is null or p.team_id = p_team)
+  where m.duration >= 300 -- ignore remakes
+    and (p_team is null or p.team_id = p_team)
     and (p_player is null or pm.player_id = p_player)
     and (p_since is null or m.ended_at >= p_since)
     and (p_queue is null or m.queue_id = p_queue)
@@ -209,7 +210,8 @@ language sql stable security invoker as $$
   from player_match pm
   join match m on m.id = pm.match_id
   join player p on p.id = pm.player_id
-  where (p_team is null or p.team_id = p_team)
+  where m.duration >= 300 -- ignore remakes
+    and (p_team is null or p.team_id = p_team)
     and (p_player is null or pm.player_id = p_player)
     and (p_since is null or m.ended_at >= p_since)
     and (p_queue is null or m.queue_id = p_queue)
