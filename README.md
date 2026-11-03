@@ -30,7 +30,7 @@ Next.js 14 (App Router) · React 18 · Tailwind CSS · MUI · Zustand · Supabas
 
 ## Running locally
 
-1. Create a Supabase project and run `supabase/migrations/0001_init.sql` in the SQL editor (or with `supabase db push`).
+1. Create a Supabase project and run the files in `supabase/migrations` in order (`0001`, `0002`, `0003`) in the SQL editor, or with `supabase db push`.
 2. Copy `.env.example` to `.env.local` and fill it in:
 
    | Variable | Where it comes from |
@@ -40,8 +40,9 @@ Next.js 14 (App Router) · React 18 · Tailwind CSS · MUI · Zustand · Supabas
    | `RIOT_API_KEY` | [developer.riotgames.com](https://developer.riotgames.com) (development keys expire every 24 hours) |
    | `DEMO_EMAIL`, `DEMO_PASSWORD` | Any credentials for the demo user |
    | `CRON_SECRET` | Any long random string |
+   | `RIOT_ENABLED`, `RIOT_ALLOWED_EMAILS` | Riot features are off for everyone unless enabled: `RIOT_ALLOWED_EMAILS` lists accounts allowed to use them with a development key, and `RIOT_ENABLED=true` turns them on for all once a production key is approved (see [docs/RIOT_REGISTRATION.md](docs/RIOT_REGISTRATION.md)) |
 
-3. Install and run:
+3. Install, test and run:
 
    ```bash
    npm install
