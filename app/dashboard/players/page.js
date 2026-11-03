@@ -15,6 +15,7 @@ import AddPlayer from "@/components/players/AddPlayer";
 import EditPlayer from "@/components/players/EditPlayer";
 import RemovePlayer from "@/components/players/RemovePlayer";
 import InviteLink from "@/components/players/InviteLink";
+import PlayerNotes from "@/components/players/PlayerNotes";
 import { PlayerCard } from "@/components/players/PlayerCard";
 
 const Players = () => {
@@ -25,6 +26,7 @@ const Players = () => {
   const [editing, setEditing] = useState(null);
   const [removing, setRemoving] = useState(null);
   const [inviting, setInviting] = useState(null);
+  const [noting, setNoting] = useState(null);
   const [ranks, setRanks] = useState({});
   const [forms, setForms] = useState({});
 
@@ -76,6 +78,12 @@ const Players = () => {
         content={editing && <EditPlayer key={editing.id} player={editing} setEditPlayerModal={(v) => !v && setEditing(null)} />}
       />
       <Modal
+        title="Notes and goals"
+        show={!!noting}
+        onClose={() => setNoting(null)}
+        content={noting && <PlayerNotes key={noting.id} player={noting} />}
+      />
+      <Modal
         title="Availability link"
         show={!!inviting}
         onClose={() => setInviting(null)}
@@ -102,6 +110,7 @@ const Players = () => {
               onEdit={setEditing}
               onRemove={setRemoving}
               onInvite={setInviting}
+              onNotes={setNoting}
             />
           ))}
         </div>

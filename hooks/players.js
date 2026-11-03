@@ -128,3 +128,40 @@ export async function revokeInvite(player_id) {
   const response = await fetch(`/api/players/${player_id}/invite`, { method: "DELETE" });
   if (!response.ok) throw new Error((await response.json().catch(() => ({}))).error || "Could not revoke the link");
 }
+
+// Private notes and goals -----------------------------------------------------
+export async function fetchNotes(player_id) {
+  const { data, error } = await supabase
+    .from("player_note")
+    .select("id, kind, body, status, due_date, created_at")
+    .eq("player_id", player_id)
+    .order("created_at", { ascending: false });
+  if (error) throw new Error(error.message);
+  return data;
+}
+
+export async function addNote({ player_id, kind, body, due_date }) {
+  const { data, error } = await supabase
+    .from("player_note")
+    .insert({ player_id, kind, body, due_date: due_date || null })
+    .select("id, kind, body, status, due_date, created_at")
+    .single();
+  if (error) throw new Error(error.message);
+  return data;
+}
+
+export async function updateNote(id, changes) {
+  const { data, error } = await supabase
+    .from("player_note")
+    .update(changes)
+    .eq("id", id)
+    .select("id, kind, body, status, due_date, created_at")
+    .single();
+  if (error) throw new Error(error.message);
+  return data;
+}
+
+export async function deleteNote(id) {
+  const { error } = await supabase.from("player_note").delete().eq("id", id);
+  if (error) throw new Error(error.message);
+}
