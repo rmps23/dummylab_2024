@@ -20,6 +20,7 @@ import TrendChart from "@/components/ui/TrendChart";
 import EmptyState, { actionClass } from "@/components/ui/EmptyState";
 import Skeleton, { SkeletonKpis } from "@/components/ui/Skeleton";
 import { btnSecondary } from "@/components/ui/buttons";
+import { featureStore } from "@/store/featureStore";
 
 const select =
   "min-h-11 cursor-pointer rounded-lg border border-white/10 bg-white/[0.05] px-3 text-sm font-semibold outline-none hover:bg-white/10 focus:border-brand/60";
@@ -64,6 +65,7 @@ function AnalyticsContent() {
   const allPlayers = playerStore((s) => s.players);
   const players = useMemo(() => allPlayers.filter((p) => p.team_id === activeTeamId), [allPlayers, activeTeamId]);
 
+  const plan = featureStore((s) => s.plan);
   const [player, setPlayer] = useState(params.get("player") || "");
   const [days, setDays] = useState(30);
   const [queue, setQueue] = useState("");
@@ -122,8 +124,8 @@ function AnalyticsContent() {
         <select aria-label="Period" className={select} value={days} onChange={(e) => setDays(Number(e.target.value))}>
           <option value={7}>Last 7 days</option>
           <option value={30}>Last 30 days</option>
-          <option value={90}>Last 90 days</option>
-          <option value={0}>All time</option>
+          <option value={90} disabled={plan !== "pro"}>Last 90 days{plan !== "pro" ? " (Pro)" : ""}</option>
+          <option value={0} disabled={plan !== "pro"}>All time{plan !== "pro" ? " (Pro)" : ""}</option>
         </select>
         <select aria-label="Queue" className={select} value={queue} onChange={(e) => setQueue(e.target.value)}>
           <option value="">All queues</option>

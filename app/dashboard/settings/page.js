@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { FaBan, FaGear, FaUser } from "react-icons/fa6";
+import Link from "next/link";
+import { FaBan, FaCrown, FaGear, FaUser } from "react-icons/fa6";
 import { toast } from "react-toastify";
 import { isDemo, userStore } from "@/store/userStore";
 import { updateUserEmail } from "@/hooks/users";
@@ -9,7 +10,7 @@ import Modal from "@/components/ui/Modal";
 import PageHeader from "@/components/ui/PageHeader";
 import Card from "@/components/ui/Card";
 import Skeleton from "@/components/ui/Skeleton";
-import { btnDanger, btnPrimary, inputClass } from "@/components/ui/buttons";
+import { btnDanger, btnPrimary, btnSecondary, inputClass } from "@/components/ui/buttons";
 import RemoveAcc from "@/components/auth/RemoveAcc";
 
 const Settings = () => {
@@ -73,6 +74,15 @@ const Settings = () => {
                 )}
               </div>
             </div>
+          </div>
+        </Card>
+
+        <Card title="Plan">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <p className="max-w-sm text-sm text-zinc-300">See your plan, usage and limits, or upgrade to Pro.</p>
+            <Link href="/dashboard/billing" className={btnSecondary}>
+              <FaCrown aria-hidden="true" /> Plan and billing
+            </Link>
           </div>
         </Card>
 

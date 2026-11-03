@@ -1,4 +1,5 @@
 import { supabase } from "@/supabase";
+import { toPlanError } from "@/lib/planErrors";
 
 export async function fetchTeams() {
   const { data, error } = await supabase.from("team").select().order("id", { ascending: true });

@@ -4,12 +4,16 @@ import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { FaCheck, FaCopy } from "react-icons/fa6";
 import { createInvite, fetchInvite, revokeInvite } from "@/hooks/players";
+import Link from "next/link";
 import { isDemo, userStore } from "@/store/userStore";
+import { featureStore } from "@/store/featureStore";
 import { btnDanger, btnPrimary, btnSecondary, inputClass } from "@/components/ui/buttons";
 
 export default function InviteLink({ player }) {
   const user = userStore((s) => s.user);
   const demo = isDemo(user);
+  const plan = featureStore((s) => s.plan);
+  const loaded = featureStore((s) => s.loaded);
   const [invite, setInvite] = useState(undefined); // undefined = loading, null = none
   const [busy, setBusy] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -75,7 +79,15 @@ export default function InviteLink({ player }) {
         </p>
       )}
 
-      {invite === undefined ? (
+      {loaded && plan !== "pro" ? (
+        <div className="rounded-xl border border-brand/30 bg-brand/[0.05] p-4 text-sm">
+          <p className="font-semibold">Availability links are a Pro feature.</p>
+          <p className="mt-1 text-zinc-300">Upgrade to let players answer for upcoming events from their phone.</p>
+          <Link href="/dashboard/billing" className={`${btnPrimary} mt-3`}>
+            See Pro
+          </Link>
+        </div>
+      ) : invite === undefined ? (
         <p className="text-sm text-zinc-400">Loading...</p>
       ) : invite ? (
         <>

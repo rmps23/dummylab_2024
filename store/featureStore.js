@@ -4,6 +4,8 @@ import { create } from "zustand";
 export const featureStore = create((set, get) => ({
   riot: false,
   demo: false,
+  plan: "free",
+  billing: false,
   loaded: false,
 
   load: async () => {
@@ -11,13 +13,13 @@ export const featureStore = create((set, get) => ({
     try {
       const response = await fetch("/api/features");
       if (response.ok) {
-        const { riot, demo } = await response.json();
-        set({ riot, demo, loaded: true });
+        const { riot, demo, plan, billing } = await response.json();
+        set({ riot, demo, plan, billing, loaded: true });
         return;
       }
     } catch {}
     set({ loaded: true });
   },
 
-  reset: () => set({ riot: false, demo: false, loaded: false }),
+  reset: () => set({ riot: false, demo: false, plan: "free", billing: false, loaded: false }),
 }));

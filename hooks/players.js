@@ -1,4 +1,5 @@
 import { supabase } from "@/supabase";
+import { toPlanError } from "@/lib/planErrors";
 
 const PLAYER_SELECT =
   "id, name, region, team_id, role_id, riot_id, riot_puuid, last_synced_at, role:role_id(id, name)";
@@ -120,7 +121,7 @@ export async function fetchInvite(player_id) {
 export async function createInvite(player_id) {
   const response = await fetch(`/api/players/${player_id}/invite`, { method: "POST" });
   const body = await response.json().catch(() => ({}));
-  if (!response.ok) throw new Error(body.error || "Could not create the link");
+  if (!response.ok) throw Object.assign(new Error(body.error || "Could not create the link"), { code: body.code });
   return body.invite;
 }
 
@@ -146,7 +147,7 @@ export async function addNote({ player_id, kind, body, due_date }) {
     .insert({ player_id, kind, body, due_date: due_date || null })
     .select("id, kind, body, status, due_date, created_at")
     .single();
-  if (error) throw new Error(error.message);
+  if (error) throw toPlanError(error.message) ?? new Error(error.message);
   return data;
 }
 

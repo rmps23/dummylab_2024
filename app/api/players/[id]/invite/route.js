@@ -1,5 +1,6 @@
 import { isDemoUser, json, requireUser } from "@/lib/auth";
 import { newToken } from "@/lib/invites";
+import { toPlanError } from "@/lib/planErrors";
 
 // Creates (or replaces) the personal availability link of a player. RLS ensures the player is yours.
 export async function POST(request, { params }) {
@@ -22,7 +23,10 @@ export async function POST(request, { params }) {
     .insert({ player_id: player.id, token: newToken() })
     .select("id, token, created_at")
     .single();
-  if (insertError) return json({ error: insertError.message }, 500);
+  if (insertError) {
+    const plan = toPlanError(insertError.message);
+    return plan ? json({ error: plan.message, code: "plan_limit" }, 402) : json({ error: insertError.message }, 500);
+  }
 
   return json({ invite });
 }
