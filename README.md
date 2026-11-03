@@ -1,36 +1,44 @@
 # DummyLab
 
-A coaching dashboard for **League of Legends** teams: manage rosters, plan trainings, scrims and matches with each player's availability, and track per-player and per-team stats pulled from the Riot Games API.
+A coaching dashboard for **League of Legends** teams. Plan trainings, scrims and matches with each player's availability, and follow per-player and per-team stats built from match history pulled from the Riot Games API.
 
-**Live demo:** _add the Vercel URL here_ (use the "Try the demo account" button, no sign-up needed)
+**Live demo: [dummylab-2024.vercel.app](https://dummylab-2024.vercel.app)**. Press "Try the demo account" for a one-click login with a sample team (no sign-up).
 
-<!-- Screenshots: docs/home.png, docs/schedule.png, docs/analytics.png -->
+| Home | Schedule |
+|---|---|
+| ![Home dashboard](docs/home.png) | ![Schedule](docs/schedule.png) |
+| **Analytics** | **Players** |
+| ![Analytics](docs/analytics.png) | ![Players](docs/players.jpg) |
 
 ## Features
 
-- **Accounts:** email/password sign-up and login with Supabase Auth, change email, delete account.
-- **Teams and players:** add players by Riot ID (`gameName#tagLine`), verified against the Riot Account API.
-- **Schedule:** month and week calendar with trainings, scrims and matches, weekly repeat, and a per-player availability matrix (available / maybe / unavailable) with a warning when fewer than five players can attend.
-- **Analytics:** win rate, KDA, CS/min, damage/min, vision/min and kill participation per player and per team, most played champions, KDA trend, filterable by period and queue (solo, flex, clash, custom/scrims).
-- **Match history and ranked:** import recent games per player (Match-V5 with timeline data at 10 and 20 minutes) and ranked entries (League-V4, by PUUID).
-- **Dashboard home:** upcoming events, awaiting replies, latest games and solo queue ranks for the active team.
-- **Demo account:** one-click login that never exposes credentials to the browser; the account is read-only for email and deletion and is reset daily.
+- **Teams and players:** add players by Riot ID (verified against the Riot Account API) or by name, with role, rank and recent form.
+- **Schedule:** month, week and agenda views for trainings, scrims and matches, weekly repeat, and a per-player availability matrix with a warning when fewer than five can play. Phones get a readable agenda.
+- **Availability links (Pro):** each player gets a personal link to answer from their phone, with no account.
+- **Analytics:** win rate, KDA, CS, damage and vision per minute, kill participation, champion pool and KDA trend, per player and per team, filtered by period and queue (solo, flex, clash, scrims).
+- **Match history and ranked:** import recent games with timeline values at 10 and 20 minutes (Match-V5) and ranked entries (League-V4, by PUUID).
+- **Private notes and goals** per player.
+- **Discord reminders and a weekly report (Pro):** post an event's availability to a channel, and get a weekly summary by email, CSV or print.
+- **Plans:** Free (1 team, 10 players, 30 days of stats) and Pro (5 teams, 100 players, full history, links, reminders, report). Limits are enforced in the database. Payments are built on Stripe test mode and switched off until launch.
+- **Accessible and responsive:** keyboard-friendly dialogs, landmarks, 44 px touch targets, light on JavaScript.
+- **Demo account:** one-click login that never exposes credentials to the browser. It has every Pro feature, cannot change email or be deleted, and is reset daily.
 
 ## Stack
 
-Next.js 14 (App Router) · React 18 · Tailwind CSS · MUI · Zustand · Supabase (Auth, Postgres, Row Level Security) · Riot Games API · date-fns · deployed on Vercel.
+Next.js 14 (App Router) · React 18 · Tailwind CSS · Zustand · Supabase (Auth, Postgres, Row Level Security) · Riot Games API · Stripe · Resend · Vitest · deployed on Vercel.
 
 ## How it's built
 
-- The Riot API key stays on the server. Route handlers in `app/api` require a signed-in user, validate input, send the key in the `X-Riot-Token` header and retry on `429`.
+- The Riot API key stays on the server. Route handlers in `app/api` require a signed-in user, validate input, send the key in the `X-Riot-Token` header, retry on `429` and rate-limit per user. Riot features are off by default and enabled per account or, once a production key exists, for everyone.
 - Match import runs server-side in small batches (`/api/players/[id]/sync`); the client calls it until everything is imported.
-- Sessions use `@supabase/ssr` cookies, and `middleware.js` protects `/dashboard`.
-- The schema, Row Level Security policies and stats functions live in `supabase/migrations`.
-- State lives in small Zustand stores (`store/`); data access is in `hooks/`.
+- Sessions use `@supabase/ssr` cookies; `middleware.js` protects `/dashboard`.
+- The schema, Row Level Security, plan limits and stats functions live in `supabase/migrations`. Plan limits are database triggers, so they cannot be bypassed from the browser.
+- Public surfaces are narrow on purpose: an availability link can only answer for one player and sees only titles and times; webhook URLs are only ever called if they are real Discord webhooks.
+- State lives in small Zustand stores (`store/`); data access is in `hooks/`; pure logic (stats, availability, reports, plans) is in `lib/` and covered by tests.
 
 ## Running locally
 
-1. Create a Supabase project and run the files in `supabase/migrations` in order (`0001`, `0002`, `0003`) in the SQL editor, or with `supabase db push`.
+1. Create a Supabase project and run the files in `supabase/migrations` in order (`0001` to `0007`) in the SQL editor, or with `supabase db push`.
 2. Copy `.env.example` to `.env.local` and fill it in:
 
    | Variable | Where it comes from |
@@ -38,14 +46,17 @@ Next.js 14 (App Router) · React 18 · Tailwind CSS · MUI · Zustand · Supabas
    | `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase, Project Settings > API |
    | `SUPABASE_SERVICE_ROLE_KEY` | Same page. **Server only, never expose it.** |
    | `RIOT_API_KEY` | [developer.riotgames.com](https://developer.riotgames.com) (development keys expire every 24 hours) |
+   | `RIOT_ENABLED`, `RIOT_ALLOWED_EMAILS` | Riot features are off unless enabled: allow-list your own email with a development key, set `RIOT_ENABLED=true` once a production key is approved ([docs/RIOT_REGISTRATION.md](docs/RIOT_REGISTRATION.md)) |
    | `DEMO_EMAIL`, `DEMO_PASSWORD` | Any credentials for the demo user |
-   | `CRON_SECRET` | Any long random string |
-   | `RIOT_ENABLED`, `RIOT_ALLOWED_EMAILS` | Riot features are off for everyone unless enabled: `RIOT_ALLOWED_EMAILS` lists accounts allowed to use them with a development key, and `RIOT_ENABLED=true` turns them on for all once a production key is approved (see [docs/RIOT_REGISTRATION.md](docs/RIOT_REGISTRATION.md)) |
+   | `CRON_SECRET` | Any long random string (protects the daily demo reset and the weekly report) |
+   | `BILLING_ENABLED`, `STRIPE_*` | Optional. Leave `BILLING_ENABLED=false` until launch ([docs/LAUNCH_CHECKLIST.md](docs/LAUNCH_CHECKLIST.md)) |
+   | `RESEND_API_KEY`, `RESEND_FROM` | Optional. Enables the weekly report email |
 
 3. Install, test and run:
 
    ```bash
    npm install
+   npm test
    npm run dev
    ```
 
@@ -53,7 +64,7 @@ Next.js 14 (App Router) · React 18 · Tailwind CSS · MUI · Zustand · Supabas
 
 ## Deployment
 
-Deploy to Vercel with the same environment variables. `vercel.json` schedules a daily cron that resets the demo account (`/api/cron/reset-demo`). In Supabase, add the site URL under Authentication > URL Configuration.
+Deploy to Vercel with the same environment variables. `vercel.json` schedules a daily cron that resets the demo account and a weekly one that sends the reports. In Supabase, add the site URL under Authentication > URL Configuration.
 
 ## Riot Games
 
