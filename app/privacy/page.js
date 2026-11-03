@@ -51,6 +51,14 @@ export default function Privacy() {
         </p>
       </section>
       <section>
+        <h2>Availability links</h2>
+        <p>
+          A coach can create a personal link for a player. Anyone with the link can answer availability for that one
+          player and sees only the title, time and opponent of upcoming events. The link needs no account, stores no
+          personal data beyond the answers, and can be revoked by the coach at any time.
+        </p>
+      </section>
+      <section>
         <h2>How long we keep it</h2>
         <p>
           Until you delete it. Deleting a player removes their match history; deleting your account removes everything

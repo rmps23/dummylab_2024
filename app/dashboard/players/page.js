@@ -14,6 +14,7 @@ import { btnPrimary } from "@/components/ui/buttons";
 import AddPlayer from "@/components/players/AddPlayer";
 import EditPlayer from "@/components/players/EditPlayer";
 import RemovePlayer from "@/components/players/RemovePlayer";
+import InviteLink from "@/components/players/InviteLink";
 import { PlayerCard } from "@/components/players/PlayerCard";
 
 const Players = () => {
@@ -23,6 +24,7 @@ const Players = () => {
   const [createModal, setCreateModal] = useState(false);
   const [editing, setEditing] = useState(null);
   const [removing, setRemoving] = useState(null);
+  const [inviting, setInviting] = useState(null);
   const [ranks, setRanks] = useState({});
   const [forms, setForms] = useState({});
 
@@ -74,6 +76,12 @@ const Players = () => {
         content={editing && <EditPlayer key={editing.id} player={editing} setEditPlayerModal={(v) => !v && setEditing(null)} />}
       />
       <Modal
+        title="Availability link"
+        show={!!inviting}
+        onClose={() => setInviting(null)}
+        content={inviting && <InviteLink key={inviting.id} player={inviting} />}
+      />
+      <Modal
         title="Delete player"
         show={!!removing}
         onClose={() => setRemoving(null)}
@@ -93,6 +101,7 @@ const Players = () => {
               form={forms[player.id] || []}
               onEdit={setEditing}
               onRemove={setRemoving}
+              onInvite={setInviting}
             />
           ))}
         </div>

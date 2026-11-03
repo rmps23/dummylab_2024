@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { FaPen, FaTrash } from "react-icons/fa6";
+import { FaLink, FaPen, FaTrash } from "react-icons/fa6";
 import Avatar from "@/components/ui/Avatar";
 import RoleBadge from "@/components/ui/RoleBadge";
 import RankBadge from "@/components/ui/RankBadge";
@@ -10,7 +10,7 @@ const link =
   "inline-flex min-h-11 flex-1 items-center justify-center rounded-lg border border-white/10 bg-white/[0.04] px-3 text-sm font-semibold text-zinc-100 transition hover:bg-white/10";
 
 // `rank` is the solo queue snapshot (or undefined) and `form` the last results, newest first.
-export const PlayerCard = ({ player, teamName, rank, form = [], onEdit, onRemove }) => (
+export const PlayerCard = ({ player, teamName, rank, form = [], onEdit, onRemove, onInvite }) => (
   <article className="animate-rise flex flex-col gap-4 rounded-xl border border-white/[0.07] bg-panel/80 p-4 shadow-card transition hover:border-brand/30">
     <div className="flex items-start gap-3">
       <Avatar name={player.name} size={46} />
@@ -24,6 +24,9 @@ export const PlayerCard = ({ player, teamName, rank, form = [], onEdit, onRemove
         </p>
       </div>
       <div className="flex shrink-0">
+        <button aria-label={`Availability link for ${player.name}`} title="Availability link" onClick={() => onInvite(player)} className={iconBtn}>
+          <FaLink />
+        </button>
         <button aria-label={`Edit ${player.name}`} onClick={() => onEdit(player)} className={iconBtn}>
           <FaPen />
         </button>

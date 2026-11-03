@@ -104,3 +104,27 @@ export async function fetchRank(player_id) {
   if (error) throw new Error(error.message);
   return data;
 }
+
+// Personal availability links ------------------------------------------------
+export async function fetchInvite(player_id) {
+  const { data, error } = await supabase
+    .from("player_invite")
+    .select("id, token, created_at, last_used_at")
+    .eq("player_id", player_id)
+    .is("revoked_at", null)
+    .maybeSingle();
+  if (error) throw new Error(error.message);
+  return data;
+}
+
+export async function createInvite(player_id) {
+  const response = await fetch(`/api/players/${player_id}/invite`, { method: "POST" });
+  const body = await response.json().catch(() => ({}));
+  if (!response.ok) throw new Error(body.error || "Could not create the link");
+  return body.invite;
+}
+
+export async function revokeInvite(player_id) {
+  const response = await fetch(`/api/players/${player_id}/invite`, { method: "DELETE" });
+  if (!response.ok) throw new Error((await response.json().catch(() => ({}))).error || "Could not revoke the link");
+}
