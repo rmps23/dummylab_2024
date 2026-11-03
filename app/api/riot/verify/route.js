@@ -1,8 +1,8 @@
-import { json, requireUser } from "@/lib/auth";
+import { json, requireRiotUser } from "@/lib/auth";
 import { getAccountByRiotId, RiotError } from "@/lib/riot";
 
 export async function GET(request) {
-  const { error } = await requireUser();
+  const { error } = await requireRiotUser("verify", { limit: 10, windowMs: 60_000 });
   if (error) return error;
 
   const params = request.nextUrl.searchParams;

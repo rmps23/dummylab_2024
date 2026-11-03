@@ -1,17 +1,17 @@
-import { isDemoUser, json, requireUser } from "@/lib/auth";
+import { json, requireRiotUser } from "@/lib/auth";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { getMatch, getMatchIds, getTimeline, RiotError, toRows } from "@/lib/riot";
+import { getMatch, getMatchIds, getTimeline, isMatchIdFor, RiotError, toRows } from "@/lib/riot";
 
 export const maxDuration = 60;
 
 const BATCH = 6;
 const FIRST_SYNC_DAYS = 90;
 
-// Syncs one batch of new matches. The client calls it until `remaining` is 0.
+// Syncs one batch of new matches. The first call lists the match ids; it returns the ids still
+// pending, and the client sends them back so the list is requested from Riot only once.
 export async function POST(request, { params }) {
-  const { supabase, user, error } = await requireUser();
+  const { supabase, error } = await requireRiotUser("sync", { limit: 20, windowMs: 60_000 });
   if (error) return error;
-  if (isDemoUser(user)) return json({ error: "Sync is disabled in the demo account" }, 403);
 
   // RLS guarantees the player belongs to the caller.
   const { data: player } = await supabase
@@ -20,14 +20,20 @@ export async function POST(request, { params }) {
     .eq("id", params.id)
     .maybeSingle();
   if (!player) return json({ error: "Player not found" }, 404);
+  if (!player.riot_puuid) return json({ error: "This player has no Riot ID linked" }, 400);
 
-  const since = player.last_synced_at
-    ? new Date(player.last_synced_at)
-    : new Date(Date.now() - FIRST_SYNC_DAYS * 86400000);
-  const startTime = Math.floor(since.getTime() / 1000);
+  const body = await request.json().catch(() => ({}));
 
   try {
-    const ids = (await getMatchIds(player.riot_puuid, player.region, { startTime })) || [];
+    let ids;
+    if (Array.isArray(body.ids)) {
+      ids = [...new Set(body.ids)].filter((id) => isMatchIdFor(player.region, id)).slice(0, 100);
+    } else {
+      const since = player.last_synced_at
+        ? new Date(player.last_synced_at)
+        : new Date(Date.now() - FIRST_SYNC_DAYS * 86400000);
+      ids = (await getMatchIds(player.riot_puuid, player.region, { startTime: Math.floor(since.getTime() / 1000) })) || [];
+    }
 
     const { data: existing } = await supabase
       .from("player_match")
@@ -57,12 +63,12 @@ export async function POST(request, { params }) {
       saved++;
     }
 
-    const remaining = Math.max(pending.length - batch.length, 0);
-    if (remaining === 0) {
+    const rest = pending.slice(BATCH);
+    if (rest.length === 0) {
       await admin.from("player").update({ last_synced_at: new Date().toISOString() }).eq("id", player.id);
     }
 
-    return json({ saved, remaining, total: ids.length });
+    return json({ saved, remaining: rest.length, total: ids.length, pending: rest });
   } catch (e) {
     const status = e instanceof RiotError ? e.status : 500;
     return json({ error: e.message }, status);

@@ -7,6 +7,7 @@ import Footer from "@/components/Footer";
 import { userStore } from "@/store/userStore";
 import { teamStore } from "@/store/teamStore";
 import { playerStore } from "@/store/playerStore";
+import { featureStore } from "@/store/featureStore";
 import { fetchTeams } from "@/hooks/teams";
 import { fetchPlayers } from "@/hooks/players";
 
@@ -14,12 +15,14 @@ export default function DashboardShell({ children }) {
   const getUser = userStore((s) => s.getUser);
   const setTeams = teamStore((s) => s.setTeams);
   const setPlayers = playerStore((s) => s.setPlayers);
+  const loadFeatures = featureStore((s) => s.load);
 
   useEffect(() => {
     getUser();
+    loadFeatures();
     fetchTeams().then(setTeams).catch((e) => toast.error(`Could not load teams: ${e.message}`));
     fetchPlayers().then(setPlayers).catch((e) => toast.error(`Could not load players: ${e.message}`));
-  }, [getUser, setTeams, setPlayers]);
+  }, [getUser, loadFeatures, setTeams, setPlayers]);
 
   return (
     <div className="flex">

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/supabase";
 import { userStore } from "@/store/userStore";
+import { featureStore } from "@/store/featureStore";
 import { FaRightFromBracket } from "react-icons/fa6";
 
 const Logout = ({ className = "h-9 px-3" }) => {
@@ -15,6 +16,7 @@ const Logout = ({ className = "h-9 px-3" }) => {
     setLoading(true);
     await supabase.auth.signOut();
     clearUser();
+    featureStore.getState().reset();
     router.push("/");
     router.refresh();
   };
