@@ -9,7 +9,7 @@ export default function ProgressBar({ value, label = "Progress" }) {
       aria-valuenow={pct}
       className="h-2 w-full overflow-hidden rounded-full bg-zinc-700"
     >
-      <div className="h-full bg-cyan-500 transition-all" style={{ width: `${pct}%` }} />
+      <div className="h-full bg-gradient-to-r from-cyan-400 to-violet-400 transition-all" style={{ width: `${pct}%` }} />
     </div>
   );
 }

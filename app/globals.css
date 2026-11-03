@@ -3,9 +3,34 @@
 @tailwind utilities;
 
 @layer base {
+  body {
+    background:
+      radial-gradient(900px 420px at 88% -8%, rgba(34, 211, 238, 0.12), transparent 60%),
+      radial-gradient(700px 420px at -5% 0%, rgba(139, 92, 246, 0.12), transparent 55%),
+      #09090b;
+    background-attachment: fixed;
+    font-variant-numeric: tabular-nums;
+  }
+
   :focus-visible {
     outline: 2px solid #22d3ee;
     outline-offset: 2px;
+  }
+
+  ::selection {
+    background: rgba(34, 211, 238, 0.35);
+  }
+
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: #3f3f46 transparent;
+  }
+}
+
+@layer components {
+  /* Small uppercase labels used across cards and tables. */
+  .eyebrow {
+    @apply text-[11px] font-bold uppercase tracking-[0.14em] text-zinc-400;
   }
 }
 

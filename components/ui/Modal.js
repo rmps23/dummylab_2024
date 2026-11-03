@@ -63,17 +63,18 @@ const Modal = ({ show, onClose, content, title = "Dialog" }) => {
         aria-modal="true"
         aria-label={title}
         tabIndex={-1}
-        className="relative mx-auto my-6 sm:my-12 w-[calc(100%-2rem)] max-w-2xl rounded-lg border border-zinc-800 bg-zinc-950 p-6 outline-none"
+        className="relative mx-auto my-6 w-[calc(100%-2rem)] max-w-xl animate-rise rounded-2xl border border-white/10 bg-raised p-6 shadow-2xl outline-none sm:my-12"
       >
+        <span aria-hidden="true" className="absolute inset-x-6 top-0 h-px bg-gradient-to-r from-brand/70 via-accent/50 to-transparent" />
         <button
           type="button"
           aria-label="Close dialog"
           onClick={() => onCloseRef.current()}
-          className="absolute right-3 top-3 flex h-10 w-10 items-center justify-center rounded-md text-zinc-300 hover:bg-zinc-800"
+          className="absolute right-3 top-3 flex h-10 w-10 items-center justify-center rounded-lg text-zinc-300 hover:bg-white/10"
         >
           <GrClose />
         </button>
-        <div className="px-1 pb-2 pt-8">{content}</div>
+        <div className="px-1 pb-2 pt-6">{content}</div>
       </div>
     </div>
   );

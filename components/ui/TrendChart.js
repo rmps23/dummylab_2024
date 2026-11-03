@@ -1,4 +1,5 @@
-// Win/loss bars with a KDA line, oldest game on the left. `games` is ordered newest first.
+// KDA per game as a line with an area fill, with win/loss ticks underneath. Oldest game on the left.
+// `games` is ordered newest first.
 export default function TrendChart({ games, kdaOf }) {
   const rows = [...games].reverse();
   if (rows.length < 2) return <p className="text-sm text-zinc-400">Not enough games for a trend.</p>;
@@ -8,18 +9,30 @@ export default function TrendChart({ games, kdaOf }) {
   const values = rows.map(kdaOf);
   const max = Math.max(...values, 1);
   const step = W / rows.length;
-  const points = values.map((v, i) => `${i * step + step / 2},${H - (v / max) * (H - 12) - 4}`).join(" ");
+  const x = (i) => i * step + step / 2;
+  const y = (v) => H - (v / max) * (H - 16) - 6;
+  const line = values.map((v, i) => `${x(i)},${y(v)}`).join(" ");
+  const area = `${x(0)},${H} ${line} ${x(values.length - 1)},${H}`;
+  const avg = values.reduce((a, b) => a + b, 0) / values.length;
 
   return (
-    <svg viewBox={`0 0 ${W} ${H + 8}`} className="w-full h-36" role="img" aria-label="KDA trend over the last games">
+    <svg viewBox={`0 0 ${W} ${H + 12}`} className="h-40 w-full" role="img" aria-label="KDA trend over the last games">
+      <defs>
+        <linearGradient id="trend-fill" x1="0" x2="0" y1="0" y2="1">
+          <stop offset="0%" stopColor="#22d3ee" stopOpacity="0.35" />
+          <stop offset="100%" stopColor="#22d3ee" stopOpacity="0" />
+        </linearGradient>
+      </defs>
+      <line x1="0" x2={W} y1={y(avg)} y2={y(avg)} stroke="rgba(255,255,255,0.18)" strokeDasharray="4 4" />
+      <polygon points={area} fill="url(#trend-fill)" />
+      <polyline points={line} fill="none" stroke="#22d3ee" strokeWidth="2.5" strokeLinejoin="round" />
       {rows.map((g, i) => (
-        <rect key={g.id} x={i * step + 2} y={H} width={step - 4} height={6} rx={2} fill={g.win ? "#10b981" : "#ef4444"} />
-      ))}
-      <polyline points={points} fill="none" stroke="#22d3ee" strokeWidth="2" />
-      {values.map((v, i) => (
-        <circle key={i} cx={i * step + step / 2} cy={H - (v / max) * (H - 12) - 4} r="3" fill="#22d3ee">
-          <title>{`KDA ${v.toFixed(2)}`}</title>
-        </circle>
+        <g key={g.id}>
+          <circle cx={x(i)} cy={y(values[i])} r="3.5" fill="#09090b" stroke="#22d3ee" strokeWidth="2">
+            <title>{`KDA ${values[i].toFixed(2)} · ${g.win ? "Win" : "Loss"}`}</title>
+          </circle>
+          <rect x={x(i) - step / 2 + 2} y={H + 2} width={step - 4} height={6} rx={2} fill={g.win ? "#34d399" : "#fb7185"} />
+        </g>
       ))}
     </svg>
   );
