@@ -1,103 +1,64 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { verifyPlayer } from "@/hooks/players/verifyPlayer";
+import { useState } from "react";
+import { toast } from "react-toastify";
+import { FaCircleCheck, FaCircleExclamation } from "react-icons/fa6";
+import { verifyPlayer, insertPlayer } from "@/hooks/players";
 import { regionStore } from "@/store/regionStore";
 import { teamStore } from "@/store/teamStore";
-import { FaCircleCheck, FaCircleExclamation } from "react-icons/fa6";
-import { insertPlayer } from "@/hooks/players/insertPlayer";
 import { playerStore } from "@/store/playerStore";
+import { ROLES } from "@/lib/constants";
 
-const AddPlayer = ({ user_id, setCreatePlayerModal }) => {
+const field = "p-2 rounded-md flex w-full bg-zinc-900 cursor-pointer";
+
+const AddPlayer = ({ setCreatePlayerModal }) => {
   const { regions } = regionStore();
-  const { teams } = teamStore();
-  const { addPlayer } = playerStore();
+  const { teams, activeTeamId } = teamStore();
+  const addPlayer = playerStore((s) => s.addPlayer);
 
-  const [verPlayerLOAD, setVerPlayerLOAD] = useState(false);
-  const [playerRegion, setPlayerRegion] = useState(regions[0].code);
+  const [name, setName] = useState("");
+  const [team, setTeam] = useState(activeTeamId ?? teams[0]?.id ?? "");
+  const [role, setRole] = useState(1);
+  const [region, setRegion] = useState(regions[0].code);
   const [gameName, setGameName] = useState("");
   const [tagLine, setTagLine] = useState("");
-  const [verified, setVerified] = useState(false);
-  const [verError, setVerError] = useState(false);
-  const [name, setName] = useState("");
-  const [team, setTeam] = useState(0);
-  const [role, setRole] = useState(0);
+  const [verified, setVerified] = useState(null); // { puuid, riotId }
+  const [verError, setVerError] = useState(null);
+  const [loading, setLoading] = useState(false);
 
-  const [riot_id, set_riot_id] = useState("");
-  const [riot_puuid, set_riot_puuid] = useState("");
-  const [riot_acc_id, set_riot_acc_id] = useState("");
-
-  async function resetVerify() {
-    setGameName("");
-    setTagLine("");
-    setVerified("");
-    set_riot_id("");
-    set_riot_puuid("");
-    set_riot_acc_id("");
-    setVerified(false);
-    setVerError(false);
+  async function verPlayer() {
+    setLoading(true);
+    setVerError(null);
+    try {
+      setVerified(await verifyPlayer(gameName.trim(), tagLine.trim().replace(/^#/, ""), region));
+    } catch (error) {
+      setVerError(error.message);
+    } finally {
+      setLoading(false);
+    }
   }
 
   async function handleInsertPlayer() {
-    if (!name) {
-      console.log("Error: Player name is missing");
-      return false;
-    }
-
-    const regionCode = regions.find((r) => r.code === playerRegion);
-    if (!regionCode) {
-      console.log("Error: Invalid player region");
-      return false;
-    }
-
+    if (!name.trim() || !team || !verified) return;
+    setLoading(true);
     try {
-      const response = await insertPlayer(
-        team,
-        name,
-        regionCode,
-        role,
-        riot_id,
-        riot_puuid,
-        riot_acc_id,
-        user_id
-      );
-      addPlayer(response);
-
-    } catch (error) {
-      console.error("Error during player insertion:", error);
-      setVerError(true);
-    } finally {
+      const player = await insertPlayer({
+        team_id: Number(team),
+        name: name.trim(),
+        region,
+        role_id: Number(role),
+        riot_id: verified.riotId,
+        riot_puuid: verified.puuid,
+      });
+      addPlayer(player);
       setCreatePlayerModal(false);
-    }
-  }
-
-  async function verPlayer() {
-    setVerPlayerLOAD(true);
-
-    const regionCode = regions.find((r) => r.code === playerRegion);
-
-    try {
-      const response = await verifyPlayer(gameName, tagLine, regionCode);
-
-      if (!response.error) {
-        set_riot_id(gameName + "#" + tagLine);
-        set_riot_puuid(response.puuid);
-        set_riot_acc_id(response.acc_id);
-
-        setVerified(true);
-        setVerPlayerLOAD(false);
-        setVerError(false);
-      } else {
-        setVerError(true);
-      }
     } catch (error) {
-      setVerPlayerLOAD(false);
-      setVerified(false);
-      setVerError(true);
-    } finally {
-      setVerPlayerLOAD(false);
+      toast.error(`Could not add the player: ${error.message}`);
+      setLoading(false);
     }
   }
+
+  if (teams.length === 0) return <p>Create a team first, then add players to it.</p>;
 
   return (
     <div className="flex flex-col gap-4">
@@ -108,117 +69,86 @@ const AddPlayer = ({ user_id, setCreatePlayerModal }) => {
           className="bg-zinc-900 p-2 rounded-md outline-none"
           placeholder="Insert player name..."
           value={name}
+          maxLength={40}
           onChange={(e) => setName(e.target.value)}
         />
       </div>
       <div>
         <p>Team</p>
-        <select
-          className="p-2 rounded-md flex w-full bg-zinc-900 cursor-pointer"
-          value={team}
-          onChange={(e) => setTeam(e.target.value)}
-        >
-          <option value={0}>Select a team</option>
-          {(teams || []).map((team, index) => (
-            <option key={index} value={team.id}>
-              {team.name}
+        <select className={field} value={team} onChange={(e) => setTeam(e.target.value)}>
+          {teams.map((t) => (
+            <option key={t.id} value={t.id}>
+              {t.name}
             </option>
           ))}
         </select>
       </div>
       <div>
         <p>Role</p>
-        <select
-          className="p-2 rounded-md flex w-full bg-zinc-900 cursor-pointer"
-          value={role}
-          onChange={(e) => setRole(e.target.value)}
-        >
-          <option value={1}>Top</option>
-          <option value={2}>Jungler</option>
-          <option value={3}>Mid</option>
-          <option value={4}>Bottom</option>
-          <option value={5}>Support</option>
+        <select className={field} value={role} onChange={(e) => setRole(e.target.value)}>
+          {ROLES.map((r) => (
+            <option key={r.id} value={r.id}>
+              {r.name}
+            </option>
+          ))}
         </select>
       </div>
       <div className="bg-zinc-900 p-4 rounded-md">
-        {verPlayerLOAD ? (
-          "Loading..."
+        {verified ? (
+          <div className="flex justify-between items-center gap-2">
+            <div className="flex items-center gap-2">
+              {verified.riotId} is verified <FaCircleCheck className="text-cyan-400 text-xl" />
+            </div>
+            <button className="bg-zinc-200 text-zinc-900 py-1 px-2 rounded-md text-sm" onClick={() => setVerified(null)}>
+              X
+            </button>
+          </div>
         ) : (
-          <>
-            {verified == false ? (
-              <>
-                <div className="flex flex-col gap-4">
-                  <p>Riot ID</p>
-                  {verError === true && (
-                    <div className="bg-red-600/20 border-2 border-red-600 rounded-md p-3 flex items-center justify-between">
-                      <span>Couldnt find the player</span>
-                      <span>
-                        <FaCircleExclamation className="text-red-500 text-xl" />
-                      </span>
-                    </div>
-                  )}
-                  <div className="flex space-x-2">
-                    <input
-                      type="text"
-                      className="bg-zinc-950 p-2 rounded-md outline-none flex-1 min-w-0"
-                      placeholder="Game Name"
-                      value={gameName}
-                      onChange={(e) => setGameName(e.target.value)}
-                    />
-                    <span className="flex items-center justify-center">#</span>
-                    <input
-                      type="text"
-                      className="bg-zinc-950 p-2 rounded-md outline-none flex-1 min-w-0 max-w-24"
-                      placeholder="Tag Line"
-                      value={tagLine}
-                      onChange={(e) => setTagLine(e.target.value)}
-                    />
-                  </div>
-                  <div className="flex flex-col">
-                    <select
-                      className="p-2 rounded-md bg-zinc-950 cursor-pointer"
-                      value={playerRegion}
-                      onChange={(e) => setPlayerRegion(e.target.value)}
-                    >
-                      {regions.map((region, index) => (
-                        <option key={index} value={region.code}>
-                          {region.name} ({region.zone})
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                  <button
-                    className="bg-zinc-200 text-zinc-950 p-1 rounded-md"
-                    onClick={verPlayer}
-                  >
-                    Verify Player
-                  </button>
-                </div>
-              </>
-            ) : (
-              <div className="flex justify-between items-center gap-2">
-                <div className="flex items-center gap-2">
-                  {riot_id} is verified{" "}
-                  <FaCircleCheck className="text-cyan-400 text-xl" />
-                </div>
-                <div>
-                  <button
-                    className="bg-zinc-200 text-zinc-900 py-1 px-2 rounded-md text-sm"
-                    onClick={resetVerify}
-                  >
-                    X
-                  </button>
-                </div>
+          <div className="flex flex-col gap-4">
+            <p>Riot ID</p>
+            {verError && (
+              <div className="bg-red-600/20 border-2 border-red-600 rounded-md p-3 flex items-center justify-between">
+                <span>{verError}</span>
+                <FaCircleExclamation className="text-red-500 text-xl" />
               </div>
             )}
-          </>
+            <div className="flex space-x-2">
+              <input
+                type="text"
+                className="bg-zinc-950 p-2 rounded-md outline-none flex-1 min-w-0"
+                placeholder="Game Name"
+                value={gameName}
+                onChange={(e) => setGameName(e.target.value)}
+              />
+              <span className="flex items-center justify-center">#</span>
+              <input
+                type="text"
+                className="bg-zinc-950 p-2 rounded-md outline-none flex-1 min-w-0 max-w-24"
+                placeholder="Tag"
+                value={tagLine}
+                onChange={(e) => setTagLine(e.target.value)}
+              />
+            </div>
+            <select className="p-2 rounded-md bg-zinc-950 cursor-pointer" value={region} onChange={(e) => setRegion(e.target.value)}>
+              {regions.map((r) => (
+                <option key={r.code} value={r.code}>
+                  {r.name}
+                </option>
+              ))}
+            </select>
+            <button
+              className="bg-zinc-200 text-zinc-950 p-1 rounded-md disabled:opacity-50"
+              disabled={loading || !gameName.trim() || !tagLine.trim()}
+              onClick={verPlayer}
+            >
+              {loading ? "Verifying..." : "Verify Player"}
+            </button>
+          </div>
         )}
       </div>
-
       <button
-        className={` text-zinc-950 p-1 rounded-md ${verified ? "bg-zinc-200" : "bg-zinc-200/20"
-          }`}
-        disabled={!verified}
+        className="text-zinc-950 p-1 rounded-md bg-zinc-200 disabled:opacity-20"
+        disabled={!verified || !name.trim() || loading}
         onClick={handleInsertPlayer}
       >
         Confirm

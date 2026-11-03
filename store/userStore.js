@@ -1,14 +1,15 @@
-import { fetchUser } from "@/hooks/users/fetchUser";
+import { fetchUser } from "@/hooks/users";
 import { create } from "zustand";
 
-export const userStore = create((set) => ({
+export const userStore = create((set, get) => ({
   user: null,
-  updateUser: (new_user) => set({ user: new_user, userFetched: true }),
+  userFetched: false,
   getUser: async () => {
-    const { user, userFetched } = userStore.getState();
-    if (!user && !userFetched) {
-      const response = await fetchUser();
-      set({ user: response.user, userFetched: true });
-    }
+    if (get().userFetched) return;
+    const { user } = await fetchUser();
+    set({ user, userFetched: true });
   },
+  clearUser: () => set({ user: null, userFetched: false }),
 }));
+
+export const isDemo = (user) => user?.app_metadata?.is_demo === true;
