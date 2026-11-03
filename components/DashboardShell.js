@@ -33,7 +33,7 @@ export default function DashboardShell({ children }) {
         Skip to content
       </a>
       <Sidebar />
-      <div className="flex h-dvh w-full flex-col overflow-y-auto bg-zinc-900">
+      <div className="flex h-dvh w-full flex-col overflow-y-auto">
         <MobileChrome />
         <main id="main" className="flex-1">
           {children}

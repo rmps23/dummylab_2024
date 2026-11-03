@@ -67,7 +67,7 @@ export default function EventDetail({ event, players, timeZone, onChange, onEdit
             {players.map((p) => {
               const current = statusFor(event, p.id);
               return (
-                <div key={p.id} className="flex items-center justify-between gap-2 rounded-md bg-zinc-900 p-2">
+                <div key={p.id} className="flex items-center justify-between gap-2 rounded-lg bg-white/[0.04] p-2">
                   <div className="min-w-0 truncate text-sm">
                     {p.name} <span className="text-zinc-400">· {p.role?.name}</span>
                     {current === "pending" && <span className="ml-2 text-xs text-amber-400">pending</span>}
@@ -80,7 +80,7 @@ export default function EventDetail({ event, players, timeZone, onChange, onEdit
                         aria-label={`${p.name}: ${AVAILABILITY[s].label}`}
                         aria-pressed={current === s}
                         onClick={() => handleStatus(p.id, s)}
-                        className={`h-11 w-11 rounded-md text-sm ${current === s ? AVAILABILITY[s].color : "bg-zinc-800 text-zinc-400 hover:bg-zinc-700"}`}
+                        className={`h-11 w-11 rounded-lg text-sm ${current === s ? AVAILABILITY[s].color : "bg-white/[0.06] text-zinc-400 hover:bg-white/10"}`}
                       >
                         {AVAILABILITY[s].short}
                       </button>
@@ -96,19 +96,19 @@ export default function EventDetail({ event, players, timeZone, onChange, onEdit
       <div className="flex items-center justify-between gap-3">
         {confirmDelete ? (
           <div className="flex items-center gap-2">
-            <button onClick={handleDelete} className="min-h-11 rounded-md bg-red-700 px-3 text-sm">
+            <button onClick={handleDelete} className="min-h-11 rounded-lg bg-rose-600/90 px-4 text-sm font-semibold">
               Yes, delete
             </button>
-            <button onClick={() => setConfirmDelete(false)} className="min-h-11 rounded-md bg-zinc-800 px-3 text-sm">
+            <button onClick={() => setConfirmDelete(false)} className="min-h-11 rounded-lg bg-white/10 px-4 text-sm">
               Keep
             </button>
           </div>
         ) : (
-          <button onClick={() => setConfirmDelete(true)} className="min-h-11 rounded-md bg-red-700 px-3 text-sm">
+          <button onClick={() => setConfirmDelete(true)} className="min-h-11 rounded-lg bg-rose-600/90 px-4 text-sm font-semibold">
             Delete
           </button>
         )}
-        <button onClick={() => onEdit(event)} className="min-h-11 rounded-md bg-zinc-100 px-3 text-sm text-zinc-950">
+        <button onClick={() => onEdit(event)} className="min-h-11 rounded-lg bg-gradient-to-r from-cyan-400 to-sky-500 px-4 text-sm font-semibold text-zinc-950">
           Edit
         </button>
       </div>

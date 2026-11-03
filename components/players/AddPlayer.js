@@ -10,7 +10,7 @@ import { playerStore } from "@/store/playerStore";
 import { featureStore } from "@/store/featureStore";
 import { ROLES } from "@/lib/constants";
 
-const field = "flex min-h-11 w-full cursor-pointer rounded-md bg-zinc-900 p-2";
+const field = "flex min-h-11 w-full cursor-pointer rounded-lg border border-white/10 bg-black/30 px-3 text-sm outline-none focus:border-brand/60";
 
 const AddPlayer = ({ setCreatePlayerModal }) => {
   const { regions } = regionStore();
@@ -75,7 +75,7 @@ const AddPlayer = ({ setCreatePlayerModal }) => {
         <input
           id="player-name"
           type="text"
-          className="min-h-11 rounded-md bg-zinc-900 p-2 outline-none"
+          className="min-h-11 w-full rounded-lg border border-white/10 bg-black/30 px-3 text-sm outline-none focus:border-brand/60"
           placeholder="Insert player name..."
           value={name}
           maxLength={40}
@@ -103,7 +103,7 @@ const AddPlayer = ({ setCreatePlayerModal }) => {
         </select>
       </div>
 
-      <div className="rounded-md bg-zinc-900 p-4">
+      <div className="rounded-xl border border-white/10 bg-black/20 p-4">
         {!riotEnabled ? (
           <p className="text-sm text-zinc-300">
             Riot lookups are not enabled for your account yet, so this player is added without a Riot ID. You can still
@@ -112,7 +112,7 @@ const AddPlayer = ({ setCreatePlayerModal }) => {
         ) : skipRiot ? (
           <div className="flex items-center justify-between gap-2 text-sm">
             <span className="text-zinc-300">Adding without a Riot ID (no match history).</span>
-            <button className="min-h-11 rounded-md bg-zinc-200 px-3 text-zinc-900" onClick={() => setSkipRiot(false)}>
+            <button className="min-h-11 rounded-lg bg-white/10 px-3 text-zinc-100" onClick={() => setSkipRiot(false)}>
               Use Riot ID
             </button>
           </div>
@@ -123,7 +123,7 @@ const AddPlayer = ({ setCreatePlayerModal }) => {
             </div>
             <button
               aria-label="Remove verified Riot ID"
-              className="min-h-11 min-w-11 rounded-md bg-zinc-200 px-2 text-zinc-900"
+              className="min-h-11 min-w-11 rounded-lg bg-white/10 px-2 text-zinc-100"
               onClick={() => setVerified(null)}
             >
               X
@@ -142,7 +142,7 @@ const AddPlayer = ({ setCreatePlayerModal }) => {
               <input
                 type="text"
                 aria-label="Game name"
-                className="min-h-11 min-w-0 flex-1 rounded-md bg-zinc-950 p-2 outline-none"
+                className="min-h-11 min-w-0 flex-1 rounded-lg border border-white/10 bg-black/30 px-3 text-sm outline-none focus:border-brand/60"
                 placeholder="Game Name"
                 value={gameName}
                 onChange={(e) => setGameName(e.target.value)}
@@ -151,13 +151,13 @@ const AddPlayer = ({ setCreatePlayerModal }) => {
               <input
                 type="text"
                 aria-label="Tag line"
-                className="min-h-11 min-w-0 max-w-24 flex-1 rounded-md bg-zinc-950 p-2 outline-none"
+                className="min-h-11 min-w-0 max-w-24 flex-1 rounded-lg border border-white/10 bg-black/30 px-3 text-sm outline-none focus:border-brand/60"
                 placeholder="Tag"
                 value={tagLine}
                 onChange={(e) => setTagLine(e.target.value)}
               />
             </div>
-            <select aria-label="Region" className="min-h-11 cursor-pointer rounded-md bg-zinc-950 p-2" value={region} onChange={(e) => setRegion(e.target.value)}>
+            <select aria-label="Region" className="min-h-11 cursor-pointer rounded-lg border border-white/10 bg-black/30 px-3 text-sm" value={region} onChange={(e) => setRegion(e.target.value)}>
               {regions.map((r) => (
                 <option key={r.code} value={r.code}>
                   {r.name}
@@ -165,7 +165,7 @@ const AddPlayer = ({ setCreatePlayerModal }) => {
               ))}
             </select>
             <button
-              className="min-h-11 rounded-md bg-zinc-200 p-1 text-zinc-950 disabled:opacity-50"
+              className="min-h-11 rounded-lg bg-white/10 px-4 text-sm font-semibold text-zinc-100 hover:bg-white/15 disabled:opacity-40"
               disabled={loading || !gameName.trim() || !tagLine.trim()}
               onClick={verPlayer}
             >
@@ -179,7 +179,7 @@ const AddPlayer = ({ setCreatePlayerModal }) => {
       </div>
 
       <button
-        className="min-h-11 rounded-md bg-zinc-200 p-1 text-zinc-950 disabled:opacity-20"
+        className="inline-flex min-h-11 items-center justify-center rounded-lg bg-gradient-to-r from-cyan-400 to-sky-500 px-4 text-sm font-semibold text-zinc-950 shadow-[0_6px_18px_-8px_rgba(34,211,238,0.8)] hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-40"
         disabled={!canSave}
         onClick={handleInsertPlayer}
       >

@@ -1,28 +1,44 @@
 import Link from "next/link";
 import { FaPen, FaTrash } from "react-icons/fa6";
+import Avatar from "@/components/ui/Avatar";
+import RoleBadge from "@/components/ui/RoleBadge";
+import RankBadge from "@/components/ui/RankBadge";
+import FormPips from "@/components/ui/FormPips";
+import { iconBtn } from "@/components/ui/buttons";
 
-const iconButton = "flex h-11 w-11 items-center justify-center rounded-md bg-zinc-900 text-sm hover:bg-zinc-700";
-const link = "inline-flex min-h-11 items-center rounded-md px-2 text-sm text-zinc-200 hover:bg-zinc-700";
+const link =
+  "inline-flex min-h-11 flex-1 items-center justify-center rounded-lg border border-white/10 bg-white/[0.04] px-3 text-sm font-semibold text-zinc-100 transition hover:bg-white/10";
 
-export const PlayerCard = ({ player, teamName, onEdit, onRemove }) => (
-  <div className="flex flex-col gap-2 rounded-md border border-zinc-800 bg-zinc-800 p-4">
-    <div className="flex justify-between gap-2">
-      <div className="min-w-0">
-        <div className="truncate text-cyan-400">{player.name}</div>
-        <div className="truncate text-xs text-zinc-400">
-          {player.role?.name} · {teamName} · {player.riot_id || "No Riot ID"}
+// `rank` is the solo queue snapshot (or undefined) and `form` the last results, newest first.
+export const PlayerCard = ({ player, teamName, rank, form = [], onEdit, onRemove }) => (
+  <article className="animate-rise flex flex-col gap-4 rounded-xl border border-white/[0.07] bg-panel/80 p-4 shadow-card transition hover:border-brand/30">
+    <div className="flex items-start gap-3">
+      <Avatar name={player.name} size={46} />
+      <div className="min-w-0 flex-1">
+        <div className="flex items-center gap-2">
+          <h2 className="truncate text-lg font-bold leading-tight">{player.name}</h2>
+          <RoleBadge role={player.role?.name} />
         </div>
+        <p className="truncate text-xs text-zinc-400">
+          {player.riot_id || "No Riot ID"} · {teamName}
+        </p>
       </div>
-      <div className="flex shrink-0 gap-2">
-        <button aria-label={`Edit ${player.name}`} onClick={() => onEdit(player)} className={iconButton}>
+      <div className="flex shrink-0">
+        <button aria-label={`Edit ${player.name}`} onClick={() => onEdit(player)} className={iconBtn}>
           <FaPen />
         </button>
-        <button aria-label={`Delete ${player.name}`} onClick={() => onRemove(player)} className={iconButton}>
+        <button aria-label={`Delete ${player.name}`} onClick={() => onRemove(player)} className={iconBtn}>
           <FaTrash />
         </button>
       </div>
     </div>
-    <div className="flex gap-1">
+
+    <div className="flex items-center justify-between gap-3 rounded-lg bg-black/20 px-3 py-2">
+      {rank ? <RankBadge tier={rank.tier} rank={rank.rank} lp={rank.lp} /> : <span className="text-sm text-zinc-400">Unranked</span>}
+      <FormPips results={form} size="sm" />
+    </div>
+
+    <div className="flex gap-2">
       <Link className={link} href={`/dashboard/players/match_history/${player.id}`}>
         Match history
       </Link>
@@ -30,5 +46,5 @@ export const PlayerCard = ({ player, teamName, onEdit, onRemove }) => (
         Stats
       </Link>
     </div>
-  </div>
+  </article>
 );

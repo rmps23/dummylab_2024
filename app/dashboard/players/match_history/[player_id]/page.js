@@ -4,7 +4,14 @@ import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { toast } from "react-toastify";
+import { FaArrowRotateRight, FaUsers } from "react-icons/fa6";
 import ProgressBar from "@/components/ui/ProgressBar";
+import PageHeader from "@/components/ui/PageHeader";
+import RankBadge from "@/components/ui/RankBadge";
+import RoleBadge from "@/components/ui/RoleBadge";
+import FormPips from "@/components/ui/FormPips";
+import Skeleton from "@/components/ui/Skeleton";
+import { btnPrimary } from "@/components/ui/buttons";
 import { fetchPlayer, fetchMatches, fetchRank, syncPlayer, refreshRank } from "@/hooks/players";
 import { isDemo, userStore } from "@/store/userStore";
 import { featureStore } from "@/store/featureStore";
@@ -52,7 +59,7 @@ const MatchHistory = () => {
     }
   }
 
-  if (!matches) return <p className="p-6 text-zinc-400">Loading...</p>;
+  if (!matches) return <Skeleton className="m-6 h-64" />;
 
   const demo = isDemo(user);
   // Why importing is unavailable, if it is.
@@ -64,78 +71,84 @@ const MatchHistory = () => {
         ? "Importing from Riot is not enabled for this account yet. It will be available once DummyLab's Riot production key is approved."
         : null;
 
+  const wins = matches.filter((g) => g.win).length;
+  const solo = rank.find((r) => r.queue === "RANKED_SOLO_5x5");
+
   return (
-    <div className="p-4 sm:p-6 flex flex-col gap-4 max-w-4xl">
-      <Link href="/dashboard/players" className="text-sm text-zinc-400 hover:text-zinc-200">
-        ← Players
-      </Link>
-      <div className="flex flex-wrap items-center gap-4 justify-between">
-        <div>
-          <h1 className="text-xl text-cyan-400">{player?.name ?? "Player"}</h1>
-          <p className="text-sm text-zinc-400">
-            {player?.riot_id || "No Riot ID linked"} · {player?.region}
-          </p>
-        </div>
-        <button
-          onClick={handleUpdate}
-          disabled={progress !== null || !!blocked || !featuresLoaded}
-          className="min-h-11 rounded-md bg-cyan-500 px-3 text-zinc-950 disabled:opacity-40"
-        >
-          Update from Riot
+    <>
+      <PageHeader
+        icon={FaUsers}
+        title={player?.name ?? "Player"}
+        subtitle={`${player?.riot_id || "No Riot ID linked"} · ${player?.region ?? ""}`}
+      >
+        <Link href="/dashboard/players" className="inline-flex min-h-11 items-center px-2 text-sm text-zinc-400 hover:text-zinc-100">
+          ← Players
+        </Link>
+        <button onClick={handleUpdate} disabled={progress !== null || !!blocked || !featuresLoaded} className={btnPrimary}>
+          <FaArrowRotateRight aria-hidden="true" className={progress !== null ? "animate-spin" : ""} /> Update from Riot
         </button>
+      </PageHeader>
+
+      <div className="flex max-w-5xl flex-col gap-4 p-4 sm:p-6">
+        {blocked && <p className="rounded-lg border border-amber-500/30 bg-amber-500/10 p-3 text-sm text-amber-300">{blocked}</p>}
+        {progress !== null && <ProgressBar value={progress} label="Importing matches" />}
+
+        <div className="flex flex-wrap items-center gap-4 rounded-xl border border-white/[0.07] bg-panel/80 p-4 shadow-card">
+          {player?.role?.name && <RoleBadge role={player.role.name} />}
+          {solo ? <RankBadge tier={solo.tier} rank={solo.rank} lp={solo.lp} /> : <span className="text-sm text-zinc-400">Unranked</span>}
+          {rank.filter((r) => r.queue !== "RANKED_SOLO_5x5").map((r) => (
+            <span key={r.queue} className="text-sm text-zinc-300">
+              Flex: {r.tier} {r.rank} · {r.lp} LP
+            </span>
+          ))}
+          <div className="ml-auto flex items-center gap-4">
+            <span className="text-sm text-zinc-400">
+              {wins}W {matches.length - wins}L
+            </span>
+            <FormPips results={matches.slice(0, 10).map((g) => g.win)} />
+          </div>
+        </div>
+
+        {matches.length === 0 ? (
+          <p className="rounded-xl border border-dashed border-white/10 p-8 text-center text-zinc-400">
+            No matches yet. Use &quot;Update from Riot&quot; to import the latest games.
+          </p>
+        ) : (
+          <ul className="flex flex-col gap-2">
+            {matches.map((g) => (
+              <li
+                key={g.id}
+                className={`flex items-center gap-3 rounded-xl border border-white/[0.07] border-l-[3px] bg-panel/80 p-3 shadow-card ${g.win ? "border-l-win" : "border-l-loss"}`}
+              >
+                <ChampionIcon name={g.champion} size={44} />
+                <div className="w-24">
+                  <div className={`text-sm font-bold uppercase ${g.win ? "text-win" : "text-loss"}`}>{g.win ? "Victory" : "Defeat"}</div>
+                  <div className="text-xs text-zinc-400">{QUEUES[g.match.queue_id] ?? `Queue ${g.match.queue_id}`}</div>
+                </div>
+                <div className="w-28">
+                  <div className="font-semibold">
+                    {g.kills}
+                    <span className="text-zinc-500"> / </span>
+                    <span className="text-loss">{g.deaths}</span>
+                    <span className="text-zinc-500"> / </span>
+                    {g.assists}
+                  </div>
+                  <div className="text-xs text-zinc-400">{fmt(kda(g.kills, g.deaths, g.assists))} KDA</div>
+                </div>
+                <div className="hidden w-24 sm:block">
+                  <div className="font-semibold">{g.cs} CS</div>
+                  <div className="text-xs text-zinc-400">{fmt(g.cs / (g.match.duration / 60), 1)}/min</div>
+                </div>
+                <div className="ml-auto text-right text-xs text-zinc-400">
+                  <div>{new Date(g.match.ended_at).toLocaleDateString("en-GB")}</div>
+                  <div>{Math.round(g.match.duration / 60)} min</div>
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
-
-      {blocked && <p className="text-sm text-amber-400">{blocked}</p>}
-
-      {progress !== null && <ProgressBar value={progress} label="Importing matches" />}
-
-      {rank.length > 0 && (
-        <div className="flex flex-wrap gap-3">
-          {rank.map((r) => (
-            <div key={r.queue} className="bg-zinc-800 rounded-md px-3 py-2 text-sm">
-              <div className="text-zinc-400">{r.queue === "RANKED_SOLO_5x5" ? "Solo/Duo" : "Flex"}</div>
-              <div>
-                {r.tier} {r.rank} · {r.lp} LP
-              </div>
-              <div className="text-zinc-400">
-                {r.wins}W {r.losses}L
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
-
-      {matches.length === 0 ? (
-        <p className="text-zinc-400">No matches yet. Use &quot;Update from Riot&quot; to import the latest games.</p>
-      ) : (
-        <div className="flex flex-col gap-2">
-          {matches.map((g) => (
-            <div
-              key={g.id}
-              className={`bg-zinc-800 border-l-4 ${g.win ? "border-emerald-500" : "border-red-500"} p-2 flex items-center gap-3 text-sm`}
-            >
-              <ChampionIcon name={g.champion} size={40} />
-              <div className="w-24">
-                <div className={g.win ? "text-emerald-400" : "text-red-400"}>{g.win ? "Victory" : "Defeat"}</div>
-                <div className="text-zinc-400 text-xs">{QUEUES[g.match.queue_id] ?? `Queue ${g.match.queue_id}`}</div>
-              </div>
-              <div className="w-28">
-                {g.kills}/{g.deaths}/{g.assists}
-                <div className="text-zinc-400 text-xs">{fmt(kda(g.kills, g.deaths, g.assists))} KDA</div>
-              </div>
-              <div className="w-24 hidden sm:block">
-                {g.cs} CS
-                <div className="text-zinc-400 text-xs">{fmt(g.cs / (g.match.duration / 60), 1)}/min</div>
-              </div>
-              <div className="ml-auto text-right text-zinc-400 text-xs">
-                <div>{new Date(g.match.ended_at).toLocaleDateString("en-GB")}</div>
-                <div>{Math.round(g.match.duration / 60)} min</div>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
+    </>
   );
 };
 

@@ -1,12 +1,15 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { FaGear, FaUser, FaBan } from "react-icons/fa6";
+import { FaBan, FaGear, FaUser } from "react-icons/fa6";
 import { toast } from "react-toastify";
 import { isDemo, userStore } from "@/store/userStore";
 import { updateUserEmail } from "@/hooks/users";
 import Modal from "@/components/ui/Modal";
 import PageHeader from "@/components/ui/PageHeader";
+import Card from "@/components/ui/Card";
+import Skeleton from "@/components/ui/Skeleton";
+import { btnDanger, btnPrimary, inputClass } from "@/components/ui/buttons";
 import RemoveAcc from "@/components/auth/RemoveAcc";
 
 const Settings = () => {
@@ -18,7 +21,7 @@ const Settings = () => {
     if (user?.email) setNewEmail(user.email);
   }, [user]);
 
-  if (!user) return <p className="p-6 text-zinc-400">Loading...</p>;
+  if (!user) return <Skeleton className="m-6 h-48 max-w-2xl" />;
 
   const demo = isDemo(user);
   const changed = newEmail.trim() !== user.email;
@@ -35,60 +38,60 @@ const Settings = () => {
 
   return (
     <>
-      <PageHeader icon={FaGear} title="Settings" />
+      <PageHeader icon={FaGear} title="Settings" subtitle={user.email} />
 
-      {demo && (
-        <p className="max-w-[800px] mx-auto mt-6 px-4 text-sm text-amber-400">
-          This is the demo account: email and account deletion are disabled.
-        </p>
-      )}
+      <div className="mx-auto flex max-w-2xl flex-col gap-4 p-4 sm:p-6">
+        {demo && (
+          <p className="rounded-lg border border-amber-500/30 bg-amber-500/10 p-3 text-sm text-amber-300">
+            This is the demo account: email and account deletion are disabled.
+          </p>
+        )}
 
-      <div className="flex flex-col max-w-[800px] mx-auto justify-center w-full my-10 px-4">
-        <h2 className="pb-2 font-bold flex items-center gap-2">
-          <FaUser /> My Account
-        </h2>
-        <div className="flex flex-col gap-2 p-4 border border-zinc-800 rounded-md">
-          {displayName && (
-            <>
-              <p>Username</p>
-              <input type="text" value={displayName} className="bg-zinc-800 p-2 rounded-md outline-none" disabled />
-            </>
-          )}
-          <p>Email</p>
-          <div className="relative">
-            <input
-              type="email"
-              onChange={(e) => setNewEmail(e.target.value)}
-              value={newEmail}
-              disabled={demo}
-              className="bg-zinc-800 p-2 pr-24 rounded-md outline-none w-full disabled:opacity-50"
-            />
-            {changed && !demo && (
-              <button
-                onClick={handleEditEmail}
-                className="absolute right-1 top-1/2 -translate-y-1/2 bg-cyan-500 text-zinc-950 py-1 px-2 rounded-md"
-              >
-                Confirm
-              </button>
-            )}
+        <Card title="My account">
+          <div className="flex flex-col gap-4">
+            <div className="flex items-center gap-2 text-sm text-zinc-300">
+              <FaUser aria-hidden="true" className="text-brand" />
+              {displayName || "Signed in with email"}
+            </div>
+            <div className="flex flex-col gap-2">
+              <label htmlFor="settings-email" className="text-sm font-semibold">
+                Email
+              </label>
+              <div className="flex flex-col gap-2 sm:flex-row">
+                <input
+                  id="settings-email"
+                  type="email"
+                  onChange={(e) => setNewEmail(e.target.value)}
+                  value={newEmail}
+                  disabled={demo}
+                  className={`${inputClass} disabled:opacity-50`}
+                />
+                {changed && !demo && (
+                  <button onClick={handleEditEmail} className={btnPrimary}>
+                    Confirm
+                  </button>
+                )}
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
+        </Card>
 
-      <div className="flex flex-col max-w-[800px] mx-auto justify-center w-full px-4">
-        <h2 className="pb-2 font-bold flex items-center gap-2">
-          <FaBan /> Delete Account
-        </h2>
-        <div className="p-4 border border-zinc-800 rounded-md">
-          <button
-            onClick={() => setRemoveAccModal(true)}
-            disabled={demo}
-            className="text-sm bg-red-700 text-zinc-100 px-4 py-1 rounded-md disabled:opacity-30"
-          >
-            Delete
-          </button>
-          <Modal title="Delete account" show={removeAccModal} onClose={() => setRemoveAccModal(false)} content={<RemoveAcc setRemoveAccModal={setRemoveAccModal} />} />
-        </div>
+        <Card title="Danger zone" className="border-rose-500/25">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <p className="max-w-sm text-sm text-zinc-300">
+              Deleting your account removes your teams, players, schedule and stats. This cannot be undone.
+            </p>
+            <button onClick={() => setRemoveAccModal(true)} disabled={demo} className={btnDanger}>
+              <FaBan aria-hidden="true" /> Delete account
+            </button>
+          </div>
+          <Modal
+            title="Delete account"
+            show={removeAccModal}
+            onClose={() => setRemoveAccModal(false)}
+            content={<RemoveAcc setRemoveAccModal={setRemoveAccModal} />}
+          />
+        </Card>
       </div>
     </>
   );

@@ -18,7 +18,7 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en" className={`${chakra.variable} h-full`}>
-      <body className="bg-zinc-950 font-sans tracking-wide text-zinc-100">
+      <body className="font-sans tracking-wide text-zinc-100">
         {children}
         <ToastContainer theme="dark" position="bottom-right" />
       </body>

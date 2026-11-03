@@ -26,10 +26,10 @@ const RemoveTeam = ({ team_name, team_id, setRemoveTeamModal }) => {
         Delete <b>{team_name}</b>? Its players, events and stats are deleted too.
       </p>
       <div className="flex gap-4 justify-center">
-        <button className="bg-red-700 py-1 px-2 rounded-md" onClick={handleRemoveTeam}>
+        <button className="inline-flex min-h-11 items-center justify-center rounded-lg bg-rose-600/90 px-4 text-sm font-semibold text-white hover:bg-rose-500 disabled:opacity-30" onClick={handleRemoveTeam}>
           Delete
         </button>
-        <button className="bg-zinc-100 text-zinc-950 py-1 px-2 rounded-md" onClick={() => setRemoveTeamModal(false)}>
+        <button className="inline-flex min-h-11 items-center justify-center rounded-lg border border-white/10 bg-white/[0.05] px-4 text-sm font-semibold text-zinc-100 hover:bg-white/10" onClick={() => setRemoveTeamModal(false)}>
           Cancel
         </button>
       </div>

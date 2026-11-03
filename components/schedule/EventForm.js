@@ -6,7 +6,7 @@ import { toast } from "react-toastify";
 import { insertEvent, updateEvent } from "@/hooks/schedule";
 import { EVENT_TYPES } from "@/lib/constants";
 
-const input = "bg-zinc-900 p-2 rounded-md outline-none w-full";
+const input = "min-h-11 w-full rounded-lg border border-white/10 bg-black/30 px-3 py-2 text-sm outline-none focus:border-brand/60";
 const local = (d) => format(new Date(d), "yyyy-MM-dd'T'HH:mm");
 
 export default function EventForm({ teamId, event, defaultDate, onSaved, onClose }) {
@@ -55,7 +55,7 @@ export default function EventForm({ teamId, event, defaultDate, onSaved, onClose
             type="button"
             key={key}
             onClick={() => setType(key)}
-            className={`flex-1 py-1 rounded-md text-sm ${type === key ? `${t.color} text-white` : "bg-zinc-900 text-zinc-400"}`}
+            className={`min-h-11 flex-1 rounded-lg text-sm font-semibold ${type === key ? `${t.color} text-white` : "bg-white/[0.05] text-zinc-400 hover:bg-white/10"}`}
           >
             {t.label}
           </button>
@@ -80,15 +80,15 @@ export default function EventForm({ teamId, event, defaultDate, onSaved, onClose
       {!event && (
         <label className="text-sm text-zinc-300 flex items-center gap-2">
           Repeat weekly for
-          <input type="number" min={0} max={12} className="bg-zinc-900 p-1 rounded-md w-16" value={repeat} onChange={(e) => setRepeat(Math.min(12, Math.max(0, Number(e.target.value) || 0)))} />
+          <input type="number" min={0} max={12} className="min-h-11 w-20 rounded-lg border border-white/10 bg-black/30 px-2" value={repeat} onChange={(e) => setRepeat(Math.min(12, Math.max(0, Number(e.target.value) || 0)))} />
           more weeks
         </label>
       )}
       <div className="flex gap-3 justify-end">
-        <button type="button" onClick={onClose} className="bg-zinc-100 text-zinc-950 py-1 px-3 rounded-md">
+        <button type="button" onClick={onClose} className="inline-flex min-h-11 items-center rounded-lg border border-white/10 bg-white/[0.05] px-4 text-sm font-semibold hover:bg-white/10">
           Cancel
         </button>
-        <button type="submit" disabled={saving} className="bg-cyan-500 text-zinc-950 py-1 px-3 rounded-md disabled:opacity-50">
+        <button type="submit" disabled={saving} className="inline-flex min-h-11 items-center rounded-lg bg-gradient-to-r from-cyan-400 to-sky-500 px-4 text-sm font-semibold text-zinc-950 hover:brightness-110 disabled:opacity-50">
           Save
         </button>
       </div>

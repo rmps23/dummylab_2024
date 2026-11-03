@@ -16,11 +16,11 @@ export default function Agenda({ events, players, onSelect, onCreate }) {
 
   if (days.length === 0) {
     return (
-      <div className="rounded-lg border border-dashed border-zinc-700 p-8 text-center">
+      <div className="rounded-2xl border border-dashed border-white/10 bg-panel/40 p-8 text-center">
         <p className="text-zinc-300">Nothing scheduled in this period.</p>
         <button
           onClick={onCreate}
-          className="mt-3 inline-flex min-h-11 items-center rounded-md bg-cyan-500 px-4 text-sm font-semibold text-zinc-950 hover:bg-cyan-400"
+          className="mt-3 inline-flex min-h-11 items-center rounded-lg bg-gradient-to-r from-cyan-400 to-sky-500 px-4 text-sm font-semibold text-zinc-950 hover:brightness-110"
         >
           Schedule an event
         </button>
@@ -45,7 +45,7 @@ export default function Agenda({ events, players, onSelect, onCreate }) {
                 <li key={e.id}>
                   <button
                     onClick={() => onSelect(e.id)}
-                    className="flex min-h-14 w-full items-center gap-3 rounded-md border border-zinc-800 bg-zinc-950 p-3 text-left hover:bg-zinc-800"
+                    className="flex min-h-14 w-full items-center gap-3 rounded-xl border border-white/[0.07] bg-panel/80 p-3 text-left shadow-card transition hover:border-brand/30 hover:bg-white/[0.05]"
                   >
                     <span aria-hidden="true" className={`h-10 w-1 shrink-0 rounded-full ${type.dot}`} />
                     <span className="min-w-0 flex-1">

@@ -4,7 +4,7 @@ import { SITE } from "@/lib/site";
 
 export default function LegalPage({ title, children }) {
   return (
-    <div className="min-h-dvh bg-zinc-950">
+    <div className="min-h-dvh">
       <header className="border-b border-zinc-800 px-4 py-3">
         <Link href="/" className="inline-flex min-h-11 items-center text-lg">
           DUMMY<span className="text-cyan-400">LAB</span>

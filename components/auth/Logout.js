@@ -7,7 +7,7 @@ import { userStore } from "@/store/userStore";
 import { featureStore } from "@/store/featureStore";
 import { FaRightFromBracket } from "react-icons/fa6";
 
-const Logout = ({ className = "h-9 px-3" }) => {
+const Logout = ({ className = "h-10 w-10" }) => {
   const router = useRouter();
   const clearUser = userStore((s) => s.clearUser);
   const [loading, setLoading] = useState(false);
@@ -26,7 +26,7 @@ const Logout = ({ className = "h-9 px-3" }) => {
       onClick={signOut}
       disabled={loading}
       aria-label="Log out"
-      className={`flex shrink-0 items-center justify-center rounded-md text-zinc-400 hover:bg-zinc-900 disabled:opacity-50 ${className}`}
+      className={`flex shrink-0 items-center justify-center rounded-lg text-zinc-400 transition hover:bg-white/[0.07] hover:text-zinc-100 disabled:opacity-50 ${className}`}
     >
       <FaRightFromBracket />
     </button>

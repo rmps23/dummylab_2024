@@ -5,7 +5,7 @@ import {
   addMonths, addWeeks, eachDayOfInterval, endOfMonth, endOfWeek, format,
   isSameDay, isSameMonth, startOfMonth, startOfWeek,
 } from "date-fns";
-import { FaCalendar, FaChevronLeft, FaChevronRight } from "react-icons/fa6";
+import { FaCalendar, FaChevronLeft, FaChevronRight, FaPlus } from "react-icons/fa6";
 import { teamStore } from "@/store/teamStore";
 import { playerStore } from "@/store/playerStore";
 import { fetchEvents } from "@/hooks/schedule";
@@ -15,13 +15,13 @@ import Modal from "@/components/ui/Modal";
 import PageHeader from "@/components/ui/PageHeader";
 import EmptyState from "@/components/ui/EmptyState";
 import Skeleton from "@/components/ui/Skeleton";
+import { btnPrimary, btnSecondary, iconBtn } from "@/components/ui/buttons";
 import EventForm from "@/components/schedule/EventForm";
 import EventDetail from "@/components/schedule/EventDetail";
 import Agenda from "@/components/schedule/Agenda";
 
 const WEEK = { weekStartsOn: 1 };
 const VIEWS = ["month", "week", "agenda"];
-const iconButton = "flex h-11 w-11 items-center justify-center rounded-md bg-zinc-800 hover:bg-zinc-700";
 
 const Schedule = () => {
   const { teams, activeTeamId, loaded } = teamStore();
@@ -92,37 +92,35 @@ const Schedule = () => {
 
   return (
     <>
-      <PageHeader icon={FaCalendar} title="Schedule">
-        <button
-          onClick={() => openForm(new Date())}
-          disabled={!activeTeamId}
-          className="inline-flex min-h-11 items-center rounded-md bg-zinc-50 px-3 text-sm text-zinc-950 hover:bg-zinc-100 disabled:opacity-50"
-        >
-          New event
+      <PageHeader icon={FaCalendar} title="Schedule" subtitle={timeZone ? `Times shown in ${timeZone.replace("_", " ")}` : undefined}>
+        <button onClick={() => openForm(new Date())} disabled={!activeTeamId} className={btnPrimary}>
+          <FaPlus aria-hidden="true" /> New event
         </button>
       </PageHeader>
 
-      <div className="flex flex-col gap-4 p-4">
+      <div className="flex flex-col gap-4 p-4 sm:p-6">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <div className="flex items-center gap-2">
-            <button aria-label="Previous" onClick={() => step(-1)} className={iconButton}>
+          <div className="flex items-center gap-1">
+            <button aria-label="Previous" onClick={() => step(-1)} className={`${iconBtn} border border-white/10 bg-white/[0.04]`}>
               <FaChevronLeft />
             </button>
-            <button onClick={() => setCursor(new Date())} className="min-h-11 rounded-md bg-zinc-800 px-3 text-sm hover:bg-zinc-700">
+            <button onClick={() => setCursor(new Date())} className={`${btnSecondary} px-3`}>
               Today
             </button>
-            <button aria-label="Next" onClick={() => step(1)} className={iconButton}>
+            <button aria-label="Next" onClick={() => step(1)} className={`${iconBtn} border border-white/10 bg-white/[0.04]`}>
               <FaChevronRight />
             </button>
-            <h2 className="ml-2 font-bold">{title}</h2>
+            <h2 className="ml-3 text-lg font-bold">{title}</h2>
           </div>
-          <div role="group" aria-label="Calendar view" className="hidden gap-1 rounded-md bg-zinc-800 p-1 sm:flex">
+          <div role="group" aria-label="Calendar view" className="hidden gap-1 rounded-xl border border-white/10 bg-white/[0.04] p-1 sm:flex">
             {VIEWS.map((v) => (
               <button
                 key={v}
                 onClick={() => setView(v)}
                 aria-pressed={view === v}
-                className={`min-h-9 rounded-md px-3 text-sm capitalize ${view === v ? "bg-zinc-600" : "text-zinc-400 hover:text-zinc-200"}`}
+                className={`min-h-9 rounded-lg px-4 text-sm font-semibold capitalize transition ${
+                  view === v ? "bg-brand/20 text-brand shadow-glow" : "text-zinc-400 hover:text-zinc-100"
+                }`}
               >
                 {v}
               </button>
@@ -132,47 +130,46 @@ const Schedule = () => {
 
         <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-zinc-400">
           {Object.values(EVENT_TYPES).map((t) => (
-            <span key={t.label} className="flex items-center gap-1">
+            <span key={t.label} className="flex items-center gap-1.5">
               <span aria-hidden="true" className={`h-2 w-2 rounded-full ${t.dot}`} /> {t.label}
             </span>
           ))}
-          <span>
-            Availability: {Object.values(AVAILABILITY).map((a) => `${a.short} ${a.label}`).join(" · ")}
-          </span>
-          {timeZone && <span>Times shown in {timeZone.replace("_", " ")}</span>}
+          <span className="hidden sm:inline">|</span>
+          <span>Availability: {Object.values(AVAILABILITY).map((a) => `${a.short} ${a.label}`).join(" · ")}</span>
         </div>
 
         {error && (
-          <div role="alert" className="flex items-center justify-between gap-3 rounded-md border border-red-700 bg-red-950/40 p-3 text-sm">
+          <div role="alert" className="flex items-center justify-between gap-3 rounded-xl border border-rose-700 bg-rose-950/40 p-3 text-sm">
             <span>Could not load events: {error}</span>
-            <button onClick={load} className="min-h-9 rounded-md bg-zinc-100 px-3 text-zinc-950">
+            <button onClick={load} className={btnSecondary}>
               Retry
             </button>
           </div>
         )}
 
         {events === null ? (
-          <Skeleton className="h-80" />
+          <Skeleton className="h-96" />
         ) : (
           <>
             <div className={view === "agenda" ? "block" : "sm:hidden"}>
               <Agenda events={events} players={players} onSelect={setSelectedId} onCreate={() => openForm(new Date())} />
             </div>
 
-            <div className={`${gridClass} grid-cols-7 gap-px overflow-hidden rounded-md border border-zinc-800 bg-zinc-800`}>
+            <div className={`${gridClass} animate-rise grid-cols-7 gap-px overflow-hidden rounded-xl border border-white/[0.07] bg-white/[0.07] shadow-card`}>
               {range.days.slice(0, 7).map((d) => (
-                <div key={d.toISOString()} className="bg-zinc-900 py-1 text-center text-xs text-zinc-400">
+                <div key={d.toISOString()} className="eyebrow bg-raised py-2 text-center">
                   {format(d, "EEE")}
                 </div>
               ))}
               {range.days.map((day) => {
                 const dayEvents = events.filter((e) => isSameDay(new Date(e.starts_at), day));
                 const muted = view === "month" && !isSameMonth(day, cursor);
+                const today = isSameDay(day, new Date());
                 return (
                   <div
                     key={day.toISOString()}
                     onClick={() => openForm(day)}
-                    className={`cursor-pointer bg-zinc-950 p-1 hover:bg-zinc-900 ${view === "month" ? "min-h-20" : "min-h-48"} ${muted ? "opacity-50" : ""}`}
+                    className={`cursor-pointer bg-panel p-1.5 transition hover:bg-raised ${view === "month" ? "min-h-24" : "min-h-52"} ${muted ? "opacity-40" : ""} ${today ? "bg-brand/[0.06]" : ""}`}
                   >
                     <button
                       aria-label={`New event on ${format(day, "d MMMM")}`}
@@ -180,8 +177,8 @@ const Schedule = () => {
                         ev.stopPropagation();
                         openForm(day);
                       }}
-                      className={`mb-1 flex h-6 w-6 items-center justify-center rounded-full text-xs ${
-                        isSameDay(day, new Date()) ? "bg-cyan-500 text-zinc-950" : "text-zinc-400 hover:bg-zinc-800"
+                      className={`mb-1 flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold ${
+                        today ? "bg-brand text-zinc-950 shadow-glow" : "text-zinc-400 hover:bg-white/10"
                       }`}
                     >
                       {format(day, "d")}
@@ -194,11 +191,11 @@ const Schedule = () => {
                             ev.stopPropagation();
                             setSelectedId(e.id);
                           }}
-                          className={`${EVENT_TYPES[e.type].color} truncate rounded px-1 py-0.5 text-left text-xs text-white`}
+                          className={`truncate rounded border-l-2 px-1.5 py-0.5 text-left text-[11px] font-semibold transition ${EVENT_TYPES[e.type].chip}`}
                         >
                           {format(new Date(e.starts_at), "HH:mm")} {e.title}
                           {players.length > 0 && (
-                            <span className="opacity-90">
+                            <span className="opacity-80">
                               {" "}
                               · {availableCount(e, players)}/{players.length}
                             </span>
