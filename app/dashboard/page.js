@@ -13,7 +13,7 @@ import { fmt, kda, pct } from "@/lib/stats";
 import PageHeader from "@/components/ui/PageHeader";
 import KpiCard from "@/components/ui/KpiCard";
 import ChampionIcon from "@/components/ui/ChampionIcon";
-import { availableCount, statusFor } from "@/components/schedule/EventDetail";
+import { availableCount, pendingCount } from "@/lib/availability";
 
 const Card = ({ title, href, children }) => (
   <section className="bg-zinc-950 border border-zinc-800 rounded-md p-4 flex flex-col gap-3">
@@ -40,16 +40,21 @@ const Dashboard = () => {
   const [recent, setRecent] = useState([]);
   const [ranks, setRanks] = useState([]);
 
+  // Team-level data depends only on the team; player-level data only on the set of player ids.
   useEffect(() => {
     if (!activeTeamId) return;
-    const ids = players.map((p) => p.id);
     const from = new Date();
     const to = new Date(Date.now() + 14 * 86400000);
     fetchEvents(activeTeamId, from, to).then(setEvents).catch(() => setEvents([]));
     fetchPlayerStats({ team: activeTeamId, days: 30 }).then(setStats).catch(() => setStats([]));
+  }, [activeTeamId]);
+
+  const playerKey = players.map((p) => p.id).join(",");
+  useEffect(() => {
+    const ids = playerKey ? playerKey.split(",") : [];
     fetchRecentTeamMatches(ids).then(setRecent).catch(() => setRecent([]));
     fetchTeamRanks(ids).then(setRanks).catch(() => setRanks([]));
-  }, [activeTeamId, players]);
+  }, [playerKey]);
 
   if (loaded && teams.length === 0) {
     return (
@@ -68,7 +73,7 @@ const Dashboard = () => {
   const total = stats ? sumStats(stats) : null;
   const nameOf = (id) => players.find((p) => p.id === id)?.name ?? "?";
   const pendingReplies = events.reduce(
-    (n, e) => n + players.filter((p) => statusFor(e, p.id) === "pending").length,
+    (n, e) => n + pendingCount(e, players),
     0
   );
   const upcoming = events.slice(0, 5);
@@ -98,7 +103,7 @@ const Dashboard = () => {
                     <span className={`w-2 h-2 rounded-full ${EVENT_TYPES[e.type].dot}`} />
                     <div className="flex-1 min-w-0 truncate">
                       {e.title}
-                      <span className="text-zinc-500"> · {format(new Date(e.starts_at), "EEE d MMM HH:mm")}</span>
+                      <span className="text-zinc-400"> · {format(new Date(e.starts_at), "EEE d MMM HH:mm")}</span>
                     </div>
                     <span className={n >= 5 ? "text-emerald-400" : "text-amber-400"}>
                       {n}/{players.length}
