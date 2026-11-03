@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { toast } from "react-toastify";
-import LinearProgress from "@mui/material/LinearProgress";
+import ProgressBar from "@/components/ui/ProgressBar";
 import { fetchPlayer, fetchMatches, fetchRank, syncPlayer, refreshRank } from "@/hooks/players";
 import { isDemo, userStore } from "@/store/userStore";
 import { QUEUES } from "@/lib/constants";
@@ -73,7 +73,7 @@ const MatchHistory = () => {
         </button>
       </div>
 
-      {progress !== null && <LinearProgress variant="determinate" value={progress} />}
+      {progress !== null && <ProgressBar value={progress} label="Importing matches" />}
 
       {rank.length > 0 && (
         <div className="flex flex-wrap gap-3">
