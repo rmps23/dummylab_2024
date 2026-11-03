@@ -9,6 +9,9 @@ export default function Footer({ className = "" }) {
         properties are trademarks or registered trademarks of Riot Games, Inc.
       </p>
       <p className="mt-1 flex justify-center gap-2">
+        <Link href="/pricing" className="inline-flex min-h-11 items-center px-2 underline underline-offset-2 hover:text-zinc-200">
+          Pricing
+        </Link>
         <Link href="/terms" className="inline-flex min-h-11 items-center px-2 underline underline-offset-2 hover:text-zinc-200">
           Terms
         </Link>
