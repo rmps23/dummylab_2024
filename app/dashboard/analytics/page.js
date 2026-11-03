@@ -21,6 +21,7 @@ import EmptyState, { actionClass } from "@/components/ui/EmptyState";
 import Skeleton, { SkeletonKpis } from "@/components/ui/Skeleton";
 import { btnSecondary } from "@/components/ui/buttons";
 import { featureStore } from "@/store/featureStore";
+import { FaFileLines } from "react-icons/fa6";
 
 const select =
   "min-h-11 cursor-pointer rounded-lg border border-white/10 bg-white/[0.05] px-3 text-sm font-semibold outline-none hover:bg-white/10 focus:border-brand/60";
@@ -113,6 +114,9 @@ function AnalyticsContent() {
   return (
     <>
       <PageHeader icon={FaChartSimple} title="Analytics" subtitle={focus ? `Focus: ${focus.name}` : "Whole team"}>
+        <Link href="/dashboard/report" className={btnSecondary}>
+          <FaFileLines aria-hidden="true" /> Weekly report
+        </Link>
         <select aria-label="Player" className={select} value={player} onChange={(e) => setPlayer(e.target.value)}>
           <option value="">Whole team</option>
           {players.map((p) => (

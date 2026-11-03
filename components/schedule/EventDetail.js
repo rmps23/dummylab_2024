@@ -6,11 +6,14 @@ import { toast } from "react-toastify";
 import { deleteEvent, setAvailability } from "@/hooks/schedule";
 import { AVAILABILITY, EVENT_TYPES } from "@/lib/constants";
 import { availableCount, rosterShort, statusFor } from "@/lib/availability";
+import { teamStore } from "@/store/teamStore";
 
 export default function EventDetail({ event, players, timeZone, onChange, onEdit, onDeleted }) {
   const t = EVENT_TYPES[event.type];
   const available = availableCount(event, players);
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const [reminding, setReminding] = useState(false);
+  const team = teamStore((s) => s.teams.find((t) => t.id === event.team_id));
 
   async function handleStatus(player_id, status) {
     try {
@@ -19,6 +22,20 @@ export default function EventDetail({ event, players, timeZone, onChange, onEdit
       onChange({ ...event, participants: [...others, { player_id, status }] });
     } catch (error) {
       toast.error(`Could not save availability: ${error.message}`);
+    }
+  }
+
+  async function handleRemind() {
+    setReminding(true);
+    try {
+      const response = await fetch(`/api/events/${event.id}/remind`, { method: "POST" });
+      const body = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(body.error || "Could not send the reminder");
+      toast.success("Reminder sent to Discord");
+    } catch (error) {
+      toast.error(error.message);
+    } finally {
+      setReminding(false);
     }
   }
 
@@ -106,6 +123,11 @@ export default function EventDetail({ event, players, timeZone, onChange, onEdit
         ) : (
           <button onClick={() => setConfirmDelete(true)} className="min-h-11 rounded-lg bg-rose-600/90 px-4 text-sm font-semibold">
             Delete
+          </button>
+        )}
+        {team?.discord_webhook_url && (
+          <button onClick={handleRemind} disabled={reminding} className="min-h-11 rounded-lg border border-white/10 bg-white/[0.05] px-4 text-sm font-semibold hover:bg-white/10 disabled:opacity-50">
+            Remind on Discord
           </button>
         )}
         <button onClick={() => onEdit(event)} className="min-h-11 rounded-lg bg-gradient-to-r from-cyan-400 to-sky-500 px-4 text-sm font-semibold text-zinc-950">

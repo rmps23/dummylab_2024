@@ -28,6 +28,9 @@ export const teamStore = create((set) => ({
       activeTeamId: state.activeTeamId ?? team.id,
     })),
 
+  patchTeam: (team_id, changes) =>
+    set((state) => ({ teams: state.teams.map((t) => (t.id === team_id ? { ...t, ...changes } : t)) })),
+
   editTeamName: (team_id, name) =>
     set((state) => ({ teams: state.teams.map((t) => (t.id === team_id ? { ...t, name } : t)) })),
 

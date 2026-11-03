@@ -36,6 +36,7 @@ language sql stable security definer set search_path = public, auth as $$
   end
 $$;
 revoke execute on function user_plan(uuid) from public, anon, authenticated;
+grant execute on function user_plan(uuid) to service_role;
 
 create function my_plan() returns text
 language sql stable security definer set search_path = public as $$
