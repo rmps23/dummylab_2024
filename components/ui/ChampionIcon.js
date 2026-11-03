@@ -1,6 +1,6 @@
 "use client";
 
-import { useDdragonVersion } from "@/lib/stats";
+import { useDdragonVersion } from "@/lib/useDdragonVersion";
 
 export default function ChampionIcon({ name, size = 32 }) {
   const version = useDdragonVersion();
