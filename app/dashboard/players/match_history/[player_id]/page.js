@@ -67,11 +67,17 @@ const MatchHistory = () => {
           onClick={handleUpdate}
           disabled={progress !== null || isDemo(user)}
           title={isDemo(user) ? "Disabled in the demo account" : undefined}
-          className="bg-cyan-500 text-zinc-950 px-3 py-1 rounded-md disabled:opacity-40"
+          className="min-h-11 rounded-md bg-cyan-500 px-3 text-zinc-950 disabled:opacity-40"
         >
           Update from Riot
         </button>
       </div>
+
+      {isDemo(user) && (
+        <p className="text-sm text-amber-400">
+          Importing from Riot is disabled in the demo account. The games below are sample data.
+        </p>
+      )}
 
       {progress !== null && <ProgressBar value={progress} label="Importing matches" />}
 

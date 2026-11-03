@@ -1,9 +1,9 @@
 "use client";
 
-import { Suspense, useEffect, useMemo, useState } from "react";
+import { Suspense, useCallback, useEffect, useMemo, useState } from "react";
+import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { FaChartSimple } from "react-icons/fa6";
-import { toast } from "react-toastify";
 import { teamStore } from "@/store/teamStore";
 import { playerStore } from "@/store/playerStore";
 import { fetchChampionStats, fetchPlayerStats, sumStats } from "@/hooks/stats";
@@ -13,8 +13,10 @@ import PageHeader from "@/components/ui/PageHeader";
 import KpiCard from "@/components/ui/KpiCard";
 import ChampionIcon from "@/components/ui/ChampionIcon";
 import TrendChart from "@/components/ui/TrendChart";
+import EmptyState, { actionClass } from "@/components/ui/EmptyState";
+import Skeleton, { SkeletonKpis } from "@/components/ui/Skeleton";
 
-const select = "bg-zinc-900 text-sm p-2 rounded-md outline-none cursor-pointer";
+const select = "min-h-11 cursor-pointer rounded-md bg-zinc-900 p-2 text-sm outline-none";
 
 const rowMetrics = (r) => ({
   games: Number(r.games),
@@ -25,9 +27,18 @@ const rowMetrics = (r) => ({
   vision: Number(r.vision) / Number(r.minutes || 1),
 });
 
+const GUIDE = [
+  ["Win rate", "Wins divided by games played."],
+  ["KDA", "(kills + assists) / deaths. With no deaths, the deaths count as 1."],
+  ["CS / min", "Minions and jungle monsters killed per minute of game time."],
+  ["Damage / min", "Damage to champions per minute."],
+  ["Vision / min", "Vision score per minute (wards placed, cleared and vision control)."],
+  ["KP", "Kill participation: share of the team's kills a player took part in."],
+];
+
 function AnalyticsContent() {
   const params = useSearchParams();
-  const { activeTeamId } = teamStore();
+  const { activeTeamId, teams, loaded } = teamStore();
   const allPlayers = playerStore((s) => s.players);
   const players = useMemo(() => allPlayers.filter((p) => p.team_id === activeTeamId), [allPlayers, activeTeamId]);
 
@@ -37,15 +48,17 @@ function AnalyticsContent() {
   const [stats, setStats] = useState(null);
   const [champions, setChampions] = useState([]);
   const [trend, setTrend] = useState([]);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     if (player && allPlayers.length && !allPlayers.some((p) => p.id === player)) setPlayer("");
   }, [player, allPlayers]);
 
-  useEffect(() => {
+  const load = useCallback(() => {
     if (!activeTeamId) return;
     const filters = { team: activeTeamId, player: player || null, days: days || null, queue: queue ? Number(queue) : null };
     setStats(null);
+    setError(null);
     Promise.all([fetchPlayerStats(filters), fetchChampionStats(filters), player ? fetchMatches(player, 20) : []])
       .then(([s, c, t]) => {
         setStats(s);
@@ -53,10 +66,14 @@ function AnalyticsContent() {
         setTrend(t);
       })
       .catch((e) => {
-        toast.error(`Could not load stats: ${e.message}`);
+        setError(e.message);
         setStats([]);
       });
   }, [activeTeamId, player, days, queue]);
+
+  useEffect(() => {
+    load();
+  }, [load]);
 
   const total = stats ? sumStats(stats) : null;
   const totals = total && {
@@ -94,26 +111,63 @@ function AnalyticsContent() {
         </select>
       </PageHeader>
 
-      <div className="p-4 sm:p-6 flex flex-col gap-6">
-        {!stats ? (
-          <p className="text-zinc-400">Loading...</p>
+      <div className="flex flex-col gap-6 p-4 sm:p-6">
+        {loaded && teams.length === 0 ? (
+          <EmptyState icon={FaChartSimple} title="Create a team first">
+            Stats are calculated from the match history of your players.
+          </EmptyState>
+        ) : error ? (
+          <div role="alert" className="flex items-center justify-between gap-3 rounded-md border border-red-700 bg-red-950/40 p-4 text-sm">
+            <span>Could not load stats: {error}</span>
+            <button onClick={load} className="min-h-11 rounded-md bg-zinc-100 px-3 text-zinc-950">
+              Retry
+            </button>
+          </div>
+        ) : !stats ? (
+          <>
+            <SkeletonKpis count={6} />
+            <Skeleton className="h-48" />
+          </>
         ) : total.games === 0 ? (
-          <p className="text-zinc-400">No games for this selection. Import match history from the Players page.</p>
+          <EmptyState
+            icon={FaChartSimple}
+            title="No games for this selection"
+            action={
+              <Link href="/dashboard/players" className={actionClass}>
+                Go to Players
+              </Link>
+            }
+          >
+            Try a longer period or another queue. To get data, open a player and use &quot;Update from Riot&quot; to
+            import their match history.
+          </EmptyState>
         ) : (
           <>
             <div className="flex flex-wrap gap-3">
               <KpiCard label="Games" value={total.games} />
               <KpiCard label="Win rate" value={`${totals.wr}%`} hint={`${total.wins}W ${total.games - total.wins}L`} />
-              <KpiCard label="KDA" value={fmt(totals.kda)} hint={`${fmt(total.kills / total.games, 1)} / ${fmt(total.deaths / total.games, 1)} / ${fmt(total.assists / total.games, 1)}`} />
+              <KpiCard label="KDA" value={fmt(totals.kda)} hint={`${fmt(total.kills / total.games, 1)} / ${fmt(total.deaths / total.games, 1)} / ${fmt(total.assists / total.games, 1)} per game`} />
               <KpiCard label="CS / min" value={fmt(totals.cs, 1)} />
               <KpiCard label="Damage / min" value={Math.round(totals.dmg)} />
               <KpiCard label="Vision / min" value={fmt(totals.vision, 2)} />
             </div>
 
+            <details className="max-w-3xl rounded-md border border-zinc-800 bg-zinc-950 p-3 text-sm">
+              <summary className="min-h-9 cursor-pointer text-zinc-300">What do these numbers mean?</summary>
+              <dl className="mt-2 grid gap-1 sm:grid-cols-[9rem_1fr]">
+                {GUIDE.map(([term, text]) => (
+                  <div key={term} className="contents">
+                    <dt className="text-zinc-200">{term}</dt>
+                    <dd className="text-zinc-400">{text}</dd>
+                  </div>
+                ))}
+              </dl>
+            </details>
+
             {player && (
               <section>
-                <h2 className="font-bold mb-2">Last {trend.length} games</h2>
-                <div className="bg-zinc-800 rounded-md p-3 max-w-3xl">
+                <h2 className="mb-2 font-bold">Last {trend.length} games</h2>
+                <div className="max-w-3xl rounded-md bg-zinc-800 p-3">
                   <TrendChart games={trend} kdaOf={(g) => kda(g.kills, g.deaths, g.assists)} />
                   <p className="text-xs text-zinc-400">Line: KDA per game · bar: win (green) or loss (red)</p>
                 </div>
@@ -121,13 +175,14 @@ function AnalyticsContent() {
             )}
 
             <section>
-              <h2 className="font-bold mb-2">Players</h2>
+              <h2 className="mb-2 font-bold">Players</h2>
+              <p className="mb-1 text-xs text-zinc-400 sm:hidden">Swipe the table sideways to see every column.</p>
               <div className="overflow-x-auto">
-                <table className="w-full text-sm min-w-[600px]">
-                  <thead className="text-zinc-400 text-left">
+                <table className="w-full min-w-[600px] text-sm">
+                  <thead className="text-left text-zinc-400">
                     <tr>
                       {["Player", "Games", "Win rate", "KDA", "CS/min", "Dmg/min", "Vision/min", "KP"].map((h) => (
-                        <th key={h} className="py-1 pr-3 font-normal">{h}</th>
+                        <th key={h} scope="col" className="py-1 pr-3 font-normal">{h}</th>
                       ))}
                     </tr>
                   </thead>
@@ -138,8 +193,8 @@ function AnalyticsContent() {
                       return (
                         <tr key={r.player_id} className="border-t border-zinc-800">
                           <td className="py-2 pr-3">
-                            <button onClick={() => setPlayer(r.player_id)} className="text-cyan-400 hover:underline">{p?.name ?? "?"}</button>
-                            <span className="text-zinc-400 text-xs"> {p?.role?.name}</span>
+                            <button onClick={() => setPlayer(r.player_id)} className="min-h-9 text-cyan-400 hover:underline">{p?.name ?? "?"}</button>
+                            <span className="text-xs text-zinc-400"> {p?.role?.name}</span>
                           </td>
                           <td className="pr-3">{m.games}</td>
                           <td className="pr-3">{m.wr}%</td>
@@ -157,20 +212,20 @@ function AnalyticsContent() {
             </section>
 
             <section>
-              <h2 className="font-bold mb-2">Most played champions</h2>
+              <h2 className="mb-2 font-bold">Most played champions</h2>
               <div className="overflow-x-auto">
-                <table className="w-full text-sm max-w-2xl">
-                  <thead className="text-zinc-400 text-left">
+                <table className="w-full max-w-2xl text-sm">
+                  <thead className="text-left text-zinc-400">
                     <tr>
                       {["Champion", "Games", "Win rate", "KDA"].map((h) => (
-                        <th key={h} className="py-1 pr-3 font-normal">{h}</th>
+                        <th key={h} scope="col" className="py-1 pr-3 font-normal">{h}</th>
                       ))}
                     </tr>
                   </thead>
                   <tbody>
                     {champions.map((c) => (
                       <tr key={c.champion} className="border-t border-zinc-800">
-                        <td className="py-2 pr-3 flex items-center gap-2">
+                        <td className="flex items-center gap-2 py-2 pr-3">
                           <ChampionIcon name={c.champion} size={28} /> {c.champion}
                         </td>
                         <td className="pr-3">{Number(c.games)}</td>
@@ -191,7 +246,7 @@ function AnalyticsContent() {
 
 export default function Analytics() {
   return (
-    <Suspense fallback={<p className="p-6 text-zinc-400">Loading...</p>}>
+    <Suspense fallback={<Skeleton className="m-6 h-48" />}>
       <AnalyticsContent />
     </Suspense>
   );
