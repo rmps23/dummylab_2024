@@ -1,4 +1,5 @@
 import { supabase } from "@/supabase";
+import { toPlanError } from "@/lib/planErrors";
 
 export async function fetchTeams() {
   const { data, error } = await supabase.from("team").select().order("id", { ascending: true });
@@ -21,4 +22,16 @@ export async function editTeam(name, team_id) {
 export async function deleteTeam(team_id) {
   const { error } = await supabase.from("team").delete().eq("id", team_id);
   if (error) throw new Error(error.message);
+}
+
+// Notification settings (Pro). Clearing a value is always allowed; setting one needs the Pro plan.
+export async function saveNotifications(team_id, { discord_webhook_url, report_email, weekly_report }) {
+  const { data, error } = await supabase
+    .from("team")
+    .update({ discord_webhook_url: discord_webhook_url || null, report_email: report_email || null, weekly_report: !!weekly_report })
+    .eq("id", team_id)
+    .select()
+    .single();
+  if (error) throw toPlanError(error.message) ?? new Error(error.message.includes("check constraint") ? "Check the webhook URL and email format" : error.message);
+  return data;
 }

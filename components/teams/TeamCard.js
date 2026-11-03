@@ -3,40 +3,67 @@
 import { useState } from "react";
 import { FaPen, FaTrash } from "react-icons/fa6";
 import Modal from "../ui/Modal";
+import Avatar from "../ui/Avatar";
+import RoleBadge from "../ui/RoleBadge";
+import { iconBtn } from "../ui/buttons";
 import EditTeam from "./EditTeam";
 import RemoveTeam from "./RemoveTeam";
 
-const TeamCard = ({ team, playerCount = 0 }) => {
+const TeamCard = ({ team, players = [], active, onSelect }) => {
   const [removeTeamModal, setRemoveTeamModal] = useState(false);
   const [editTeamModal, setEditTeamModal] = useState(false);
 
   return (
-    <div className="border border-zinc-800 bg-zinc-800 p-4 rounded-md flex justify-between">
-      <div>
-        <div>{team.name}</div>
-        <div className="text-xs text-zinc-400">
-          {playerCount} player{playerCount === 1 ? "" : "s"}
+    <article
+      className={`animate-rise flex flex-col gap-4 rounded-xl border bg-panel/80 p-4 shadow-card transition ${
+        active ? "border-brand/50 shadow-glow" : "border-white/[0.07] hover:border-white/20"
+      }`}
+    >
+      <div className="flex items-center gap-3">
+        <Avatar name={team.name} size={48} />
+        <div className="min-w-0 flex-1">
+          <h2 className="truncate text-lg font-bold">{team.name}</h2>
+          <p className="text-xs text-zinc-400">
+            {players.length} player{players.length === 1 ? "" : "s"}
+          </p>
         </div>
-      </div>
-      <div className="flex items-center gap-2">
-        <button aria-label="Edit team" onClick={() => setEditTeamModal(true)} className="text-sm text-zinc-200 p-2 rounded-md bg-zinc-900">
+        <button aria-label={`Edit ${team.name}`} onClick={() => setEditTeamModal(true)} className={iconBtn}>
           <FaPen />
         </button>
-        <button aria-label="Delete team" onClick={() => setRemoveTeamModal(true)} className="text-sm text-zinc-200 p-2 rounded-md bg-zinc-900">
+        <button aria-label={`Delete ${team.name}`} onClick={() => setRemoveTeamModal(true)} className={iconBtn}>
           <FaTrash />
         </button>
       </div>
+
+      <div className="flex min-h-6 flex-wrap gap-1.5">
+        {players.length === 0 ? (
+          <span className="text-xs text-zinc-400">No players yet</span>
+        ) : (
+          players.map((p) => <RoleBadge key={p.id} role={p.role?.name} />)
+        )}
+      </div>
+
+      <button
+        onClick={onSelect}
+        disabled={active}
+        className="min-h-11 rounded-lg border border-white/10 bg-white/[0.04] text-sm font-semibold transition hover:bg-white/10 disabled:border-brand/40 disabled:bg-brand/10 disabled:text-brand"
+      >
+        {active ? "Active team" : "Switch to this team"}
+      </button>
+
       <Modal
+        title="Edit team"
         show={editTeamModal}
         onClose={() => setEditTeamModal(false)}
         content={<EditTeam team_name={team.name} team_id={team.id} setEditTeamModal={setEditTeamModal} />}
       />
       <Modal
+        title="Delete team"
         show={removeTeamModal}
         onClose={() => setRemoveTeamModal(false)}
         content={<RemoveTeam team_name={team.name} team_id={team.id} setRemoveTeamModal={setRemoveTeamModal} />}
       />
-    </div>
+    </article>
   );
 };
 

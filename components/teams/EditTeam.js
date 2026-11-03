@@ -22,16 +22,16 @@ const EditTeam = ({ team_name, team_id, setEditTeamModal }) => {
 
   return (
     <div className="flex flex-col gap-4">
-      <p>Team Name</p>
+      <h2 className="text-lg font-bold">Team name</h2>
       <input
         type="text"
-        className="bg-zinc-900 p-2 rounded-md outline-none"
+        className="min-h-11 w-full rounded-lg border border-white/10 bg-black/30 px-3 text-sm outline-none transition placeholder:text-zinc-500 focus:border-brand/60 focus:ring-2 focus:ring-brand/20"
         value={teamName}
         maxLength={60}
         onChange={(e) => setTeamName(e.target.value)}
         onKeyDown={(e) => e.key === "Enter" && handleEditTeam()}
       />
-      <button className="bg-zinc-200 text-zinc-950 p-1 rounded-md" onClick={handleEditTeam}>
+      <button className="inline-flex min-h-11 items-center justify-center rounded-lg bg-gradient-to-r from-cyan-400 to-sky-500 px-4 text-sm font-semibold text-zinc-950 shadow-[0_6px_18px_-8px_rgba(34,211,238,0.8)] transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-40 w-full" onClick={handleEditTeam}>
         Confirm
       </button>
     </div>

@@ -2,7 +2,9 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { FaPlay } from "react-icons/fa6";
 import { supabase } from "@/supabase";
+import { btnPrimary, btnSecondary, inputClass } from "@/components/ui/buttons";
 
 export default function Login() {
   const router = useRouter();
@@ -48,27 +50,30 @@ export default function Login() {
     }
   }
 
-  const input = "bg-zinc-900 border border-zinc-800 p-2 rounded-md outline-none focus:border-cyan-500";
-
   return (
-    <div className="flex flex-col gap-4 max-w-sm w-full mx-auto">
-      <button
-        onClick={handleDemo}
-        disabled={loading}
-        className="bg-cyan-500 text-zinc-950 font-semibold py-2 rounded-md hover:bg-cyan-400 disabled:opacity-50"
-      >
-        Try the demo account
-      </button>
-      <div className="flex items-center gap-3 text-zinc-500 text-sm">
-        <span className="h-px bg-zinc-800 flex-1" /> or <span className="h-px bg-zinc-800 flex-1" />
+    <div className="mx-auto flex w-full max-w-sm flex-col gap-4 rounded-2xl border border-white/10 bg-panel/80 p-6 shadow-card backdrop-blur">
+      <div>
+        <h2 className="text-xl font-bold">{mode === "signin" ? "Welcome back" : "Create your account"}</h2>
+        <p className="text-sm text-zinc-400">Plan the week, track the stats.</p>
       </div>
+
+      <button onClick={handleDemo} disabled={loading} className={`${btnPrimary} w-full`}>
+        <FaPlay aria-hidden="true" className="text-xs" /> Try the demo account
+      </button>
+      <p className="-mt-2 text-center text-xs text-zinc-400">One click, no sign-up. Sample team and players.</p>
+
+      <div className="flex items-center gap-3 text-sm text-zinc-400">
+        <span className="h-px flex-1 bg-white/10" /> or <span className="h-px flex-1 bg-white/10" />
+      </div>
+
       <form onSubmit={handleSubmit} className="flex flex-col gap-3">
         <input
           type="email"
           required
+          aria-label="Email address"
           placeholder="Email address"
           autoComplete="email"
-          className={input}
+          className={inputClass}
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
@@ -76,26 +81,22 @@ export default function Login() {
           type="password"
           required
           minLength={6}
+          aria-label="Password"
           placeholder="Password"
           autoComplete={mode === "signin" ? "current-password" : "new-password"}
-          className={input}
+          className={inputClass}
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
-        {message && (
-          <p className={`text-sm ${message.error ? "text-red-400" : "text-cyan-400"}`}>{message.text}</p>
-        )}
-        <button
-          type="submit"
-          disabled={loading}
-          className="bg-zinc-100 text-zinc-950 py-2 rounded-md hover:bg-white disabled:opacity-50"
-        >
+        {message && <p role="alert" className={`text-sm ${message.error ? "text-rose-400" : "text-brand"}`}>{message.text}</p>}
+        <button type="submit" disabled={loading} className={`${btnSecondary} w-full`}>
           {mode === "signin" ? "Sign in" : "Create account"}
         </button>
       </form>
+
       <button
         onClick={() => setMode(mode === "signin" ? "signup" : "signin")}
-        className="text-sm text-zinc-400 hover:text-zinc-200"
+        className="min-h-11 text-sm text-zinc-300 underline-offset-2 hover:text-white hover:underline"
       >
         {mode === "signin" ? "No account? Sign up" : "Already have an account? Sign in"}
       </button>

@@ -1,41 +1,80 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { GrClose } from "react-icons/gr";
 
-const Modal = ({ show, onClose, content }) => {
-  const [modalVisible, setModalVisible] = useState(show);
+const FOCUSABLE =
+  'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
-  const handleOverlayClick = (e) => {
-    if (e.target === e.currentTarget) {
-      onClose();
-    }
-  };
+// Accessible dialog: only mounted while open, closes with Esc or a click on the backdrop,
+// keeps focus inside, and gives focus back to the trigger when it closes.
+const Modal = ({ show, onClose, content, title = "Dialog" }) => {
+  const dialogRef = useRef(null);
+  const onCloseRef = useRef(onClose);
+  onCloseRef.current = onClose;
 
   useEffect(() => {
-    if (show) {
-      setModalVisible(true);
-    } else {
-      setTimeout(() => setModalVisible(false), 100);
+    if (!show) return;
+    const dialog = dialogRef.current;
+    const previous = document.activeElement;
+    const focusables = () => [...dialog.querySelectorAll(FOCUSABLE)].filter((el) => el.offsetParent !== null);
+
+    (dialog.querySelector("input, select, textarea") || focusables()[0] || dialog).focus();
+
+    function onKeyDown(e) {
+      if (e.key === "Escape") {
+        e.stopPropagation();
+        onCloseRef.current();
+      } else if (e.key === "Tab") {
+        const items = focusables();
+        if (items.length === 0) return e.preventDefault();
+        const first = items[0];
+        const last = items[items.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
     }
+
+    document.addEventListener("keydown", onKeyDown);
+    const overflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.removeEventListener("keydown", onKeyDown);
+      document.body.style.overflow = overflow;
+      previous?.focus?.();
+    };
   }, [show]);
+
+  if (!show) return null;
 
   return (
     <div
-      className={`fixed inset-0 flex items-start justify-center z-50 bg-opacity-80 backdrop-blur-sm transition-opacity ${modalVisible ? "opacity-100" : "opacity-0 pointer-events-none"
-        }`}
-      onClick={handleOverlayClick}
+      className="fixed inset-0 z-50 overflow-y-auto bg-black/70 backdrop-blur-sm"
+      onMouseDown={(e) => e.target === e.currentTarget && onCloseRef.current()}
     >
       <div
-        className={`bg-zinc-800/80 backdrop-blur-sm rounded-lg shadow-lg w-full h-screen pt-10 transition-transform overflow-y-scroll ${modalVisible ? "scale-100" : "scale-95"
-          }`}
+        ref={dialogRef}
+        role="dialog"
+        aria-modal="true"
+        aria-label={title}
+        tabIndex={-1}
+        className="relative mx-auto my-6 w-[calc(100%-2rem)] max-w-xl animate-rise rounded-2xl border border-white/10 bg-raised p-6 shadow-2xl outline-none sm:my-12"
       >
-        <div className="p-6 max-w-2xl mx-auto border bg-zinc-950 rounded-lg border-zinc-800">
-          <button className="w-full px-4 flex justify-end" onClick={onClose}>
-            <GrClose />
-          </button>
-          <div className="px-4 py-10">{content}</div>
-        </div>
+        <span aria-hidden="true" className="absolute inset-x-6 top-0 h-px bg-gradient-to-r from-brand/70 via-accent/50 to-transparent" />
+        <button
+          type="button"
+          aria-label="Close dialog"
+          onClick={() => onCloseRef.current()}
+          className="absolute right-3 top-3 flex h-10 w-10 items-center justify-center rounded-lg text-zinc-300 hover:bg-white/10"
+        >
+          <GrClose />
+        </button>
+        <div className="px-1 pb-2 pt-6">{content}</div>
       </div>
     </div>
   );

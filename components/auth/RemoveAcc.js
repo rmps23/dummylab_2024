@@ -32,24 +32,24 @@ const RemoveAcc = ({ setRemoveAccModal }) => {
   return (
     <div className="flex flex-col gap-8">
       <p>
-        Type <span className="font-bold text-cyan-400 bg-zinc-800 p-1 rounded-md">{user?.email}</span> to confirm. This
+        Type <span className="font-bold text-brand bg-white/10 px-1.5 py-0.5 rounded-md">{user?.email}</span> to confirm. This
         deletes your account, teams, players and stats.
       </p>
       <input
         type="text"
-        className="bg-zinc-900 p-2 rounded-md outline-none"
+        className="min-h-11 w-full rounded-lg border border-white/10 bg-black/30 px-3 text-sm outline-none transition placeholder:text-zinc-500 focus:border-brand/60 focus:ring-2 focus:ring-brand/20"
         value={accName}
         onChange={(e) => setAccName(e.target.value)}
       />
       <div className="flex gap-4 justify-center">
         <button
-          className="bg-red-700 py-1 px-2 rounded-md flex-1 disabled:opacity-20"
+          className="inline-flex min-h-11 items-center justify-center rounded-lg bg-rose-600/90 px-4 text-sm font-semibold text-white hover:bg-rose-500 disabled:opacity-30 flex-1"
           disabled={!confirmed || loading}
           onClick={handleRemoveAcc}
         >
           Delete account
         </button>
-        <button className="bg-zinc-100 text-zinc-950 py-1 px-2 rounded-md" onClick={() => setRemoveAccModal(false)}>
+        <button className="inline-flex min-h-11 items-center justify-center rounded-lg border border-white/10 bg-white/[0.05] px-4 text-sm font-semibold text-zinc-100 hover:bg-white/10" onClick={() => setRemoveAccModal(false)}>
           Cancel
         </button>
       </div>

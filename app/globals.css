@@ -1,85 +1,42 @@
-@import url("https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;700&display=swap");
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
-  html {
-    font-family: "Chakra Petch", Inter, Arial, Helvetica, sans-serif;
-    letter-spacing: 0.05em;
-  }
-
   body {
-    color: #eee;
+    background:
+      radial-gradient(900px 420px at 88% -8%, rgba(34, 211, 238, 0.12), transparent 60%),
+      radial-gradient(700px 420px at -5% 0%, rgba(139, 92, 246, 0.12), transparent 55%),
+      #09090b;
+    background-attachment: fixed;
+    font-variant-numeric: tabular-nums;
+  }
+
+  :focus-visible {
+    outline: 2px solid #22d3ee;
+    outline-offset: 2px;
+  }
+
+  ::selection {
+    background: rgba(34, 211, 238, 0.35);
+  }
+
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: #3f3f46 transparent;
   }
 }
 
-.bg-video-home {
-  box-shadow: rgb(0, 0, 0) 100px 100px 100px 50px inner;
+@layer components {
+  /* Small uppercase labels used across cards and tables. */
+  .eyebrow {
+    @apply text-[11px] font-bold uppercase tracking-[0.14em] text-zinc-400;
+  }
 }
 
-html,
-body,
-#__next {
-  height: 100%;
-}
-
-/* Ensure the html and body elements take up the full height */
-html,
-body {
-  height: 100%;
-  margin: 0;
-  overflow: hidden;
-}
-
-/* Style the div to take up the full viewport */
-.full-screen {
-  height: 100vh;
-  /* Viewport height */
-}
-
-.t-deGdmh {
-  background-color: #09090b;
-  border-radius: 6px;
-  max-width: 400px;
-  margin: 0 auto;
-  padding: 20px;
-  font-family: "Chakra Petch", Arial, Helvetica, sans-serif;
-}
-
-.t-deGdmh .supabase-auth-ui_ui-button {
-  font-family: "Chakra Petch", Arial, Helvetica, sans-serif;
-}
-
-.t-deGdmh #auth-sign-in label,
-.t-deGdmh #auth-sign-in input {
-  font-family: "Chakra Petch", Arial, Helvetica, sans-serif;
-}
-
-.t-deGdmh #auth-sign-in button {
-  background-color: #06b6d4;
-  border-color: #06b6d4;
-  color: #000;
-  font-weight: bold;
-}
-
-::-webkit-scrollbar {
-  width: 6px;
-}
-
-/* Track */
-::-webkit-scrollbar-track {
-  background: #0c0c0e;
-}
-
-/* Handle */
-::-webkit-scrollbar-thumb {
-  background: #1dbbd3;
-  border-radius: 20px;
-}
-
-/* Handle on hover */
-::-webkit-scrollbar-thumb:hover {
-  background: #158596;
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
 }

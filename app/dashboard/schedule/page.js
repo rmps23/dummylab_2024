@@ -5,18 +5,23 @@ import {
   addMonths, addWeeks, eachDayOfInterval, endOfMonth, endOfWeek, format,
   isSameDay, isSameMonth, startOfMonth, startOfWeek,
 } from "date-fns";
-import { FaCalendar, FaChevronLeft, FaChevronRight } from "react-icons/fa6";
-import { toast } from "react-toastify";
+import { FaCalendar, FaChevronLeft, FaChevronRight, FaPlus } from "react-icons/fa6";
 import { teamStore } from "@/store/teamStore";
 import { playerStore } from "@/store/playerStore";
 import { fetchEvents } from "@/hooks/schedule";
-import { EVENT_TYPES } from "@/lib/constants";
+import { AVAILABILITY, EVENT_TYPES } from "@/lib/constants";
+import { availableCount } from "@/lib/availability";
 import Modal from "@/components/ui/Modal";
 import PageHeader from "@/components/ui/PageHeader";
+import EmptyState from "@/components/ui/EmptyState";
+import Skeleton from "@/components/ui/Skeleton";
+import { btnPrimary, btnSecondary, iconBtn } from "@/components/ui/buttons";
 import EventForm from "@/components/schedule/EventForm";
-import EventDetail, { availableCount } from "@/components/schedule/EventDetail";
+import EventDetail from "@/components/schedule/EventDetail";
+import Agenda from "@/components/schedule/Agenda";
 
 const WEEK = { weekStartsOn: 1 };
+const VIEWS = ["month", "week", "agenda"];
 
 const Schedule = () => {
   const { teams, activeTeamId, loaded } = teamStore();
@@ -25,33 +30,46 @@ const Schedule = () => {
 
   const [view, setView] = useState("month");
   const [cursor, setCursor] = useState(new Date());
-  const [events, setEvents] = useState([]);
+  const [events, setEvents] = useState(null);
+  const [error, setError] = useState(null);
   const [selectedId, setSelectedId] = useState(null);
   const [form, setForm] = useState(null); // { event?, date? }
+  const [timeZone, setTimeZone] = useState("");
 
+  useEffect(() => {
+    setTimeZone(Intl.DateTimeFormat().resolvedOptions().timeZone);
+    if (window.matchMedia("(max-width: 639px)").matches) setView("agenda");
+  }, []);
+
+  // Agenda lists the whole month; the grids show a month or a week.
   const range = useMemo(() => {
-    const from = view === "month" ? startOfWeek(startOfMonth(cursor), WEEK) : startOfWeek(cursor, WEEK);
-    const to = view === "month" ? endOfWeek(endOfMonth(cursor), WEEK) : endOfWeek(cursor, WEEK);
+    const byWeek = view === "week";
+    const from = byWeek ? startOfWeek(cursor, WEEK) : view === "agenda" ? startOfMonth(cursor) : startOfWeek(startOfMonth(cursor), WEEK);
+    const to = byWeek ? endOfWeek(cursor, WEEK) : view === "agenda" ? endOfMonth(cursor) : endOfWeek(endOfMonth(cursor), WEEK);
     return { from, to, days: eachDayOfInterval({ start: from, end: to }) };
   }, [view, cursor]);
 
   const load = useCallback(async () => {
     if (!activeTeamId) return setEvents([]);
+    setError(null);
     try {
       setEvents(await fetchEvents(activeTeamId, range.from, new Date(range.to.getTime() + 1)));
-    } catch (error) {
-      toast.error(`Could not load events: ${error.message}`);
+    } catch (e) {
+      setError(e.message);
+      setEvents([]);
     }
   }, [activeTeamId, range]);
 
   useEffect(() => {
+    setEvents(null);
     load();
   }, [load]);
 
-  const selected = events.find((e) => e.id === selectedId);
-  const step = (dir) => setCursor((c) => (view === "month" ? addMonths(c, dir) : addWeeks(c, dir)));
-  const title = view === "month" ? format(cursor, "MMMM yyyy") : `${format(range.from, "d MMM")} – ${format(range.to, "d MMM yyyy")}`;
+  const selected = events?.find((e) => e.id === selectedId);
+  const step = (dir) => setCursor((c) => (view === "week" ? addWeeks(c, dir) : addMonths(c, dir)));
+  const title = view === "week" ? `${format(range.from, "d MMM")} – ${format(range.to, "d MMM yyyy")}` : format(cursor, "MMMM yyyy");
   const replace = (event) => setEvents((list) => list.map((e) => (e.id === event.id ? event : e)));
+  const openForm = (date) => setForm({ date });
 
   function handleSaved(saved) {
     setForm(null);
@@ -63,91 +81,138 @@ const Schedule = () => {
     return (
       <>
         <PageHeader icon={FaCalendar} title="Schedule" />
-        <p className="p-6 text-zinc-400">Create a team first to plan its schedule.</p>
+        <EmptyState icon={FaCalendar} title="Create a team first">
+          The schedule belongs to a team. Create one in the Teams page, then plan trainings, scrims and matches here.
+        </EmptyState>
       </>
     );
   }
 
+  const gridClass = view === "agenda" ? "hidden" : "hidden sm:grid";
+
   return (
     <>
-      <PageHeader icon={FaCalendar} title="Schedule">
-        <button
-          onClick={() => setForm({ date: new Date() })}
-          disabled={!activeTeamId}
-          className="text-sm bg-zinc-50 text-zinc-950 px-2 py-1 rounded-md hover:bg-zinc-100 disabled:opacity-50"
-        >
-          New event
+      <PageHeader icon={FaCalendar} title="Schedule" subtitle={timeZone ? `Times shown in ${timeZone.replace("_", " ")}` : undefined}>
+        <button onClick={() => openForm(new Date())} disabled={!activeTeamId} className={btnPrimary}>
+          <FaPlus aria-hidden="true" /> New event
         </button>
       </PageHeader>
 
-      <div className="p-4 flex flex-col gap-4">
-        <div className="flex flex-wrap items-center gap-3 justify-between">
-          <div className="flex items-center gap-2">
-            <button aria-label="Previous" onClick={() => step(-1)} className="p-2 bg-zinc-800 rounded-md"><FaChevronLeft /></button>
-            <button onClick={() => setCursor(new Date())} className="px-3 py-1 bg-zinc-800 rounded-md text-sm">Today</button>
-            <button aria-label="Next" onClick={() => step(1)} className="p-2 bg-zinc-800 rounded-md"><FaChevronRight /></button>
-            <span className="ml-2 font-bold">{title}</span>
+      <div className="flex flex-col gap-4 p-4 sm:p-6">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="flex items-center gap-1">
+            <button aria-label="Previous" onClick={() => step(-1)} className={`${iconBtn} border border-white/10 bg-white/[0.04]`}>
+              <FaChevronLeft />
+            </button>
+            <button onClick={() => setCursor(new Date())} className={`${btnSecondary} px-3`}>
+              Today
+            </button>
+            <button aria-label="Next" onClick={() => step(1)} className={`${iconBtn} border border-white/10 bg-white/[0.04]`}>
+              <FaChevronRight />
+            </button>
+            <h2 className="ml-3 text-lg font-bold">{title}</h2>
           </div>
-          <div className="flex gap-1 bg-zinc-800 rounded-md p-1">
-            {["month", "week"].map((v) => (
-              <button key={v} onClick={() => setView(v)} className={`px-3 py-1 rounded-md text-sm capitalize ${view === v ? "bg-zinc-600" : "text-zinc-400"}`}>
+          <div role="group" aria-label="Calendar view" className="hidden gap-1 rounded-xl border border-white/10 bg-white/[0.04] p-1 sm:flex">
+            {VIEWS.map((v) => (
+              <button
+                key={v}
+                onClick={() => setView(v)}
+                aria-pressed={view === v}
+                className={`min-h-9 rounded-lg px-4 text-sm font-semibold capitalize transition ${
+                  view === v ? "bg-brand/20 text-brand shadow-glow" : "text-zinc-400 hover:text-zinc-100"
+                }`}
+              >
                 {v}
               </button>
             ))}
           </div>
         </div>
 
-        <div className="flex flex-wrap gap-3 text-xs text-zinc-400">
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-zinc-400">
           {Object.values(EVENT_TYPES).map((t) => (
-            <span key={t.label} className="flex items-center gap-1">
-              <span className={`w-2 h-2 rounded-full ${t.dot}`} /> {t.label}
+            <span key={t.label} className="flex items-center gap-1.5">
+              <span aria-hidden="true" className={`h-2 w-2 rounded-full ${t.dot}`} /> {t.label}
             </span>
           ))}
+          <span className="hidden sm:inline">|</span>
+          <span>Availability: {Object.values(AVAILABILITY).map((a) => `${a.short} ${a.label}`).join(" · ")}</span>
         </div>
 
-        <div className="grid grid-cols-7 gap-px bg-zinc-800 border border-zinc-800 rounded-md overflow-hidden">
-          {range.days.slice(0, 7).map((d) => (
-            <div key={d.toISOString()} className="bg-zinc-900 text-center text-xs text-zinc-400 py-1">
-              {format(d, "EEE")}
+        {error && (
+          <div role="alert" className="flex items-center justify-between gap-3 rounded-xl border border-rose-700 bg-rose-950/40 p-3 text-sm">
+            <span>Could not load events: {error}</span>
+            <button onClick={load} className={btnSecondary}>
+              Retry
+            </button>
+          </div>
+        )}
+
+        {events === null ? (
+          <Skeleton className="h-96" />
+        ) : (
+          <>
+            <div className={view === "agenda" ? "block" : "sm:hidden"}>
+              <Agenda events={events} players={players} onSelect={setSelectedId} onCreate={() => openForm(new Date())} />
             </div>
-          ))}
-          {range.days.map((day) => {
-            const dayEvents = events.filter((e) => isSameDay(new Date(e.starts_at), day));
-            const muted = view === "month" && !isSameMonth(day, cursor);
-            return (
-              <div
-                key={day.toISOString()}
-                onClick={() => setForm({ date: day })}
-                className={`bg-zinc-950 p-1 cursor-pointer hover:bg-zinc-900 ${view === "month" ? "min-h-20" : "min-h-48"} ${muted ? "opacity-40" : ""}`}
-              >
-                <div className={`text-xs mb-1 w-6 h-6 flex items-center justify-center rounded-full ${isSameDay(day, new Date()) ? "bg-cyan-500 text-zinc-950" : "text-zinc-400"}`}>
-                  {format(day, "d")}
+
+            <div className={`${gridClass} animate-rise grid-cols-7 gap-px overflow-hidden rounded-xl border border-white/[0.07] bg-white/[0.07] shadow-card`}>
+              {range.days.slice(0, 7).map((d) => (
+                <div key={d.toISOString()} className="eyebrow bg-raised py-2 text-center">
+                  {format(d, "EEE")}
                 </div>
-                <div className="flex flex-col gap-1">
-                  {dayEvents.map((e) => {
-                    const n = availableCount(e, players);
-                    return (
-                      <button
-                        key={e.id}
-                        onClick={(ev) => {
-                          ev.stopPropagation();
-                          setSelectedId(e.id);
-                        }}
-                        className={`${EVENT_TYPES[e.type].color} text-white text-left text-xs rounded px-1 py-0.5 truncate`}
-                      >
-                        {format(new Date(e.starts_at), "HH:mm")} {e.title}
-                        {players.length > 0 && <span className="opacity-80"> · {n}/{players.length}</span>}
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-            );
-          })}
-        </div>
+              ))}
+              {range.days.map((day) => {
+                const dayEvents = events.filter((e) => isSameDay(new Date(e.starts_at), day));
+                const muted = view === "month" && !isSameMonth(day, cursor);
+                const today = isSameDay(day, new Date());
+                return (
+                  <div
+                    key={day.toISOString()}
+                    onClick={() => openForm(day)}
+                    className={`cursor-pointer bg-panel p-1.5 transition hover:bg-raised ${view === "month" ? "min-h-24" : "min-h-52"} ${muted ? "opacity-40" : ""} ${today ? "bg-brand/[0.06]" : ""}`}
+                  >
+                    <button
+                      aria-label={`New event on ${format(day, "d MMMM")}`}
+                      onClick={(ev) => {
+                        ev.stopPropagation();
+                        openForm(day);
+                      }}
+                      className={`mb-1 flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold ${
+                        today ? "bg-brand text-zinc-950 shadow-glow" : "text-zinc-400 hover:bg-white/10"
+                      }`}
+                    >
+                      {format(day, "d")}
+                    </button>
+                    <div className="flex flex-col gap-1">
+                      {dayEvents.map((e) => (
+                        <button
+                          key={e.id}
+                          onClick={(ev) => {
+                            ev.stopPropagation();
+                            setSelectedId(e.id);
+                          }}
+                          className={`truncate rounded border-l-2 px-1.5 py-0.5 text-left text-[11px] font-semibold transition ${EVENT_TYPES[e.type].chip}`}
+                        >
+                          {format(new Date(e.starts_at), "HH:mm")} {e.title}
+                          {players.length > 0 && (
+                            <span className="opacity-80">
+                              {" "}
+                              · {availableCount(e, players)}/{players.length}
+                            </span>
+                          )}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </>
+        )}
       </div>
 
       <Modal
+        title="Event details"
         show={!!selected}
         onClose={() => setSelectedId(null)}
         content={
@@ -155,6 +220,7 @@ const Schedule = () => {
             <EventDetail
               event={selected}
               players={players}
+              timeZone={timeZone}
               onChange={replace}
               onEdit={(event) => {
                 setSelectedId(null);
@@ -169,6 +235,7 @@ const Schedule = () => {
         }
       />
       <Modal
+        title={form?.event ? "Edit event" : "New event"}
         show={!!form}
         onClose={() => setForm(null)}
         content={form && <EventForm teamId={activeTeamId} event={form.event} defaultDate={form.date} onSaved={handleSaved} onClose={() => setForm(null)} />}

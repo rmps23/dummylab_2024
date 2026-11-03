@@ -1,31 +1,57 @@
 import Link from "next/link";
-import { FaPen, FaTrash } from "react-icons/fa6";
+import { FaLink, FaNoteSticky, FaPen, FaTrash } from "react-icons/fa6";
+import Avatar from "@/components/ui/Avatar";
+import RoleBadge from "@/components/ui/RoleBadge";
+import RankBadge from "@/components/ui/RankBadge";
+import FormPips from "@/components/ui/FormPips";
 
-export const PlayerCard = ({ player, teamName, onEdit, onRemove }) => (
-  <div className="border border-zinc-800 bg-zinc-800 p-4 rounded-md flex flex-col gap-3">
-    <div className="flex justify-between gap-2">
-      <div className="min-w-0">
-        <div className="text-cyan-400 truncate">{player.name}</div>
-        <div className="text-xs text-zinc-400 truncate">
-          {player.role?.name} · {teamName} · {player.riot_id}
+const iconBtn =
+  "inline-flex h-10 w-10 items-center justify-center rounded-lg text-sm text-zinc-300 transition hover:bg-white/[0.08]";
+const link =
+  "inline-flex min-h-11 flex-1 items-center justify-center rounded-lg border border-white/10 bg-white/[0.04] px-3 text-sm font-semibold text-zinc-100 transition hover:bg-white/10";
+
+// `rank` is the solo queue snapshot (or undefined) and `form` the last results, newest first.
+export const PlayerCard = ({ player, teamName, rank, form = [], onEdit, onRemove, onInvite, onNotes }) => (
+  <article className="animate-rise flex flex-col gap-4 rounded-xl border border-white/[0.07] bg-panel/80 p-4 shadow-card transition hover:border-brand/30">
+    <div className="flex items-start gap-3">
+      <Avatar name={player.name} size={46} />
+      <div className="min-w-0 flex-1">
+        <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+          <h2 className="break-words text-lg font-bold leading-tight">{player.name}</h2>
+          <RoleBadge role={player.role?.name} />
         </div>
+        <p className="mt-0.5 truncate text-xs text-zinc-400">
+          {player.riot_id || "No Riot ID"} · {teamName}
+        </p>
       </div>
-      <div className="flex gap-2 shrink-0">
-        <button aria-label="Edit player" onClick={() => onEdit(player)} className="text-sm p-2 rounded-md bg-zinc-900">
+      <div className="-mr-1 flex shrink-0">
+        <button aria-label={`Availability link for ${player.name}`} title="Availability link" onClick={() => onInvite(player)} className={iconBtn}>
+          <FaLink />
+        </button>
+        <button aria-label={`Notes and goals for ${player.name}`} title="Notes and goals" onClick={() => onNotes(player)} className={iconBtn}>
+          <FaNoteSticky />
+        </button>
+        <button aria-label={`Edit ${player.name}`} onClick={() => onEdit(player)} className={iconBtn}>
           <FaPen />
         </button>
-        <button aria-label="Delete player" onClick={() => onRemove(player)} className="text-sm p-2 rounded-md bg-zinc-900">
+        <button aria-label={`Delete ${player.name}`} onClick={() => onRemove(player)} className={iconBtn}>
           <FaTrash />
         </button>
       </div>
     </div>
-    <div className="flex gap-3 text-sm">
-      <Link className="text-zinc-200 underline-offset-2 hover:underline" href={`/dashboard/players/match_history/${player.id}`}>
+
+    <div className="flex items-center justify-between gap-3 rounded-lg bg-black/20 px-3 py-2">
+      {rank ? <RankBadge tier={rank.tier} rank={rank.rank} lp={rank.lp} /> : <span className="text-sm text-zinc-400">Unranked</span>}
+      <FormPips results={form} size="sm" />
+    </div>
+
+    <div className="flex gap-2">
+      <Link className={link} href={`/dashboard/players/match_history/${player.id}`}>
         Match history
       </Link>
-      <Link className="text-zinc-200 underline-offset-2 hover:underline" href={`/dashboard/analytics?player=${player.id}`}>
+      <Link className={link} href={`/dashboard/analytics?player=${player.id}`}>
         Stats
       </Link>
     </div>
-  </div>
+  </article>
 );

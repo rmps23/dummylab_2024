@@ -4,9 +4,10 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/supabase";
 import { userStore } from "@/store/userStore";
+import { featureStore } from "@/store/featureStore";
 import { FaRightFromBracket } from "react-icons/fa6";
 
-const Logout = () => {
+const Logout = ({ className = "h-10 w-10" }) => {
   const router = useRouter();
   const clearUser = userStore((s) => s.clearUser);
   const [loading, setLoading] = useState(false);
@@ -15,6 +16,7 @@ const Logout = () => {
     setLoading(true);
     await supabase.auth.signOut();
     clearUser();
+    featureStore.getState().reset();
     router.push("/");
     router.refresh();
   };
@@ -24,7 +26,7 @@ const Logout = () => {
       onClick={signOut}
       disabled={loading}
       aria-label="Log out"
-      className="bg-zinc-950 flex items-center justify-center rounded-md h-8 px-3 hover:bg-zinc-900 text-zinc-400 disabled:opacity-50"
+      className={`flex shrink-0 items-center justify-center rounded-lg text-zinc-400 transition hover:bg-white/[0.07] hover:text-zinc-100 disabled:opacity-50 ${className}`}
     >
       <FaRightFromBracket />
     </button>

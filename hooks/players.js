@@ -1,4 +1,5 @@
 import { supabase } from "@/supabase";
+import { toPlanError } from "@/lib/planErrors";
 
 const PLAYER_SELECT =
   "id, name, region, team_id, role_id, riot_id, riot_puuid, last_synced_at, role:role_id(id, name)";
@@ -55,16 +56,26 @@ export async function verifyPlayer(gameName, tagLine, regionCode) {
 export async function syncPlayer(player_id, onProgress) {
   let done = 0;
   let total = 0;
+  let ids; // the first call lists the match ids; the next ones reuse the pending list
 
   for (let i = 0; i < 100; i++) {
-    const response = await fetch(`/api/players/${player_id}/sync`, { method: "POST" });
+    const response = await fetch(`/api/players/${player_id}/sync`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(ids ? { ids } : {}),
+    });
     const body = await response.json().catch(() => ({}));
-    if (!response.ok) throw new Error(body.error || "Sync failed");
+    if (!response.ok) {
+      const error = new Error(body.error || "Sync failed");
+      error.code = body.code;
+      throw error;
+    }
 
     done += body.saved;
     total = Math.max(total, done + body.remaining);
     onProgress?.(done, total);
 
+    ids = body.pending;
     if (body.remaining === 0 || body.saved === 0) break;
   }
   return { done, total };
@@ -93,4 +104,65 @@ export async function fetchRank(player_id) {
   const { data, error } = await supabase.from("rank_snapshot").select("*").eq("player_id", player_id);
   if (error) throw new Error(error.message);
   return data;
+}
+
+// Personal availability links ------------------------------------------------
+export async function fetchInvite(player_id) {
+  const { data, error } = await supabase
+    .from("player_invite")
+    .select("id, token, created_at, last_used_at")
+    .eq("player_id", player_id)
+    .is("revoked_at", null)
+    .maybeSingle();
+  if (error) throw new Error(error.message);
+  return data;
+}
+
+export async function createInvite(player_id) {
+  const response = await fetch(`/api/players/${player_id}/invite`, { method: "POST" });
+  const body = await response.json().catch(() => ({}));
+  if (!response.ok) throw Object.assign(new Error(body.error || "Could not create the link"), { code: body.code });
+  return body.invite;
+}
+
+export async function revokeInvite(player_id) {
+  const response = await fetch(`/api/players/${player_id}/invite`, { method: "DELETE" });
+  if (!response.ok) throw new Error((await response.json().catch(() => ({}))).error || "Could not revoke the link");
+}
+
+// Private notes and goals -----------------------------------------------------
+export async function fetchNotes(player_id) {
+  const { data, error } = await supabase
+    .from("player_note")
+    .select("id, kind, body, status, due_date, created_at")
+    .eq("player_id", player_id)
+    .order("created_at", { ascending: false });
+  if (error) throw new Error(error.message);
+  return data;
+}
+
+export async function addNote({ player_id, kind, body, due_date }) {
+  const { data, error } = await supabase
+    .from("player_note")
+    .insert({ player_id, kind, body, due_date: due_date || null })
+    .select("id, kind, body, status, due_date, created_at")
+    .single();
+  if (error) throw toPlanError(error.message) ?? new Error(error.message);
+  return data;
+}
+
+export async function updateNote(id, changes) {
+  const { data, error } = await supabase
+    .from("player_note")
+    .update(changes)
+    .eq("id", id)
+    .select("id, kind, body, status, due_date, created_at")
+    .single();
+  if (error) throw new Error(error.message);
+  return data;
+}
+
+export async function deleteNote(id) {
+  const { error } = await supabase.from("player_note").delete().eq("id", id);
+  if (error) throw new Error(error.message);
 }
