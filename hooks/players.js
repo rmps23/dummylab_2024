@@ -55,16 +55,26 @@ export async function verifyPlayer(gameName, tagLine, regionCode) {
 export async function syncPlayer(player_id, onProgress) {
   let done = 0;
   let total = 0;
+  let ids; // the first call lists the match ids; the next ones reuse the pending list
 
   for (let i = 0; i < 100; i++) {
-    const response = await fetch(`/api/players/${player_id}/sync`, { method: "POST" });
+    const response = await fetch(`/api/players/${player_id}/sync`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(ids ? { ids } : {}),
+    });
     const body = await response.json().catch(() => ({}));
-    if (!response.ok) throw new Error(body.error || "Sync failed");
+    if (!response.ok) {
+      const error = new Error(body.error || "Sync failed");
+      error.code = body.code;
+      throw error;
+    }
 
     done += body.saved;
     total = Math.max(total, done + body.remaining);
     onProgress?.(done, total);
 
+    ids = body.pending;
     if (body.remaining === 0 || body.saved === 0) break;
   }
   return { done, total };

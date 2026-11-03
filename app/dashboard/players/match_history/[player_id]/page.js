@@ -7,6 +7,7 @@ import { toast } from "react-toastify";
 import ProgressBar from "@/components/ui/ProgressBar";
 import { fetchPlayer, fetchMatches, fetchRank, syncPlayer, refreshRank } from "@/hooks/players";
 import { isDemo, userStore } from "@/store/userStore";
+import { featureStore } from "@/store/featureStore";
 import { QUEUES } from "@/lib/constants";
 import { fmt, kda } from "@/lib/stats";
 import ChampionIcon from "@/components/ui/ChampionIcon";
@@ -14,6 +15,8 @@ import ChampionIcon from "@/components/ui/ChampionIcon";
 const MatchHistory = () => {
   const { player_id } = useParams();
   const user = userStore((s) => s.user);
+  const riotEnabled = featureStore((s) => s.riot);
+  const featuresLoaded = featureStore((s) => s.loaded);
   const [player, setPlayer] = useState(null);
   const [matches, setMatches] = useState(null);
   const [rank, setRank] = useState([]);
@@ -51,6 +54,16 @@ const MatchHistory = () => {
 
   if (!matches) return <p className="p-6 text-zinc-400">Loading...</p>;
 
+  const demo = isDemo(user);
+  // Why importing is unavailable, if it is.
+  const blocked = demo
+    ? "Importing from Riot is disabled in the demo account. The games below are sample data."
+    : !player?.riot_puuid
+      ? "This player has no Riot ID linked, so match history cannot be imported."
+      : featuresLoaded && !riotEnabled
+        ? "Importing from Riot is not enabled for this account yet. It will be available once DummyLab's Riot production key is approved."
+        : null;
+
   return (
     <div className="p-4 sm:p-6 flex flex-col gap-4 max-w-4xl">
       <Link href="/dashboard/players" className="text-sm text-zinc-400 hover:text-zinc-200">
@@ -60,24 +73,19 @@ const MatchHistory = () => {
         <div>
           <h1 className="text-xl text-cyan-400">{player?.name ?? "Player"}</h1>
           <p className="text-sm text-zinc-400">
-            {player?.riot_id} · {player?.region}
+            {player?.riot_id || "No Riot ID linked"} · {player?.region}
           </p>
         </div>
         <button
           onClick={handleUpdate}
-          disabled={progress !== null || isDemo(user)}
-          title={isDemo(user) ? "Disabled in the demo account" : undefined}
+          disabled={progress !== null || !!blocked || !featuresLoaded}
           className="min-h-11 rounded-md bg-cyan-500 px-3 text-zinc-950 disabled:opacity-40"
         >
           Update from Riot
         </button>
       </div>
 
-      {isDemo(user) && (
-        <p className="text-sm text-amber-400">
-          Importing from Riot is disabled in the demo account. The games below are sample data.
-        </p>
-      )}
+      {blocked && <p className="text-sm text-amber-400">{blocked}</p>}
 
       {progress !== null && <ProgressBar value={progress} label="Importing matches" />}
 
