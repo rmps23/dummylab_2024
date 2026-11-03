@@ -4,8 +4,9 @@ import Avatar from "@/components/ui/Avatar";
 import RoleBadge from "@/components/ui/RoleBadge";
 import RankBadge from "@/components/ui/RankBadge";
 import FormPips from "@/components/ui/FormPips";
-import { iconBtn } from "@/components/ui/buttons";
 
+const iconBtn =
+  "inline-flex h-10 w-10 items-center justify-center rounded-lg text-sm text-zinc-300 transition hover:bg-white/[0.08]";
 const link =
   "inline-flex min-h-11 flex-1 items-center justify-center rounded-lg border border-white/10 bg-white/[0.04] px-3 text-sm font-semibold text-zinc-100 transition hover:bg-white/10";
 
@@ -15,15 +16,15 @@ export const PlayerCard = ({ player, teamName, rank, form = [], onEdit, onRemove
     <div className="flex items-start gap-3">
       <Avatar name={player.name} size={46} />
       <div className="min-w-0 flex-1">
-        <div className="flex items-center gap-2">
-          <h2 className="truncate text-lg font-bold leading-tight">{player.name}</h2>
+        <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+          <h2 className="break-words text-lg font-bold leading-tight">{player.name}</h2>
           <RoleBadge role={player.role?.name} />
         </div>
-        <p className="truncate text-xs text-zinc-400">
+        <p className="mt-0.5 truncate text-xs text-zinc-400">
           {player.riot_id || "No Riot ID"} · {teamName}
         </p>
       </div>
-      <div className="flex shrink-0">
+      <div className="-mr-1 flex shrink-0">
         <button aria-label={`Availability link for ${player.name}`} title="Availability link" onClick={() => onInvite(player)} className={iconBtn}>
           <FaLink />
         </button>
