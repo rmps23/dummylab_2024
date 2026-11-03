@@ -14,7 +14,8 @@ import { EVENT_TYPES } from "@/lib/constants";
 import Modal from "@/components/ui/Modal";
 import PageHeader from "@/components/ui/PageHeader";
 import EventForm from "@/components/schedule/EventForm";
-import EventDetail, { availableCount } from "@/components/schedule/EventDetail";
+import EventDetail from "@/components/schedule/EventDetail";
+import { availableCount } from "@/lib/availability";
 
 const WEEK = { weekStartsOn: 1 };
 
@@ -148,6 +149,7 @@ const Schedule = () => {
       </div>
 
       <Modal
+        title="Event details"
         show={!!selected}
         onClose={() => setSelectedId(null)}
         content={
@@ -169,6 +171,7 @@ const Schedule = () => {
         }
       />
       <Modal
+        title="Event form"
         show={!!form}
         onClose={() => setForm(null)}
         content={form && <EventForm teamId={activeTeamId} event={form.event} defaultDate={form.date} onSaved={handleSaved} onClose={() => setForm(null)} />}

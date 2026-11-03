@@ -26,12 +26,12 @@ const TeamCard = ({ team, playerCount = 0 }) => {
           <FaTrash />
         </button>
       </div>
-      <Modal
+      <Modal title="Edit team"
         show={editTeamModal}
         onClose={() => setEditTeamModal(false)}
         content={<EditTeam team_name={team.name} team_id={team.id} setEditTeamModal={setEditTeamModal} />}
       />
-      <Modal
+      <Modal title="Delete team"
         show={removeTeamModal}
         onClose={() => setRemoveTeamModal(false)}
         content={<RemoveTeam team_name={team.name} team_id={team.id} setRemoveTeamModal={setRemoveTeamModal} />}

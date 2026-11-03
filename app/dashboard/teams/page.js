@@ -24,7 +24,7 @@ const Teams = () => {
           Create Team
         </button>
       </PageHeader>
-      <Modal show={addTeamModal} onClose={() => setAddTeamModal(false)} content={<AddTeam setAddTeamModal={setAddTeamModal} />} />
+      <Modal title="Create team" show={addTeamModal} onClose={() => setAddTeamModal(false)} content={<AddTeam setAddTeamModal={setAddTeamModal} />} />
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 p-4">
         {!loaded ? (
           <p className="text-zinc-400">Loading...</p>

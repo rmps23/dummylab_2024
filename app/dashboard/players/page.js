@@ -36,13 +36,15 @@ const Players = () => {
         </label>
       </PageHeader>
 
-      <Modal show={createModal} onClose={() => setCreateModal(false)} content={<AddPlayer setCreatePlayerModal={setCreateModal} />} />
+      <Modal title="Add player" show={createModal} onClose={() => setCreateModal(false)} content={<AddPlayer setCreatePlayerModal={setCreateModal} />} />
       <Modal
+        title="Edit player"
         show={!!editing}
         onClose={() => setEditing(null)}
         content={editing && <EditPlayer key={editing.id} player={editing} setEditPlayerModal={(v) => !v && setEditing(null)} />}
       />
       <Modal
+        title="Delete player"
         show={!!removing}
         onClose={() => setRemoving(null)}
         content={removing && <RemovePlayer player={removing} setRemovePlayerModal={(v) => !v && setRemoving(null)} />}

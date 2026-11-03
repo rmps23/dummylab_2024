@@ -115,7 +115,7 @@ function AnalyticsContent() {
                 <h2 className="font-bold mb-2">Last {trend.length} games</h2>
                 <div className="bg-zinc-800 rounded-md p-3 max-w-3xl">
                   <TrendChart games={trend} kdaOf={(g) => kda(g.kills, g.deaths, g.assists)} />
-                  <p className="text-xs text-zinc-500">Line: KDA per game · bar: win (green) or loss (red)</p>
+                  <p className="text-xs text-zinc-400">Line: KDA per game · bar: win (green) or loss (red)</p>
                 </div>
               </section>
             )}
@@ -139,7 +139,7 @@ function AnalyticsContent() {
                         <tr key={r.player_id} className="border-t border-zinc-800">
                           <td className="py-2 pr-3">
                             <button onClick={() => setPlayer(r.player_id)} className="text-cyan-400 hover:underline">{p?.name ?? "?"}</button>
-                            <span className="text-zinc-500 text-xs"> {p?.role?.name}</span>
+                            <span className="text-zinc-400 text-xs"> {p?.role?.name}</span>
                           </td>
                           <td className="pr-3">{m.games}</td>
                           <td className="pr-3">{m.wr}%</td>

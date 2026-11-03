@@ -87,7 +87,7 @@ const Settings = () => {
           >
             Delete
           </button>
-          <Modal show={removeAccModal} onClose={() => setRemoveAccModal(false)} content={<RemoveAcc setRemoveAccModal={setRemoveAccModal} />} />
+          <Modal title="Delete account" show={removeAccModal} onClose={() => setRemoveAccModal(false)} content={<RemoveAcc setRemoveAccModal={setRemoveAccModal} />} />
         </div>
       </div>
     </>

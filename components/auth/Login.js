@@ -59,13 +59,14 @@ export default function Login() {
       >
         Try the demo account
       </button>
-      <div className="flex items-center gap-3 text-zinc-500 text-sm">
+      <div className="flex items-center gap-3 text-zinc-400 text-sm">
         <span className="h-px bg-zinc-800 flex-1" /> or <span className="h-px bg-zinc-800 flex-1" />
       </div>
       <form onSubmit={handleSubmit} className="flex flex-col gap-3">
         <input
           type="email"
           required
+          aria-label="Email address"
           placeholder="Email address"
           autoComplete="email"
           className={input}
@@ -76,6 +77,7 @@ export default function Login() {
           type="password"
           required
           minLength={6}
+          aria-label="Password"
           placeholder="Password"
           autoComplete={mode === "signin" ? "current-password" : "new-password"}
           className={input}
