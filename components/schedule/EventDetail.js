@@ -4,13 +4,7 @@ import { format } from "date-fns";
 import { toast } from "react-toastify";
 import { deleteEvent, setAvailability } from "@/hooks/schedule";
 import { AVAILABILITY, EVENT_TYPES } from "@/lib/constants";
-
-export const statusFor = (event, player_id) =>
-  event.participants?.find((p) => p.player_id === player_id)?.status ?? "pending";
-
-export function availableCount(event, players) {
-  return players.filter((p) => statusFor(event, p.id) === "available").length;
-}
+import { availableCount, statusFor } from "@/lib/availability";
 
 export default function EventDetail({ event, players, onChange, onEdit, onDeleted }) {
   const t = EVENT_TYPES[event.type];
@@ -69,7 +63,7 @@ export default function EventDetail({ event, players, onChange, onEdit, onDelete
               return (
                 <div key={p.id} className="flex items-center justify-between gap-2 bg-zinc-900 rounded-md p-2">
                   <div className="min-w-0 text-sm truncate">
-                    {p.name} <span className="text-zinc-500">· {p.role?.name}</span>
+                    {p.name} <span className="text-zinc-400">· {p.role?.name}</span>
                   </div>
                   <div className="flex gap-1 shrink-0">
                     {["available", "maybe", "unavailable"].map((s) => (
@@ -79,7 +73,7 @@ export default function EventDetail({ event, players, onChange, onEdit, onDelete
                         aria-label={`${p.name}: ${AVAILABILITY[s].label}`}
                         aria-pressed={current === s}
                         onClick={() => handleStatus(p.id, s)}
-                        className={`w-8 h-8 rounded-md text-sm ${current === s ? AVAILABILITY[s].color : "bg-zinc-800 text-zinc-500"}`}
+                        className={`w-8 h-8 rounded-md text-sm ${current === s ? AVAILABILITY[s].color : "bg-zinc-800 text-zinc-400"}`}
                       >
                         {AVAILABILITY[s].short}
                       </button>
