@@ -19,16 +19,16 @@ export default function TrendChart({ games, kdaOf }) {
     <svg viewBox={`0 0 ${W} ${H + 12}`} className="h-40 w-full" role="img" aria-label="KDA trend over the last games">
       <defs>
         <linearGradient id="trend-fill" x1="0" x2="0" y1="0" y2="1">
-          <stop offset="0%" stopColor="#22d3ee" stopOpacity="0.35" />
-          <stop offset="100%" stopColor="#22d3ee" stopOpacity="0" />
+          <stop offset="0%" stopColor="#3ab5c6" stopOpacity="0.35" />
+          <stop offset="100%" stopColor="#3ab5c6" stopOpacity="0" />
         </linearGradient>
       </defs>
       <line x1="0" x2={W} y1={y(avg)} y2={y(avg)} stroke="rgba(255,255,255,0.18)" strokeDasharray="4 4" />
       <polygon points={area} fill="url(#trend-fill)" />
-      <polyline points={line} fill="none" stroke="#22d3ee" strokeWidth="2.5" strokeLinejoin="round" />
+      <polyline points={line} fill="none" stroke="#3ab5c6" strokeWidth="2.5" strokeLinejoin="round" />
       {rows.map((g, i) => (
         <g key={g.id}>
-          <circle cx={x(i)} cy={y(values[i])} r="3.5" fill="#09090b" stroke="#22d3ee" strokeWidth="2">
+          <circle cx={x(i)} cy={y(values[i])} r="3.5" fill="#09090b" stroke="#3ab5c6" strokeWidth="2">
             <title>{`KDA ${values[i].toFixed(2)} · ${g.win ? "Win" : "Loss"}`}</title>
           </circle>
           <rect x={x(i) - step / 2 + 2} y={H + 2} width={step - 4} height={6} rx={2} fill={g.win ? "#34d399" : "#fb7185"} />

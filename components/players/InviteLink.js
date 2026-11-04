@@ -80,7 +80,7 @@ export default function InviteLink({ player }) {
       )}
 
       {loaded && plan !== "pro" ? (
-        <div className="rounded-xl border border-brand/30 bg-brand/[0.05] p-4 text-sm">
+        <div className="rounded-lg border border-brand/30 bg-brand/[0.05] p-4 text-sm">
           <p className="font-semibold">Availability links are a Pro feature.</p>
           <p className="mt-1 text-zinc-300">Upgrade to let players answer for upcoming events from their phone.</p>
           <Link href="/dashboard/billing" className={`${btnPrimary} mt-3`}>

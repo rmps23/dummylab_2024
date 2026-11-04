@@ -51,7 +51,7 @@ export default function AvailabilityForm({ token, playerName, teamName, initialE
       </div>
 
       {events.length === 0 ? (
-        <p className="rounded-2xl border border-dashed border-white/10 p-8 text-center text-zinc-400">
+        <p className="rounded-lg border border-dashed border-white/10 p-8 text-center text-zinc-400">
           Nothing is scheduled in the next 30 days. Check back later.
         </p>
       ) : (
@@ -63,7 +63,7 @@ export default function AvailabilityForm({ token, playerName, teamName, initialE
             return (
               <li key={e.id}>
                 {newDay && <h2 className="eyebrow mb-2 mt-2">{format(start, "EEEE d MMMM")}</h2>}
-                <div className="rounded-xl border border-white/[0.07] bg-panel/80 p-4 shadow-card">
+                <div className="rounded-lg border border-white/[0.07] bg-panel p-4 shadow-card">
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0">
                       <div className="truncate font-bold">{e.title}</div>

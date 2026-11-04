@@ -112,14 +112,14 @@ const Schedule = () => {
             </button>
             <h2 className="ml-3 text-lg font-bold">{title}</h2>
           </div>
-          <div role="group" aria-label="Calendar view" className="hidden gap-1 rounded-xl border border-white/10 bg-white/[0.04] p-1 sm:flex">
+          <div role="group" aria-label="Calendar view" className="hidden gap-1 rounded-lg border border-white/10 bg-white/[0.04] p-1 sm:flex">
             {VIEWS.map((v) => (
               <button
                 key={v}
                 onClick={() => setView(v)}
                 aria-pressed={view === v}
                 className={`min-h-9 rounded-lg px-4 text-sm font-semibold capitalize transition ${
-                  view === v ? "bg-brand/20 text-brand shadow-glow" : "text-zinc-400 hover:text-zinc-100"
+                  view === v ? "bg-brand/20 text-brand" : "text-zinc-400 hover:text-zinc-100"
                 }`}
               >
                 {v}
@@ -139,7 +139,7 @@ const Schedule = () => {
         </div>
 
         {error && (
-          <div role="alert" className="flex items-center justify-between gap-3 rounded-xl border border-rose-700 bg-rose-950/40 p-3 text-sm">
+          <div role="alert" className="flex items-center justify-between gap-3 rounded-lg border border-rose-700 bg-rose-950/40 p-3 text-sm">
             <span>Could not load events: {error}</span>
             <button onClick={load} className={btnSecondary}>
               Retry
@@ -155,7 +155,7 @@ const Schedule = () => {
               <Agenda events={events} players={players} onSelect={setSelectedId} onCreate={() => openForm(new Date())} />
             </div>
 
-            <div className={`${gridClass} animate-rise grid-cols-7 gap-px overflow-hidden rounded-xl border border-white/[0.07] bg-white/[0.07] shadow-card`}>
+            <div className={`${gridClass} animate-rise grid-cols-7 gap-px overflow-hidden rounded-lg border border-white/[0.07] bg-white/[0.07] shadow-card`}>
               {range.days.slice(0, 7).map((d) => (
                 <div key={d.toISOString()} className="eyebrow bg-raised py-2 text-center">
                   {format(d, "EEE")}
@@ -178,7 +178,7 @@ const Schedule = () => {
                         openForm(day);
                       }}
                       className={`mb-1 flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold ${
-                        today ? "bg-brand text-zinc-950 shadow-glow" : "text-zinc-400 hover:bg-white/10"
+                        today ? "bg-brand text-zinc-950" : "text-zinc-400 hover:bg-white/10"
                       }`}
                     >
                       {format(day, "d")}

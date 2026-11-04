@@ -28,7 +28,7 @@ export default async function InvitePage({ params }) {
             initialEvents={context.events}
           />
         ) : (
-          <div className="rounded-2xl border border-dashed border-white/10 p-8 text-center">
+          <div className="rounded-lg border border-dashed border-white/10 p-8 text-center">
             <h1 className="text-xl font-bold">This link is no longer valid</h1>
             <p className="mt-2 text-sm text-zinc-400">Ask your coach for a new availability link.</p>
           </div>

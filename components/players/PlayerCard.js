@@ -12,7 +12,7 @@ const link =
 
 // `rank` is the solo queue snapshot (or undefined) and `form` the last results, newest first.
 export const PlayerCard = ({ player, teamName, rank, form = [], onEdit, onRemove, onInvite, onNotes }) => (
-  <article className="animate-rise flex flex-col gap-4 rounded-xl border border-white/[0.07] bg-panel/80 p-4 shadow-card transition hover:border-brand/30">
+  <article className="animate-rise flex flex-col gap-4 rounded-lg border border-white/[0.07] bg-panel p-4 shadow-card transition hover:border-brand/30">
     <div className="flex items-start gap-3">
       <Avatar name={player.name} size={46} />
       <div className="min-w-0 flex-1">

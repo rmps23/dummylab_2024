@@ -48,7 +48,7 @@ export default function Pricing() {
 
         <section className="mt-14" aria-labelledby="compare-title">
           <h2 id="compare-title" className="mb-4 text-2xl font-bold">Compare plans</h2>
-          <div className="overflow-x-auto rounded-xl border border-white/[0.07] bg-panel/70">
+          <div className="overflow-x-auto rounded-lg border border-white/[0.07] bg-panel">
             <table className="w-full min-w-[480px] text-sm">
               <thead>
                 <tr className="text-left">

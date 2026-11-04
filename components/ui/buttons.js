@@ -1,7 +1,7 @@
 const base =
   "inline-flex min-h-11 items-center justify-center gap-2 rounded-lg px-4 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-40";
 
-export const btnPrimary = `${base} bg-gradient-to-r from-cyan-400 to-sky-500 text-zinc-950 shadow-[0_6px_18px_-8px_rgba(34,211,238,0.8)] hover:brightness-110`;
+export const btnPrimary = `${base} bg-brand hover:bg-brand-soft text-zinc-950`;
 export const btnSecondary = `${base} border border-white/10 bg-white/[0.05] text-zinc-100 hover:bg-white/10`;
 export const btnGhost = `${base} text-zinc-300 hover:bg-white/[0.06]`;
 export const btnDanger = `${base} bg-rose-600/90 text-white hover:bg-rose-500`;

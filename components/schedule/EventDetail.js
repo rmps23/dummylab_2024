@@ -59,7 +59,7 @@ export default function EventDetail({ event, players, timeZone, onChange, onEdit
         </p>
         {timeZone && <p className="text-xs text-zinc-400">Times in {timeZone.replace("_", " ")}</p>}
         {event.link && (
-          <a href={event.link} target="_blank" rel="noopener noreferrer" className="break-all text-sm text-cyan-400 underline">
+          <a href={event.link} target="_blank" rel="noopener noreferrer" className="break-all text-sm text-brand underline">
             {event.link}
           </a>
         )}
@@ -130,7 +130,7 @@ export default function EventDetail({ event, players, timeZone, onChange, onEdit
             Remind on Discord
           </button>
         )}
-        <button onClick={() => onEdit(event)} className="min-h-11 rounded-lg bg-gradient-to-r from-cyan-400 to-sky-500 px-4 text-sm font-semibold text-zinc-950">
+        <button onClick={() => onEdit(event)} className="min-h-11 rounded-lg bg-brand hover:bg-brand-soft px-4 text-sm font-semibold text-zinc-950">
           Edit
         </button>
       </div>

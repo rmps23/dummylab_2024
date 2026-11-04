@@ -71,7 +71,7 @@ export default function Report() {
 
       <div className="flex flex-col gap-4 p-4 sm:p-6">
         {error ? (
-          <p role="alert" className="rounded-xl border border-rose-700 bg-rose-950/40 p-4 text-sm">{error}</p>
+          <p role="alert" className="rounded-lg border border-rose-700 bg-rose-950/40 p-4 text-sm">{error}</p>
         ) : !report ? (
           <Skeleton className="h-64" />
         ) : (

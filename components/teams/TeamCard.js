@@ -15,8 +15,8 @@ const TeamCard = ({ team, players = [], active, onSelect }) => {
 
   return (
     <article
-      className={`animate-rise flex flex-col gap-4 rounded-xl border bg-panel/80 p-4 shadow-card transition ${
-        active ? "border-brand/50 shadow-glow" : "border-white/[0.07] hover:border-white/20"
+      className={`animate-rise flex flex-col gap-4 rounded-lg border bg-panel p-4 shadow-card transition ${
+        active ? "border-brand/50" : "border-white/[0.07] hover:border-white/20"
       }`}
     >
       <div className="flex items-center gap-3">

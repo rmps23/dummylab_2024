@@ -66,7 +66,7 @@ export default function PlayerNotes({ player }) {
         <p className="mt-1 text-sm text-zinc-400">Private to you. Players never see these.</p>
       </div>
 
-      <form onSubmit={handleAdd} className="flex flex-col gap-2 rounded-xl border border-white/10 bg-black/20 p-3">
+      <form onSubmit={handleAdd} className="flex flex-col gap-2 rounded-lg border border-white/10 bg-black/20 p-3">
         <div role="group" aria-label="Type" className="flex gap-2">
           {[["goal", "Goal"], ["note", "Note"]].map(([value, label]) => (
             <button

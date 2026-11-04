@@ -2,7 +2,7 @@
 export default function Card({ as: Tag = "section", title, action, className = "", children, ...rest }) {
   return (
     <Tag
-      className={`animate-rise rounded-xl border border-white/[0.07] bg-panel/80 shadow-card backdrop-blur ${className}`}
+      className={`animate-rise rounded-lg border border-white/[0.07] bg-panel shadow-card ${className}`}
       {...rest}
     >
       {(title || action) && (

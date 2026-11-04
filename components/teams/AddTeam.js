@@ -34,7 +34,7 @@ const AddTeam = ({ setAddTeamModal }) => {
         onChange={(e) => setTeamName(e.target.value)}
         onKeyDown={(e) => e.key === "Enter" && handleAddTeam()}
       />
-      <button className="inline-flex min-h-11 items-center justify-center rounded-lg bg-gradient-to-r from-cyan-400 to-sky-500 px-4 text-sm font-semibold text-zinc-950 shadow-[0_6px_18px_-8px_rgba(34,211,238,0.8)] transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-40 w-full" disabled={saving} onClick={handleAddTeam}>
+      <button className="inline-flex min-h-11 items-center justify-center rounded-lg bg-brand hover:bg-brand-soft px-4 text-sm font-semibold text-zinc-950 transition disabled:cursor-not-allowed disabled:opacity-40 w-full" disabled={saving} onClick={handleAddTeam}>
         Confirm
       </button>
     </div>

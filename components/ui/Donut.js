@@ -9,19 +9,13 @@ export default function Donut({ value, size = 96, label = "Win rate" }) {
   return (
     <div className="relative inline-flex" style={{ width: size, height: size }} role="img" aria-label={`${label} ${pct}%`}>
       <svg width={size} height={size} className="-rotate-90">
-        <defs>
-          <linearGradient id="donut-good" x1="0" x2="1" y1="0" y2="1">
-            <stop offset="0%" stopColor="#22d3ee" />
-            <stop offset="100%" stopColor="#34d399" />
-          </linearGradient>
-        </defs>
         <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="rgba(255,255,255,0.08)" strokeWidth={stroke} />
         <circle
           cx={size / 2}
           cy={size / 2}
           r={r}
           fill="none"
-          stroke={good ? "url(#donut-good)" : "#fb7185"}
+          stroke={good ? "#5fbf8f" : "#e0726a"}
           strokeWidth={stroke}
           strokeLinecap="round"
           strokeDasharray={c}
@@ -29,8 +23,8 @@ export default function Donut({ value, size = 96, label = "Win rate" }) {
         />
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center">
-        <span className="text-xl font-bold leading-none">{pct}%</span>
-        <span className="eyebrow mt-1 !text-[9px]">{label}</span>
+        <span className="font-display text-xl font-bold leading-none">{pct}%</span>
+        <span className="mt-1 text-[10px] text-zinc-400">{label}</span>
       </div>
     </div>
   );

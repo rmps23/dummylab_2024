@@ -16,9 +16,9 @@ export default function Preview() {
     <div
       role="img"
       aria-label="Preview of the DummyLab dashboard: win rate, recent form, upcoming events with player availability and ranks"
-      className="relative rounded-2xl border border-white/10 bg-panel/80 p-4 shadow-card backdrop-blur"
+      className="relative rounded-lg border border-white/10 bg-panel p-4 shadow-card"
     >
-      <div className="flex flex-wrap items-center gap-5 rounded-xl bg-black/20 p-4">
+      <div className="flex flex-wrap items-center gap-5 rounded-lg bg-black/20 p-4">
         <Donut value={58} size={88} />
         <div>
           <div className="eyebrow">Last 30 days</div>
@@ -33,7 +33,7 @@ export default function Preview() {
       </div>
 
       <div className="mt-3 grid gap-3 sm:grid-cols-2">
-        <div className="rounded-xl bg-black/20 p-3">
+        <div className="rounded-lg bg-black/20 p-3">
           <div className="eyebrow mb-2">Upcoming events</div>
           <ul className="flex flex-col gap-2">
             {EVENTS.map(([day, title, type, dot, answers]) => (
@@ -54,7 +54,7 @@ export default function Preview() {
             ))}
           </ul>
         </div>
-        <div className="rounded-xl bg-black/20 p-3">
+        <div className="rounded-lg bg-black/20 p-3">
           <div className="eyebrow mb-2">Solo queue</div>
           <ul className="flex flex-col gap-2">
             {[

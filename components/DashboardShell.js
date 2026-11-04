@@ -28,7 +28,7 @@ export default function DashboardShell({ children }) {
     <div className="flex">
       <a
         href="#main"
-        className="sr-only focus:not-sr-only focus:fixed focus:left-2 focus:top-2 focus:z-[60] focus:rounded-md focus:bg-cyan-500 focus:px-3 focus:py-2 focus:text-zinc-950"
+        className="sr-only focus:not-sr-only focus:fixed focus:left-2 focus:top-2 focus:z-[60] focus:rounded-md focus:bg-brand focus:px-3 focus:py-2 focus:text-zinc-950"
       >
         Skip to content
       </a>

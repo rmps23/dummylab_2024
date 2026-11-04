@@ -1,5 +1,5 @@
 export default function Skeleton({ className = "" }) {
-  return <div aria-hidden="true" className={`animate-pulse rounded-xl bg-white/[0.05] ${className}`} />;
+  return <div aria-hidden="true" className={`animate-pulse rounded-lg bg-white/[0.05] ${className}`} />;
 }
 
 export function SkeletonCards({ count = 3, className = "h-24" }) {

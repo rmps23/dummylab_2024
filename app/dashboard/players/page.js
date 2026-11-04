@@ -58,7 +58,7 @@ const Players = () => {
     <>
       <PageHeader icon={FaUsers} title="Players" subtitle={`${visible.length} ${showAll ? "across all teams" : "in this team"}`}>
         <label className="flex min-h-11 cursor-pointer items-center gap-2 text-sm text-zinc-300">
-          <input type="checkbox" checked={showAll} onChange={(e) => setShowAll(e.target.checked)} className="h-4 w-4 accent-cyan-400" /> All teams
+          <input type="checkbox" checked={showAll} onChange={(e) => setShowAll(e.target.checked)} className="h-4 w-4 accent-brand" /> All teams
         </label>
         <button onClick={() => setCreateModal(true)} disabled={noTeams} className={btnPrimary}>
           <FaPlus aria-hidden="true" /> Add Player

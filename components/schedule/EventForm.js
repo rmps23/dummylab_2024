@@ -88,7 +88,7 @@ export default function EventForm({ teamId, event, defaultDate, onSaved, onClose
         <button type="button" onClick={onClose} className="inline-flex min-h-11 items-center rounded-lg border border-white/10 bg-white/[0.05] px-4 text-sm font-semibold hover:bg-white/10">
           Cancel
         </button>
-        <button type="submit" disabled={saving} className="inline-flex min-h-11 items-center rounded-lg bg-gradient-to-r from-cyan-400 to-sky-500 px-4 text-sm font-semibold text-zinc-950 hover:brightness-110 disabled:opacity-50">
+        <button type="submit" disabled={saving} className="inline-flex min-h-11 items-center rounded-lg bg-brand hover:bg-brand-soft px-4 text-sm font-semibold text-zinc-950 disabled:opacity-50">
           Save
         </button>
       </div>

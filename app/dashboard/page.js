@@ -29,7 +29,7 @@ function GetStarted({ steps }) {
   return (
     <Card title={`Get started · ${done} of ${steps.length} done`} className="border-brand/30 bg-brand/[0.04]">
       <div className="mb-3 h-1.5 overflow-hidden rounded-full bg-white/10">
-        <div className="h-full rounded-full bg-gradient-to-r from-cyan-400 to-violet-400" style={{ width: `${(done / steps.length) * 100}%` }} />
+        <div className="h-full rounded-full bg-brand" style={{ width: `${(done / steps.length) * 100}%` }} />
       </div>
       <ol className="grid gap-1 sm:grid-cols-2">
         {steps.map((s) => (
@@ -151,7 +151,7 @@ const Dashboard = () => {
                   <div className="eyebrow mb-2 text-right">Roster</div>
                   <div className="flex -space-x-2">
                     {players.slice(0, 6).map((p) => (
-                      <span key={p.id} className="rounded-xl ring-2 ring-panel" title={p.name}>
+                      <span key={p.id} className="rounded-lg ring-2 ring-panel" title={p.name}>
                         <Avatar name={p.name} size={34} />
                       </span>
                     ))}
