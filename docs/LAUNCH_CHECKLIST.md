@@ -53,7 +53,6 @@ before you rely on a number.
 ## 5. Database
 
 - [ ] Run `supabase/migrations/0001` to `0007` in order. `0006` creates the plan limits and `0007` the notification settings.
-- [ ] Run `node --env-file=.env.local scripts/seed-demo.mjs` so the demo account is Pro and has notes.
 - [ ] Rotate the Supabase secret key and any key that was ever pasted in a chat or ticket.
 
 ## 6. Portugal: tax and invoicing

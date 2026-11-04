@@ -62,7 +62,7 @@ export default function Privacy() {
         <h2>How long we keep it</h2>
         <p>
           Until you delete it. Deleting a player removes their match history; deleting your account removes everything
-          you created. The demo account is reset every day.
+          you created.
         </p>
       </section>
       <section>

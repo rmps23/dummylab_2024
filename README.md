@@ -2,7 +2,7 @@
 
 A coaching dashboard for **League of Legends** teams. Plan trainings, scrims and matches with each player's availability, and follow per-player and per-team stats built from match history pulled from the Riot Games API.
 
-**Live demo: [dummylab-2024.vercel.app](https://dummylab-2024.vercel.app)**. Press "Try the demo account" for a one-click login with a sample team (no sign-up).
+**Live: [dummylab-2024.vercel.app](https://dummylab-2024.vercel.app)**. Create a free account to try it (one team, up to 10 players, no card).
 
 | Home | Schedule |
 |---|---|
@@ -21,7 +21,6 @@ A coaching dashboard for **League of Legends** teams. Plan trainings, scrims and
 - **Discord reminders and a weekly report (Pro):** post an event's availability to a channel, and get a weekly summary by email, CSV or print.
 - **Plans:** Free (1 team, 10 players, 30 days of stats) and Pro (5 teams, 100 players, full history, links, reminders, report). Limits are enforced in the database. Payments are built on Stripe test mode and switched off until launch.
 - **Accessible and responsive:** keyboard-friendly dialogs, landmarks, 44 px touch targets, light on JavaScript.
-- **Demo account:** one-click login that never exposes credentials to the browser. It has every Pro feature, cannot change email or be deleted, and is reset daily.
 
 ## Stack
 
@@ -47,8 +46,7 @@ Next.js 14 (App Router) · React 18 · Tailwind CSS · Zustand · Supabase (Auth
    | `SUPABASE_SERVICE_ROLE_KEY` | Same page. **Server only, never expose it.** |
    | `RIOT_API_KEY` | [developer.riotgames.com](https://developer.riotgames.com) (development keys expire every 24 hours) |
    | `RIOT_ENABLED`, `RIOT_ALLOWED_EMAILS` | Riot features are off unless enabled: allow-list your own email with a development key, set `RIOT_ENABLED=true` once a production key is approved ([docs/RIOT_REGISTRATION.md](docs/RIOT_REGISTRATION.md)) |
-   | `DEMO_EMAIL`, `DEMO_PASSWORD` | Any credentials for the demo user |
-   | `CRON_SECRET` | Any long random string (protects the daily demo reset and the weekly report) |
+   | `CRON_SECRET` | Any long random string (protects the weekly report cron) |
    | `BILLING_ENABLED`, `STRIPE_*` | Optional. Leave `BILLING_ENABLED=false` until launch ([docs/LAUNCH_CHECKLIST.md](docs/LAUNCH_CHECKLIST.md)) |
    | `RESEND_API_KEY`, `RESEND_FROM` | Optional. Enables the weekly report email |
 
@@ -60,11 +58,10 @@ Next.js 14 (App Router) · React 18 · Tailwind CSS · Zustand · Supabase (Auth
    npm run dev
    ```
 
-4. Optional: create the demo account and sample data with `node --env-file=.env.local scripts/seed-demo.mjs`.
 
 ## Deployment
 
-Deploy to Vercel with the same environment variables. `vercel.json` schedules a daily cron that resets the demo account and a weekly one that sends the reports. In Supabase, add the site URL under Authentication > URL Configuration.
+Deploy to Vercel with the same environment variables. `vercel.json` schedules a weekly cron that sends the reports. In Supabase, add the site URL under Authentication > URL Configuration.
 
 ## Riot Games
 

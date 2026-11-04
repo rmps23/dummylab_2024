@@ -1,18 +1,25 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { FaPlay } from "react-icons/fa6";
 import { supabase } from "@/supabase";
-import { btnPrimary, btnSecondary, inputClass } from "@/components/ui/buttons";
+import { btnPrimary, inputClass } from "@/components/ui/buttons";
 
 export default function Login() {
   const router = useRouter();
-  const [mode, setMode] = useState("signin");
+  const [mode, setMode] = useState("signup");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState(null);
+
+  // The "Sign in" link in the header points to /#signin.
+  useEffect(() => {
+    const sync = () => window.location.hash === "#signin" && setMode("signin");
+    sync();
+    window.addEventListener("hashchange", sync);
+    return () => window.removeEventListener("hashchange", sync);
+  }, []);
 
   const enter = () => {
     router.push("/dashboard");
@@ -37,33 +44,36 @@ export default function Login() {
     setLoading(false);
   }
 
-  async function handleDemo() {
-    setLoading(true);
-    setMessage(null);
-    try {
-      const response = await fetch("/api/demo-login", { method: "POST" });
-      if (!response.ok) throw new Error("The demo account is unavailable right now.");
-      enter();
-    } catch (error) {
-      setMessage({ error: true, text: error.message });
-      setLoading(false);
-    }
-  }
-
   return (
-    <div className="mx-auto flex w-full max-w-sm flex-col gap-4 rounded-2xl border border-white/10 bg-panel/80 p-6 shadow-card backdrop-blur">
-      <div>
-        <h2 className="text-xl font-bold">{mode === "signin" ? "Welcome back" : "Create your account"}</h2>
-        <p className="text-sm text-zinc-400">Plan the week, track the stats.</p>
+    <div className="flex w-full flex-col gap-5 rounded-lg border border-white/10 bg-panel p-6 shadow-card">
+      <div role="tablist" aria-label="Account" className="grid grid-cols-2 gap-1 rounded-lg bg-black/30 p-1">
+        {[
+          ["signup", "Create account"],
+          ["signin", "Sign in"],
+        ].map(([key, label]) => (
+          <button
+            key={key}
+            role="tab"
+            type="button"
+            aria-selected={mode === key}
+            onClick={() => {
+              setMode(key);
+              setMessage(null);
+            }}
+            className={`min-h-10 rounded-md text-sm font-semibold transition ${
+              mode === key ? "bg-white/10 text-zinc-50" : "text-zinc-400 hover:text-zinc-100"
+            }`}
+          >
+            {label}
+          </button>
+        ))}
       </div>
 
-      <button onClick={handleDemo} disabled={loading} className={`${btnPrimary} w-full`}>
-        <FaPlay aria-hidden="true" className="text-xs" /> Try the demo account
-      </button>
-      <p className="-mt-2 text-center text-xs text-zinc-400">One click, no sign-up. Sample team and players.</p>
-
-      <div className="flex items-center gap-3 text-sm text-zinc-400">
-        <span className="h-px flex-1 bg-white/10" /> or <span className="h-px flex-1 bg-white/10" />
+      <div>
+        <h2 className="text-xl font-bold">{mode === "signin" ? "Welcome back" : "Start for free"}</h2>
+        <p className="text-sm text-zinc-400">
+          {mode === "signin" ? "Sign in to see your team." : "One team, up to 10 players. No card needed."}
+        </p>
       </div>
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-3">
@@ -82,24 +92,17 @@ export default function Login() {
           required
           minLength={6}
           aria-label="Password"
-          placeholder="Password"
+          placeholder={mode === "signin" ? "Password" : "Password (at least 6 characters)"}
           autoComplete={mode === "signin" ? "current-password" : "new-password"}
           className={inputClass}
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
-        {message && <p role="alert" className={`text-sm ${message.error ? "text-rose-400" : "text-brand"}`}>{message.text}</p>}
-        <button type="submit" disabled={loading} className={`${btnSecondary} w-full`}>
-          {mode === "signin" ? "Sign in" : "Create account"}
+        {message && <p role="alert" className={`text-sm ${message.error ? "text-loss" : "text-brand"}`}>{message.text}</p>}
+        <button type="submit" disabled={loading} className={`${btnPrimary} w-full`}>
+          {mode === "signin" ? "Sign in" : "Create free account"}
         </button>
       </form>
-
-      <button
-        onClick={() => setMode(mode === "signin" ? "signup" : "signin")}
-        className="min-h-11 text-sm text-zinc-300 underline-offset-2 hover:text-white hover:underline"
-      >
-        {mode === "signin" ? "No account? Sign up" : "Already have an account? Sign in"}
-      </button>
     </div>
   );
 }

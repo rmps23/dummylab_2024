@@ -9,26 +9,28 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ["var(--font-chakra)", "Inter", "Arial", "Helvetica", "sans-serif"],
+        sans: ["var(--font-body)", "system-ui", "Arial", "sans-serif"],
+        display: ["var(--font-chakra)", "system-ui", "sans-serif"],
       },
       colors: {
-        // Surfaces, from the page background up to raised panels.
-        ink: "#09090b",
-        panel: "#111116",
-        raised: "#17171f",
-        brand: { DEFAULT: "#22d3ee", soft: "#67e8f9", deep: "#0e7490" },
-        accent: { DEFAULT: "#a78bfa", deep: "#6d28d9" },
-        win: "#34d399",
-        loss: "#fb7185",
+        // Warm neutral surfaces, from the page background up to raised panels.
+        ink: "#0f0f0e",
+        panel: "#171716",
+        raised: "#1f1f1d",
+        brand: { DEFAULT: "#3ab5c6", soft: "#5cc6d4", deep: "#0e7490" },
+        // Warm sand: used sparingly (Pro tags, highlights).
+        accent: { DEFAULT: "#d6a24e", deep: "#9a6b1c" },
+        win: "#5fbf8f",
+        loss: "#e0726a",
       },
       boxShadow: {
-        card: "0 1px 0 0 rgba(255,255,255,0.04) inset, 0 8px 24px -12px rgba(0,0,0,0.6)",
-        glow: "0 0 0 1px rgba(34,211,238,0.35), 0 0 24px -4px rgba(34,211,238,0.35)",
+        card: "0 1px 2px rgba(0,0,0,0.35)",
       },
       keyframes: {
-        rise: { from: { opacity: 0, transform: "translateY(6px)" }, to: { opacity: 1, transform: "none" } },
+        rise: { from: { opacity: 0, transform: "translateY(4px)" }, to: { opacity: 1, transform: "none" } },
+        marquee: { from: { transform: "translateX(0)" }, to: { transform: "translateX(-50%)" } },
       },
-      animation: { rise: "rise .35s ease-out both" },
+      animation: { rise: "rise .25s ease-out both", marquee: "marquee 28s linear infinite" },
     },
   },
   plugins: [],

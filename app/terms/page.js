@@ -8,7 +8,7 @@ export default function Terms() {
     <LegalPage title="Terms of use">
       <p>
         {SITE.name} is a coaching dashboard for League of Legends teams. It is currently a free preview. By creating an
-        account or using the demo you agree to these terms.
+        account you agree to these terms.
       </p>
       <section>
         <h2>Your account</h2>
@@ -40,13 +40,6 @@ export default function Terms() {
           <li>Do not try to access other people&apos;s data.</li>
           <li>Do not use the service to gain an unfair in-game advantage or to break Riot&apos;s rules.</li>
         </ul>
-      </section>
-      <section>
-        <h2>The demo account</h2>
-        <p>
-          The demo account is shared, contains sample data, and is reset every day. Do not enter personal information
-          in it.
-        </p>
       </section>
       <section>
         <h2>Availability and liability</h2>

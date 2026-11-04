@@ -10,7 +10,7 @@ export default function PricingCards({ proAvailable = false }) {
 
   return (
     <div className="grid gap-4 md:grid-cols-2">
-      <section className="flex flex-col rounded-2xl border border-white/[0.08] bg-panel/80 p-6 shadow-card">
+      <section className="flex flex-col rounded-lg border border-white/[0.08] bg-panel p-6 shadow-card">
         <h3 className="eyebrow">{free.name}</h3>
         <p className="mt-2 text-4xl font-bold">€0</p>
         <p className="text-sm text-zinc-400">Free forever</p>
@@ -27,7 +27,7 @@ export default function PricingCards({ proAvailable = false }) {
         </Link>
       </section>
 
-      <section className="relative flex flex-col rounded-2xl border border-brand/40 bg-panel/80 p-6 shadow-glow">
+      <section className="relative flex flex-col rounded-lg border border-brand/40 bg-panel p-6">
         <span className="absolute right-4 top-4 rounded-full bg-brand/15 px-3 py-1 text-xs font-bold text-brand">For academies</span>
         <h3 className="eyebrow !text-brand">{pro.name}</h3>
         <p className="mt-2 text-4xl font-bold">
@@ -51,9 +51,9 @@ export default function PricingCards({ proAvailable = false }) {
         ) : (
           <>
             <Link href="/#start" className={`${btnPrimary} mt-6`}>
-              Try every Pro feature in the demo
+              Start free, upgrade later
             </Link>
-            <p className="mt-2 text-center text-xs text-zinc-400">Payments open soon. The demo account has Pro switched on.</p>
+            <p className="mt-2 text-center text-xs text-zinc-400">Pro payments are not open yet.</p>
           </>
         )}
       </section>
