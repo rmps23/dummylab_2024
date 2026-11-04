@@ -10,7 +10,7 @@ import { playerStore } from "@/store/playerStore";
 import { featureStore } from "@/store/featureStore";
 import { ROLES } from "@/lib/constants";
 
-const field = "flex min-h-11 w-full cursor-pointer rounded-lg border border-white/10 bg-black/30 px-3 text-sm outline-none focus:border-brand/60";
+import Select from "@/components/ui/Select";
 
 const AddPlayer = ({ setCreatePlayerModal }) => {
   const { regions } = regionStore();
@@ -84,26 +84,14 @@ const AddPlayer = ({ setCreatePlayerModal }) => {
       </div>
       <div className="flex flex-col gap-2">
         <label htmlFor="player-team">Team</label>
-        <select id="player-team" className={field} value={team} onChange={(e) => setTeam(e.target.value)}>
-          {teams.map((t) => (
-            <option key={t.id} value={t.id}>
-              {t.name}
-            </option>
-          ))}
-        </select>
+        <Select id="player-team" value={team} onChange={setTeam} options={teams.map((t) => ({ value: t.id, label: t.name }))} />
       </div>
       <div className="flex flex-col gap-2">
         <label htmlFor="player-role">Role</label>
-        <select id="player-role" className={field} value={role} onChange={(e) => setRole(e.target.value)}>
-          {ROLES.map((r) => (
-            <option key={r.id} value={r.id}>
-              {r.name}
-            </option>
-          ))}
-        </select>
+        <Select id="player-role" value={role} onChange={setRole} options={ROLES.map((r) => ({ value: r.id, label: r.name }))} />
       </div>
 
-      <div className="rounded-xl border border-white/10 bg-black/20 p-4">
+      <div className="rounded-lg border border-white/10 bg-black/20 p-4">
         {!riotEnabled ? (
           <p className="text-sm text-zinc-300">
             Riot lookups are not enabled for your account yet, so this player is added without a Riot ID. You can still
@@ -119,7 +107,7 @@ const AddPlayer = ({ setCreatePlayerModal }) => {
         ) : verified ? (
           <div className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-2">
-              {verified.riotId} is verified <FaCircleCheck aria-hidden="true" className="text-xl text-cyan-400" />
+              {verified.riotId} is verified <FaCircleCheck aria-hidden="true" className="text-xl text-brand" />
             </div>
             <button
               aria-label="Remove verified Riot ID"
@@ -157,13 +145,7 @@ const AddPlayer = ({ setCreatePlayerModal }) => {
                 onChange={(e) => setTagLine(e.target.value)}
               />
             </div>
-            <select aria-label="Region" className="min-h-11 cursor-pointer rounded-lg border border-white/10 bg-black/30 px-3 text-sm" value={region} onChange={(e) => setRegion(e.target.value)}>
-              {regions.map((r) => (
-                <option key={r.code} value={r.code}>
-                  {r.name}
-                </option>
-              ))}
-            </select>
+            <Select label="Region" value={region} onChange={setRegion} options={regions.map((r) => ({ value: r.code, label: r.name }))} />
             <button
               className="min-h-11 rounded-lg bg-white/10 px-4 text-sm font-semibold text-zinc-100 hover:bg-white/15 disabled:opacity-40"
               disabled={loading || !gameName.trim() || !tagLine.trim()}
@@ -179,7 +161,7 @@ const AddPlayer = ({ setCreatePlayerModal }) => {
       </div>
 
       <button
-        className="inline-flex min-h-11 items-center justify-center rounded-lg bg-gradient-to-r from-cyan-400 to-sky-500 px-4 text-sm font-semibold text-zinc-950 shadow-[0_6px_18px_-8px_rgba(34,211,238,0.8)] hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-40"
+        className="inline-flex min-h-11 items-center justify-center rounded-lg bg-brand hover:bg-brand-soft px-4 text-sm font-semibold text-zinc-950 disabled:cursor-not-allowed disabled:opacity-40"
         disabled={!canSave}
         onClick={handleInsertPlayer}
       >
