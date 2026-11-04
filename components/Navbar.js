@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { FaChartSimple, FaCalendar, FaShield, FaUsers, FaGear, FaHouse } from "react-icons/fa6";
 import Logout from "./auth/Logout";
 import Avatar from "@/components/ui/Avatar";
+import Select from "@/components/ui/Select";
 import { teamStore } from "@/store/teamStore";
 
 const links = [
@@ -22,23 +23,15 @@ export function TeamSwitcher({ className = "" }) {
   if (teams.length === 0) return null;
   const active = teams.find((t) => t.id === activeTeamId);
   return (
-    <div className={`relative flex w-full items-center gap-3 rounded-xl border border-white/10 bg-white/[0.04] px-2 hover:bg-white/[0.07] ${className}`}>
+    <div className={`relative flex w-full items-center gap-3 rounded-lg border border-white/10 bg-white/[0.04] px-2 hover:bg-white/[0.07] ${className}`}>
       <Avatar name={active?.name} size={28} />
-      <select
-        aria-label="Active team"
+      <Select
+        variant="bare"
+        label="Active team"
         value={activeTeamId ?? ""}
-        onChange={(e) => setActiveTeam(Number(e.target.value))}
-        className="h-11 min-w-0 flex-1 cursor-pointer appearance-none truncate bg-transparent text-sm font-semibold outline-none"
-      >
-        {teams.map((team) => (
-          <option key={team.id} value={team.id} className="bg-zinc-900">
-            {team.name}
-          </option>
-        ))}
-      </select>
-      <span aria-hidden="true" className="pointer-events-none pr-1 text-xs text-zinc-400">
-        ▾
-      </span>
+        onChange={(id) => setActiveTeam(Number(id))}
+        options={teams.map((team) => ({ value: team.id, label: team.name }))}
+      />
     </div>
   );
 }
@@ -54,7 +47,7 @@ export function Sidebar() {
   const all = [...links, settings];
 
   return (
-    <aside className="hidden h-dvh w-64 shrink-0 flex-col justify-between gap-4 border-r border-white/[0.06] bg-panel/60 px-4 pb-4 pt-8 backdrop-blur sm:flex">
+    <aside className="hidden h-dvh w-64 shrink-0 flex-col justify-between gap-4 border-r border-white/[0.06] bg-panel/60 px-4 pb-4 pt-8 sm:flex">
       <div className="flex w-full flex-col gap-6">
         <Link href="/dashboard" className="px-2">
           <Image src="/assets/logos/dummylab_logo.png" width={140} height={33} alt="DummyLab" priority className="h-auto w-[140px]" />
@@ -73,7 +66,7 @@ export function Sidebar() {
                   active ? "bg-white/[0.07] text-white" : "text-zinc-400 hover:bg-white/[0.04] hover:text-zinc-100"
                 }`}
               >
-                {active && <span aria-hidden="true" className="absolute inset-y-2 left-0 w-[3px] rounded-full bg-brand shadow-[0_0_12px_rgba(34,211,238,0.8)]" />}
+                {active && <span aria-hidden="true" className="absolute inset-y-2 left-0 w-[3px] rounded-full bg-brand" />}
                 <l.icon aria-hidden="true" className={active ? "text-brand" : ""} /> <span>{l.label}</span>
               </Link>
             );
@@ -94,7 +87,7 @@ export function MobileChrome() {
 
   return (
     <>
-      <header className="sticky top-0 z-40 flex items-center gap-2 border-b border-white/[0.06] bg-ink/85 px-3 py-2 backdrop-blur sm:hidden">
+      <header className="sticky top-0 z-40 flex items-center gap-2 border-b border-white/[0.06] bg-ink/85 px-3 py-2 sm:hidden">
         <Link href="/dashboard" aria-label="DummyLab home" className="shrink-0">
           <Image src="/assets/logos/dummylab_logo_solo.png" width={28} height={29} alt="" className="h-auto w-7" />
         </Link>
@@ -114,7 +107,7 @@ export function MobileChrome() {
         <Logout className="h-11 w-11" />
       </header>
 
-      <nav aria-label="Main" className="fixed inset-x-0 bottom-0 z-40 grid grid-cols-5 border-t border-white/[0.06] bg-ink/90 backdrop-blur sm:hidden">
+      <nav aria-label="Main" className="fixed inset-x-0 bottom-0 z-40 grid grid-cols-5 border-t border-white/[0.06] bg-ink/90 sm:hidden">
         {links.map((l) => {
           const active = isActive(l);
           return (
@@ -126,7 +119,7 @@ export function MobileChrome() {
                 active ? "text-brand" : "text-zinc-400"
               }`}
             >
-              {active && <span aria-hidden="true" className="absolute inset-x-5 top-0 h-[3px] rounded-b-full bg-brand shadow-[0_0_12px_rgba(34,211,238,0.8)]" />}
+              {active && <span aria-hidden="true" className="absolute inset-x-5 top-0 h-[3px] rounded-b-full bg-brand" />}
               <l.icon aria-hidden="true" className="text-base" /> <span>{l.label}</span>
             </Link>
           );
