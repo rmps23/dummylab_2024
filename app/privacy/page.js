@@ -54,6 +54,14 @@ export default function Privacy() {
         </p>
       </section>
       <section>
+        <h2>Scrim (custom) games</h2>
+        <p>
+          Games played in custom lobbies are only stored and shown to a coach if the player turns this on themselves,
+          from the personal availability link. It is off by default, only the coach and staff of that team can see these
+          games, nothing is public, and turning it off deletes the custom games already stored for that player.
+        </p>
+      </section>
+      <section>
         <h2>Staff you invite</h2>
         <p>
           A coach can invite other people to a team by email. They see that team&apos;s players, schedule and statistics

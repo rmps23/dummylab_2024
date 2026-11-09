@@ -4,6 +4,7 @@ import { useState } from "react";
 import { format, isSameDay } from "date-fns";
 import { toast } from "react-toastify";
 import { EVENT_TYPES } from "@/lib/constants";
+import { CONSENT_COPY } from "@/lib/consent";
 
 const CHOICES = [
   { status: "available", label: "I can play", short: "✓", on: "bg-emerald-600 text-white" },
@@ -11,7 +12,58 @@ const CHOICES = [
   { status: "unavailable", label: "Can't make it", short: "✕", on: "bg-rose-600 text-white" },
 ];
 
-export default function AvailabilityForm({ token, playerName, teamName, initialEvents }) {
+// Opt-in for custom (scrim) games. Off until the player turns it on; turning it off deletes what was stored.
+function ConsentCard({ token, initial }) {
+  const [on, setOn] = useState(initial);
+  const [busy, setBusy] = useState(false);
+
+  async function toggle() {
+    if (busy) return;
+    const next = !on;
+    setBusy(true);
+    try {
+      const response = await fetch(`/api/availability/${token}/consent`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ consent: next }),
+      });
+      const body = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(body.error || "Could not save your choice");
+      setOn(next);
+      toast.success(next ? "Your coach can now see your scrim games" : "Scrim games turned off and deleted");
+    } catch (error) {
+      toast.error(error.message);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <section aria-labelledby="consent-title" className="rounded-xl border border-line bg-panel p-4">
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <h2 id="consent-title" className="font-bold">{CONSENT_COPY.title}</h2>
+          <p className="mt-1 text-sm text-zinc-300">{CONSENT_COPY.body}</p>
+          <p className="mt-1 text-xs text-zinc-400">{CONSENT_COPY.off}</p>
+        </div>
+        <button
+          type="button"
+          role="switch"
+          aria-checked={on}
+          aria-labelledby="consent-title"
+          onClick={toggle}
+          disabled={busy}
+          className={`relative mt-1 h-8 w-14 shrink-0 rounded-full border transition ${on ? "border-brand bg-brand" : "border-line-strong bg-well"} disabled:opacity-60`}
+        >
+          <span className={`absolute top-1 h-6 w-6 rounded-full bg-white transition-all ${on ? "left-7" : "left-1"}`} />
+          <span className="sr-only">{on ? "On" : "Off"}</span>
+        </button>
+      </div>
+    </section>
+  );
+}
+
+export default function AvailabilityForm({ token, playerName, teamName, initialEvents, initialConsent = false }) {
   const [events, setEvents] = useState(initialEvents);
   const [saving, setSaving] = useState(null);
   const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
@@ -95,6 +147,8 @@ export default function AvailabilityForm({ token, playerName, teamName, initialE
           })}
         </ul>
       )}
+
+      <ConsentCard token={token} initial={initialConsent} />
     </div>
   );
 }

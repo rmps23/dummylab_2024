@@ -55,6 +55,9 @@ beforeAll(async () => {
     select setval(pg_get_serial_sequence('team', 'id'), 100), setval(pg_get_serial_sequence('event', 'id'), 100);
   `);
   // One old and one recent game for each player (old = 60 days ago).
+  // A scrim (custom game, queue 0) of the first player: hidden until the player consents.
+  await db.query("insert into match (id, queue_id, duration, ended_at) values ('EUW1_C1', 0, 1800, now() - interval '1 day')");
+  await db.query("insert into player_match (player_id, match_id, champion, win) values ('10000000-0000-0000-0000-000000000001', 'EUW1_C1', 'Ahri', true)");
   for (const [mid, days, pid] of [["EUW1_1", 60, "10000000-0000-0000-0000-000000000001"], ["EUW1_2", 2, "10000000-0000-0000-0000-000000000001"], ["EUW1_3", 60, "10000000-0000-0000-0000-000000000002"], ["EUW1_4", 2, "10000000-0000-0000-0000-000000000002"]]) {
     await db.query("insert into match (id, queue_id, duration, ended_at) values ($1, 420, 1800, $2)", [mid, new Date(Date.now() - days * DAY).toISOString()]);
     await db.query("insert into player_match (player_id, match_id, champion, win) values ($1, $2, 'Ahri', true)", [pid, mid]);
@@ -198,5 +201,72 @@ describe("stats window follows the team owner's plan", () => {
   it("clamps to 30 days on a Free team", async () => {
     const [row] = await rows(STAFF, "select games from player_stats(2, null, null, null)");
     expect(Number(row.games)).toBe(1);
+  });
+});
+
+describe("custom games and player consent", () => {
+  const P1 = "10000000-0000-0000-0000-000000000001";
+
+  it("hides custom games from everyone until the player consents", async () => {
+    for (const uid of [OWNER, STAFF, VIEWER, STRANGER]) {
+      expect((await rows(uid, "select id from match where id = 'EUW1_C1'")).length).toBe(0);
+      expect((await rows(uid, "select id from player_match where match_id = 'EUW1_C1'")).length).toBe(0);
+    }
+    const [row] = await rows(OWNER, "select games from player_stats(1, null, null, null)");
+    expect(Number(row.games)).toBe(2); // the scrim does not count
+  });
+
+  it("does not let a coach flip or set the consent", async () => {
+    await as(OWNER, (tx) => tx.query("update player set custom_games_consent = true where id = $1", [P1]));
+    expect((await rows(OWNER, "select custom_games_consent from player where id = $1", [P1]))[0].custom_games_consent).toBe(false);
+    await as(OWNER, (tx) =>
+      tx.query("insert into player (team_id, role_id, name, region, riot_id, riot_puuid, custom_games_consent) values (1, 1, 'Sneaky', 'EUW1', 'S#1', 'puuid-sneaky', true)")
+    );
+    expect((await rows(OWNER, "select custom_games_consent from player where name = 'Sneaky'"))[0].custom_games_consent).toBe(false);
+  });
+
+  it("shows them to the team once the server records the consent", async () => {
+    await db.query("update player set custom_games_consent = true, custom_games_consent_at = now() where id = $1", [P1]);
+    // (the viewer left the team in an earlier test, so only the owner and the staff member are checked)
+    for (const uid of [OWNER, STAFF]) {
+      expect((await rows(uid, "select id from match where id = 'EUW1_C1'")).length).toBe(1);
+      expect((await rows(uid, "select id from player_match where match_id = 'EUW1_C1'")).length).toBe(1);
+    }
+    expect((await rows(STRANGER, "select id from match where id = 'EUW1_C1'")).length).toBe(0);
+    const [row] = await rows(OWNER, "select games from player_stats(1, null, null, null)");
+    expect(Number(row.games)).toBe(3);
+  });
+
+  it("deletes the stored custom games when consent is withdrawn", async () => {
+    await db.query("update player set custom_games_consent = false, custom_games_consent_at = null where id = $1", [P1]);
+    const removed = (await db.query("select purge_custom_games($1) as n", [P1])).rows[0].n;
+    expect(Number(removed)).toBe(1);
+    expect((await db.query("select count(*)::int as n from match where id = 'EUW1_C1'")).rows[0].n).toBe(0);
+    expect((await db.query("select count(*)::int as n from match where id = 'EUW1_2'")).rows[0].n).toBe(1); // other games stay
+  });
+
+  it("keeps the purge function and the rate limiter out of reach of coaches", async () => {
+    await expect(rows(OWNER, "select purge_custom_games($1)", [P1])).rejects.toThrow(/permission denied/);
+    await expect(rows(OWNER, "select * from rate_limit_check('x', 1, 60)")).rejects.toThrow(/permission denied/);
+    expect(await rows(OWNER, "select * from rate_limit_hit")).toEqual([]); // row level security, no policy
+  });
+});
+
+describe("shared rate limiter", () => {
+  const hit = async (key, limit = 2) => (await db.query("select * from rate_limit_check($1, $2, 60)", [key, limit])).rows[0];
+
+  it("allows up to the limit per window, then says when to come back", async () => {
+    expect((await hit("a")).ok).toBe(true);
+    expect((await hit("a")).ok).toBe(true);
+    const blocked = await hit("a");
+    expect(blocked.ok).toBe(false);
+    expect(blocked.retry_after).toBeGreaterThan(0);
+    expect(blocked.retry_after).toBeLessThanOrEqual(60);
+  });
+
+  it("counts each key on its own and starts a fresh window later", async () => {
+    expect((await hit("b")).ok).toBe(true);
+    await db.query("update rate_limit_hit set window_start = now() - interval '2 minutes' where key = 'a'");
+    expect((await hit("a")).ok).toBe(true);
   });
 });

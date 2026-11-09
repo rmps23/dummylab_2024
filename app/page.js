@@ -103,7 +103,7 @@ export default function Home() {
           <h2 id="riot-title" className="text-2xl font-bold">Built on official Riot data</h2>
           <p className="text-zinc-300">
             Match history and ranks come from the Riot Games API, for the players you add by Riot ID. Importing is being switched on
-            for all accounts as Riot reviews the product, so until then the demo shows sample data. Your private notes and
+            for all accounts as Riot reviews the product, so until then the demo shows sample data. Scrim (custom) games are only included for players who opt in themselves. Your private notes and
             availability answers stay in your account, and any player can ask for their data to be deleted.
           </p>
         </div>

@@ -182,7 +182,7 @@ export default function Select({
               >
                 {o.icon}
                 <span className="min-w-0 flex-1 truncate">{o.label}</span>
-                {o.hint && <span className="eyebrow rounded bg-accent/15 px-1.5 py-0.5 text-accent">{o.hint}</span>}
+                {o.hint && <span className="eyebrow rounded bg-brand/15 px-1.5 py-0.5 text-brand">{o.hint}</span>}
                 {isSelected && <FaCheck aria-hidden="true" className="shrink-0 text-xs text-brand" />}
               </li>
             );

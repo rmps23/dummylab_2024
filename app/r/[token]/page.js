@@ -25,6 +25,7 @@ export default async function InvitePage({ params }) {
             playerName={context.player.name}
             teamName={context.teamName}
             initialEvents={context.events}
+            initialConsent={context.player.consent}
           />
         ) : (
           <div className="rounded-xl border border-dashed border-line p-8 text-center">

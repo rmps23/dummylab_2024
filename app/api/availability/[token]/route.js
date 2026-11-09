@@ -1,6 +1,6 @@
 import { json } from "@/lib/auth";
 import { ANSWERS, getInviteContext, isToken } from "@/lib/invites";
-import { rateLimit } from "@/lib/ratelimit";
+import { rateLimitShared } from "@/lib/ratelimit";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 const LIMIT = { limit: 60, windowMs: 60_000 };
@@ -9,17 +9,19 @@ const LIMIT = { limit: 60, windowMs: 60_000 };
 // and only for that player's team events.
 export async function GET(request, { params }) {
   if (!isToken(params.token)) return json({ error: "Not found" }, 404);
-  const check = rateLimit(`invite-read:${params.token}`, LIMIT);
+  const admin = createAdminClient();
+  const check = await rateLimitShared(admin, `invite-read:${params.token}`, LIMIT);
   if (!check.ok) return json({ error: "Too many requests" }, 429, { "Retry-After": String(check.retryAfter) });
 
-  const context = await getInviteContext(createAdminClient(), params.token);
+  const context = await getInviteContext(admin, params.token);
   if (!context) return json({ error: "This link is no longer valid" }, 404);
-  return json({ player: context.player.name, team: context.teamName, events: context.events });
+  return json({ player: context.player.name, team: context.teamName, events: context.events, consent: context.player.consent });
 }
 
 export async function POST(request, { params }) {
   if (!isToken(params.token)) return json({ error: "Not found" }, 404);
-  const check = rateLimit(`invite-write:${params.token}`, LIMIT);
+  const admin = createAdminClient();
+  const check = await rateLimitShared(admin, `invite-write:${params.token}`, LIMIT);
   if (!check.ok) return json({ error: "Too many requests" }, 429, { "Retry-After": String(check.retryAfter) });
 
   const body = await request.json().catch(() => ({}));
@@ -28,7 +30,6 @@ export async function POST(request, { params }) {
     return json({ error: "Invalid answer" }, 400);
   }
 
-  const admin = createAdminClient();
   const context = await getInviteContext(admin, params.token);
   if (!context) return json({ error: "This link is no longer valid" }, 404);
 

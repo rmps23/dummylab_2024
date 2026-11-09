@@ -1,6 +1,7 @@
 import { json, requireRiotUser } from "@/lib/auth";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getMatch, getMatchIds, getTimeline, isMatchIdFor, RiotError, toRows } from "@/lib/riot";
+import { canStoreMatch } from "@/lib/consent";
 
 export const maxDuration = 60;
 
@@ -16,7 +17,7 @@ export async function POST(request, { params }) {
   // RLS guarantees the player belongs to the caller.
   const { data: player } = await supabase
     .from("player")
-    .select("id, region, riot_puuid, last_synced_at")
+    .select("id, region, riot_puuid, last_synced_at, custom_games_consent")
     .eq("id", params.id)
     .maybeSingle();
   if (!player) return json({ error: "Player not found" }, 404);
@@ -46,10 +47,16 @@ export async function POST(request, { params }) {
 
     const admin = createAdminClient();
     let saved = 0;
+    let skipped = 0;
 
     for (const matchId of batch) {
       const matchData = await getMatch(matchId, player.region);
       if (!matchData) continue;
+      // Custom games (scrims) are only stored for players who opted in through their availability link.
+      if (!canStoreMatch(matchData.info?.queueId, player.custom_games_consent === true)) {
+        skipped++;
+        continue;
+      }
       const timeline = await getTimeline(matchId, player.region);
       const rows = toRows(matchData, timeline, player.riot_puuid);
       if (!rows) continue;
@@ -68,7 +75,7 @@ export async function POST(request, { params }) {
       await admin.from("player").update({ last_synced_at: new Date().toISOString() }).eq("id", player.id);
     }
 
-    return json({ saved, remaining: rest.length, total: ids.length, pending: rest });
+    return json({ saved, skipped, remaining: rest.length, total: ids.length, pending: rest });
   } catch (e) {
     const status = e instanceof RiotError ? e.status : 500;
     const headers = e instanceof RiotError && e.retryAfter ? { "Retry-After": String(e.retryAfter) } : undefined;

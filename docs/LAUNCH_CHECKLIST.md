@@ -6,7 +6,7 @@ before you rely on a number.
 
 ## 1. Riot Games (blocks everything)
 
-- [ ] Register the product on the [Developer Portal](https://developer.riotgames.com) (**Register Product**) and wait for approval.
+- [x] Register the product on the [Developer Portal](https://developer.riotgames.com) (**Register Product**): submitted, App ID 904656, waiting for approval.
       Text and open questions: [RIOT_REGISTRATION.md](RIOT_REGISTRATION.md).
 - [ ] Get a **production key** (a personal or development key may not power a public product). One product per key.
 - [ ] Ask Riot whether a subscription is fine. The 2013 API Terms say charging for access to Game Information needs
@@ -66,7 +66,7 @@ Follow [AUTH_AND_EMAIL.md](AUTH_AND_EMAIL.md):
 
 ## 5. Database
 
-- [ ] Run `supabase/migrations/0001` to `0008` in order. `0006` creates the plan limits, `0007` the notification settings and `0008` staff access (team members, invitations, staff seats) and `0009` the three plans (Free, Pro, Academy). The policies are tested in `tests/rls.test.js`.
+- [ ] Run `supabase/migrations/0001` to `0008` in order. `0006` creates the plan limits, `0007` the notification settings and `0008` staff access (team members, invitations, staff seats) `0009` the three plans (Free, Pro, Academy) and `0010` the player consent for scrim games plus the shared rate limiter. The policies are tested in `tests/rls.test.js`.
 - [ ] Run `node --env-file=.env.local scripts/seed-demo.mjs` so the demo account is Pro and has notes.
 - [ ] Rotate the Supabase secret key and any key that was ever pasted in a chat or ticket.
 

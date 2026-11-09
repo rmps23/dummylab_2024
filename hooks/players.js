@@ -2,7 +2,7 @@ import { supabase } from "@/supabase";
 import { toPlanError } from "@/lib/planErrors";
 
 const PLAYER_SELECT =
-  "id, name, region, team_id, role_id, riot_id, riot_puuid, last_synced_at, role:role_id(id, name)";
+  "id, name, region, team_id, role_id, riot_id, riot_puuid, last_synced_at, custom_games_consent, role:role_id(id, name)";
 
 export async function fetchPlayers() {
   const { data, error } = await supabase.from("player").select(PLAYER_SELECT).order("created_at");

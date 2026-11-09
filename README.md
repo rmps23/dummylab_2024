@@ -10,7 +10,13 @@ A coaching dashboard for **League of Legends** teams. Plan trainings, scrims and
 |---|---|
 | ![Pricing](docs/screenshots/pricing.png) | ![Sign up](docs/screenshots/login.png) |
 
-The dashboard, schedule, players and analytics pages are behind the login: press "Try the demo" on the live site to see them.
+| Dashboard | Schedule |
+|---|---|
+| ![Dashboard](docs/screenshots/dashboard.png) | ![Schedule](docs/screenshots/schedule.png) |
+| **Analytics** | |
+| ![Analytics](docs/screenshots/analytics.png) | |
+
+The app pages are behind the login: press "Try the demo" on the live site to explore them with sample data.
 
 ## Features
 
@@ -20,6 +26,7 @@ The dashboard, schedule, players and analytics pages are behind the login: press
 - **Analytics:** win rate, KDA, CS, damage and vision per minute, kill participation, champion pool and KDA trend, per player and per team, filtered by period and queue (solo, flex, clash, scrims).
 - **Match history and ranked:** import recent games with timeline values at 10 and 20 minutes (Match-V5) and ranked entries (League-V4, by PUUID).
 - **Private notes and goals** per player.
+- **Player consent for scrims:** games played in custom lobbies are only stored and shown for players who opt in from their availability link, and are deleted when they opt out.
 - **Staff access (Pro):** invite analysts and assistant coaches by email as *staff* (edit the schedule, keep their own notes) or *viewer* (read only). Players, billing and Riot settings stay with the owner.
 - **Real sign-in:** email confirmation, password reset, a honeypot and optional Cloudflare Turnstile against spam, branded auth emails ([docs/AUTH_AND_EMAIL.md](docs/AUTH_AND_EMAIL.md)).
 - **Discord reminders and a weekly report (Pro):** post an event's availability to a channel, and get a weekly summary by email, CSV or print.
@@ -42,7 +49,7 @@ Next.js 14 (App Router) · React 18 · Tailwind CSS · Zustand · Supabase (Auth
 
 ## Running locally
 
-1. Create a Supabase project and run the files in `supabase/migrations` in order (`0001` to `0009`) in the SQL editor, or with `supabase db push`.
+1. Create a Supabase project and run the files in `supabase/migrations` in order (`0001` to `0010`) in the SQL editor, or with `supabase db push`.
 2. Copy `.env.example` to `.env.local` and fill it in:
 
    | Variable | Where it comes from |

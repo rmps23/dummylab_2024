@@ -19,9 +19,8 @@ module.exports = {
         raised: "#1C1F24",
         well: "#262A30",
         line: { DEFAULT: "#2B3037", strong: "#3B424B" },
-        // Logo cyan. `accent` is kept as an alias so older classes still resolve.
+        // Logo cyan.
         brand: { DEFAULT: "#4AC0DE", soft: "#8AD8EC", deep: "#1E7F99", ink: "#04222B" },
-        accent: { DEFAULT: "#4AC0DE", deep: "#1E7F99" },
         pop: "#F5B84B",
         win: "#3DD6A0",
         loss: "#FF6B7A",

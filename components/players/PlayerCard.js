@@ -46,6 +46,13 @@ export const PlayerCard = ({ player, teamName, rank, form = [], onEdit, onRemove
       </div>
     </div>
 
+    <p
+      className={`-mb-2 text-xs ${player.custom_games_consent ? "text-win" : "text-zinc-400"}`}
+      title="Players choose this themselves through their availability link"
+    >
+      Scrim games: {player.custom_games_consent ? "shared by the player" : "not shared (the player has not opted in)"}
+    </p>
+
     <div className="flex items-center justify-between gap-3 rounded-lg bg-black/20 px-3 py-2">
       {rank ? <RankBadge tier={rank.tier} rank={rank.rank} lp={rank.lp} /> : <span className="text-sm text-zinc-400">Unranked</span>}
       <FormPips results={form} size="sm" />
