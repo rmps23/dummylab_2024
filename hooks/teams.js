@@ -1,16 +1,21 @@
 import { supabase } from "@/supabase";
 import { toPlanError } from "@/lib/planErrors";
 
+// Teams the person owns or has been invited to, each with `my_role`: owner, staff or viewer.
 export async function fetchTeams() {
   const { data, error } = await supabase.from("team").select().order("id", { ascending: true });
   if (error) throw new Error(error.message);
-  return data;
+  const { data: session } = await supabase.auth.getSession();
+  const me = session?.session?.user?.id;
+  const { data: seats } = await supabase.from("team_member").select("team_id, role").eq("user_id", me ?? "");
+  const roles = new Map((seats || []).map((s) => [s.team_id, s.role]));
+  return data.map((t) => ({ ...t, my_role: t.owner_id === me ? "owner" : roles.get(t.id) ?? "viewer" }));
 }
 
 export async function insertTeam(name) {
   const { data, error } = await supabase.from("team").insert({ name }).select().single();
   if (error) throw new Error(error.message);
-  return data;
+  return { ...data, my_role: "owner" };
 }
 
 export async function editTeam(name, team_id) {

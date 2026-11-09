@@ -33,14 +33,17 @@ export default function Privacy() {
         <ul>
           <li>Supabase: database and authentication (data is stored in the EU region).</li>
           <li>Vercel: hosting of the website.</li>
+          <li>Resend: sends the emails (confirmation, password reset, invitations, weekly report).</li>
+          <li>Cloudflare Turnstile: a privacy-friendly check on the sign-up form, when it is switched on.</li>
+          <li>An analytics service without cookies, when it is switched on: page views only, no personal profile.</li>
           <li>Riot Games: source of game data. Champion images are loaded from Riot&apos;s Data Dragon CDN.</li>
         </ul>
       </section>
       <section>
         <h2>Cookies</h2>
         <p>
-          We use one essential cookie to keep you signed in. We do not use analytics or advertising cookies, and the
-          fonts are served from this website.
+          We use one essential cookie to keep you signed in. We do not use advertising cookies. Any analytics we turn on counts
+          visits without cookies or personal data, and the fonts are served from this website.
         </p>
       </section>
       <section>
@@ -48,6 +51,14 @@ export default function Privacy() {
         <p>
           If you add other people, you are responsible for having a reason to track them. Anyone listed can ask for their
           data to be removed: contact us and we will delete it. Riot may also forward deletion requests, which we honour.
+        </p>
+      </section>
+      <section>
+        <h2>Staff you invite</h2>
+        <p>
+          A coach can invite other people to a team by email. They see that team&apos;s players, schedule and statistics
+          with the role you choose (staff or viewer). Their private notes are visible only to them. You can remove anyone
+          at any time from the settings.
         </p>
       </section>
       <section>

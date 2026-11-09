@@ -33,6 +33,8 @@ const Players = () => {
   const visible = players.filter((p) => showAll || p.team_id === activeTeamId);
   const teamName = (id) => teams.find((t) => t.id === id)?.name ?? "";
   const noTeams = teamsLoaded && teams.length === 0;
+  const isOwnerOf = (teamId) => (teams.find((t) => t.id === teamId)?.my_role ?? "owner") === "owner";
+  const canAdd = !noTeams && isOwnerOf(activeTeamId);
 
   // Rank and recent form for the players on screen.
   const visibleKey = visible.map((p) => p.id).join(",");
@@ -60,7 +62,7 @@ const Players = () => {
         <label className="flex min-h-11 cursor-pointer items-center gap-2 text-sm text-zinc-300">
           <input type="checkbox" checked={showAll} onChange={(e) => setShowAll(e.target.checked)} className="h-4 w-4 accent-brand" /> All teams
         </label>
-        <button onClick={() => setCreateModal(true)} disabled={noTeams} className={btnPrimary}>
+        <button onClick={() => setCreateModal(true)} disabled={!canAdd} title={canAdd ? undefined : "Only the team owner can add players"} className={btnPrimary}>
           <FaPlus aria-hidden="true" /> Add Player
         </button>
       </PageHeader>
@@ -111,6 +113,7 @@ const Players = () => {
               onRemove={setRemoving}
               onInvite={setInviting}
               onNotes={setNoting}
+              readOnly={!isOwnerOf(player.team_id)}
             />
           ))}
         </div>

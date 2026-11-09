@@ -27,12 +27,19 @@ const TeamCard = ({ team, players = [], active, onSelect }) => {
             {players.length} player{players.length === 1 ? "" : "s"}
           </p>
         </div>
-        <button aria-label={`Edit ${team.name}`} onClick={() => setEditTeamModal(true)} className={iconBtn}>
-          <FaPen />
-        </button>
-        <button aria-label={`Delete ${team.name}`} onClick={() => setRemoveTeamModal(true)} className={iconBtn}>
-          <FaTrash />
-        </button>
+        {team.my_role && team.my_role !== "owner" && (
+          <span className="rounded-full bg-well px-2.5 py-1 text-[11px] font-bold uppercase tracking-wide text-zinc-300">{team.my_role}</span>
+        )}
+        {(!team.my_role || team.my_role === "owner") && (
+          <>
+            <button aria-label={`Edit ${team.name}`} onClick={() => setEditTeamModal(true)} className={iconBtn}>
+              <FaPen />
+            </button>
+            <button aria-label={`Delete ${team.name}`} onClick={() => setRemoveTeamModal(true)} className={iconBtn}>
+              <FaTrash />
+            </button>
+          </>
+        )}
       </div>
 
       <div className="flex min-h-6 flex-wrap gap-1.5">

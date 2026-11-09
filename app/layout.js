@@ -3,6 +3,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { Chakra_Petch, Inter } from "next/font/google";
 import { ToastContainer } from "react-toastify";
 import { SITE } from "@/lib/site";
+import Analytics from "@/components/Analytics";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
 
@@ -39,6 +40,7 @@ export default function RootLayout({ children }) {
       <body className="font-sans text-zinc-100">
         {children}
         <ToastContainer theme="dark" position="bottom-right" />
+        <Analytics />
       </body>
     </html>
   );

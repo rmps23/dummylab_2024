@@ -6,11 +6,11 @@ import { FaPlay } from "react-icons/fa6";
 import { supabase } from "@/supabase";
 import { btnPrimary, btnSecondary, inputClass } from "@/components/ui/buttons";
 import Turnstile, { turnstileEnabled } from "@/components/auth/Turnstile";
-import { honeypotTripped, MIN_PASSWORD, validateCredentials } from "@/lib/authForm";
+import { honeypotTripped, MIN_PASSWORD, safeNext, validateCredentials } from "@/lib/authForm";
 
 const TITLES = { signin: "Welcome back", signup: "Create your account", forgot: "Reset your password" };
 
-export default function Login({ initialMode = "signin", linkError = false }) {
+export default function Login({ initialMode = "signin", linkError = false, next = "/dashboard" }) {
   const router = useRouter();
   const [mode, setMode] = useState(initialMode);
   const [email, setEmail] = useState("");
@@ -28,8 +28,9 @@ export default function Login({ initialMode = "signin", linkError = false }) {
   const captcha = turnstileEnabled ? { captchaToken: token } : {};
   const origin = typeof window === "undefined" ? "" : window.location.origin;
 
+  const target = safeNext(next);
   const enter = () => {
-    router.push("/dashboard");
+    router.push(target);
     router.refresh();
   };
 
@@ -62,7 +63,7 @@ export default function Login({ initialMode = "signin", linkError = false }) {
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
-        options: { emailRedirectTo: `${origin}/auth/callback?next=/dashboard`, ...captcha },
+        options: { emailRedirectTo: `${origin}/auth/callback?next=${encodeURIComponent(target)}`, ...captcha },
       });
       if (error) return fail(error.message);
       if (data.session) return enter();
@@ -84,7 +85,7 @@ export default function Login({ initialMode = "signin", linkError = false }) {
     const { error } = await supabase.auth.resend({
       type: "signup",
       email,
-      options: { emailRedirectTo: `${origin}/auth/callback?next=/dashboard`, ...captcha },
+      options: { emailRedirectTo: `${origin}/auth/callback?next=${encodeURIComponent(target)}`, ...captcha },
     });
     setLoading(false);
     setTokenKey((k) => k + 1);

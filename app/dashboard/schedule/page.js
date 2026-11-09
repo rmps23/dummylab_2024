@@ -26,6 +26,7 @@ const VIEWS = ["month", "week", "agenda"];
 const Schedule = () => {
   const { teams, activeTeamId, loaded } = teamStore();
   const allPlayers = playerStore((s) => s.players);
+  const viewOnly = teams.find((t) => t.id === activeTeamId)?.my_role === "viewer";
   const players = useMemo(() => allPlayers.filter((p) => p.team_id === activeTeamId), [allPlayers, activeTeamId]);
 
   const [view, setView] = useState("month");
@@ -69,7 +70,7 @@ const Schedule = () => {
   const step = (dir) => setCursor((c) => (view === "week" ? addWeeks(c, dir) : addMonths(c, dir)));
   const title = view === "week" ? `${format(range.from, "d MMM")} – ${format(range.to, "d MMM yyyy")}` : format(cursor, "MMMM yyyy");
   const replace = (event) => setEvents((list) => list.map((e) => (e.id === event.id ? event : e)));
-  const openForm = (date) => setForm({ date });
+  const openForm = (date) => !viewOnly && setForm({ date });
 
   function handleSaved(saved) {
     setForm(null);
@@ -93,7 +94,7 @@ const Schedule = () => {
   return (
     <>
       <PageHeader icon={FaCalendar} title="Schedule" subtitle={timeZone ? `Times shown in ${timeZone.replace("_", " ")}` : undefined}>
-        <button onClick={() => openForm(new Date())} disabled={!activeTeamId} className={btnPrimary}>
+        <button onClick={() => openForm(new Date())} disabled={!activeTeamId || viewOnly} className={btnPrimary}>
           <FaPlus aria-hidden="true" /> New event
         </button>
       </PageHeader>

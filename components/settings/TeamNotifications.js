@@ -31,7 +31,7 @@ export default function TeamNotifications() {
     setWeekly(!!team?.weekly_report);
   }, [team?.id, team?.discord_webhook_url, team?.report_email, team?.weekly_report]);
 
-  if (!team) return null;
+  if (!team || (team.my_role && team.my_role !== "owner")) return null;
 
   async function run(label, action) {
     setBusy(true);

@@ -14,6 +14,7 @@ export default function EventDetail({ event, players, timeZone, onChange, onEdit
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [reminding, setReminding] = useState(false);
   const team = teamStore((s) => s.teams.find((t) => t.id === event.team_id));
+  const readOnly = team?.my_role === "viewer";
 
   async function handleStatus(player_id, status) {
     try {
@@ -97,7 +98,8 @@ export default function EventDetail({ event, players, timeZone, onChange, onEdit
                         aria-label={`${p.name}: ${AVAILABILITY[s].label}`}
                         aria-pressed={current === s}
                         onClick={() => handleStatus(p.id, s)}
-                        className={`h-11 w-11 rounded-lg text-sm ${current === s ? AVAILABILITY[s].color : "bg-white/[0.06] text-zinc-400 hover:bg-white/10"}`}
+                        disabled={readOnly}
+                        className={`h-11 w-11 rounded-lg text-sm disabled:cursor-not-allowed disabled:opacity-60 ${current === s ? AVAILABILITY[s].color : "bg-white/[0.06] text-zinc-400 hover:bg-white/10"}`}
                       >
                         {AVAILABILITY[s].short}
                       </button>
@@ -110,6 +112,9 @@ export default function EventDetail({ event, players, timeZone, onChange, onEdit
         )}
       </div>
 
+      {readOnly ? (
+        <p className="text-xs text-zinc-400">You have view-only access to this team.</p>
+      ) : (
       <div className="flex items-center justify-between gap-3">
         {confirmDelete ? (
           <div className="flex items-center gap-2">
@@ -134,6 +139,7 @@ export default function EventDetail({ event, players, timeZone, onChange, onEdit
           Edit
         </button>
       </div>
+      )}
     </div>
   );
 }

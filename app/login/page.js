@@ -2,8 +2,9 @@ import Image from "next/image";
 import Link from "next/link";
 import Login from "@/components/auth/Login";
 import Footer from "@/components/Footer";
+import { safeNext } from "@/lib/authForm";
 
-export const metadata = { title: "Sign in" };
+export const metadata = { title: "Sign in", robots: { index: false } };
 
 export default function LoginPage({ searchParams }) {
   const mode = searchParams?.mode === "signup" ? "signup" : "signin";
@@ -15,7 +16,7 @@ export default function LoginPage({ searchParams }) {
         </Link>
       </div>
       <div className="flex flex-1 items-center px-6 py-8">
-        <Login initialMode={mode} linkError={searchParams?.error === "link"} />
+        <Login initialMode={mode} linkError={searchParams?.error === "link"} next={safeNext(searchParams?.next)} />
       </div>
       <Footer className="px-6 pb-8" />
     </main>
