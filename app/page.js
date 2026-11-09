@@ -41,6 +41,7 @@ const SECTIONS = [
       "Rank and recent form next to every name",
       "Champion pool with games played and win rate",
       "Private notes and goals for each player, visible only to you",
+      "Invite analysts and assistant coaches with their own login (Pro)",
     ],
     shot: <StatsShot />,
   },

@@ -14,8 +14,12 @@ before you rely on a number.
       coach features (more teams, availability links, reports, notes) and not around reselling data, which keeps the risk low.
 - [ ] Monetisation requires status **Approved** or **Acknowledged**, a free tier, and paid content that adds value
       ("transformative"). No gambling, no MMR/ELO calculators, no de-anonymising players.
+- [ ] Ask Riot in the portal whether a coach tracking the players they add (not their own account) fits the approved use cases
+      (the policy lists a player's own stats, tournaments, LFG and aggregates). Mention that scrims are custom games shown only
+      inside the team, and that each player can be asked for consent through the availability link. RSO (Riot Sign On) is only
+      available with a production key, and Riot contacts you about it once the key is approved.
 - [ ] Never show custom (scrim) games publicly. Keep the Riot disclaimer visible (it is in every footer).
-- [ ] Every new feature has to be audited through the product page.
+- [ ] Every new feature has to be audited through the product page. Staff invitations (migration 0008) and the new homepage are new since the last audit.
 - [ ] Then set `RIOT_ENABLED=true` on Vercel and replace `RIOT_API_KEY` with the production key.
 
 ## 2. Legal pages
@@ -25,6 +29,16 @@ before you rely on a number.
 - [ ] Decide who is the data controller. You store Riot IDs and match data of players who are not your users:
       keep the deletion path (`scripts/delete-player-data.mjs`) and a contact address that answers.
 - [ ] If you sell to consumers in the EU, add the right of withdrawal wording and your VAT details to the checkout.
+
+## 2b. Sign-in, email and spam (code is ready, switches are yours)
+
+Follow [AUTH_AND_EMAIL.md](AUTH_AND_EMAIL.md):
+
+- [ ] Buy a domain and verify it in Resend (emails cannot be sent from `vercel.app`).
+- [ ] Turn on custom SMTP in Supabase and paste the branded templates from `supabase/email-templates/`.
+- [ ] Set the Site URL and the `/auth/callback` redirect in Supabase, and turn on **Confirm email**.
+- [ ] Create a Cloudflare Turnstile widget, set `NEXT_PUBLIC_TURNSTILE_SITE_KEY`, enable CAPTCHA in Supabase, then test "Try the demo".
+- [ ] Test the full loop with a real inbox: sign up, confirm, sign out, reset the password, invite a staff member and accept.
 
 ## 3. Hosting and commercial terms
 
@@ -52,7 +66,7 @@ before you rely on a number.
 
 ## 5. Database
 
-- [ ] Run `supabase/migrations/0001` to `0007` in order. `0006` creates the plan limits and `0007` the notification settings.
+- [ ] Run `supabase/migrations/0001` to `0008` in order. `0006` creates the plan limits, `0007` the notification settings and `0008` staff access (team members, invitations, staff seats). The policies are tested in `tests/rls.test.js`.
 - [ ] Run `node --env-file=.env.local scripts/seed-demo.mjs` so the demo account is Pro and has notes.
 - [ ] Rotate the Supabase secret key and any key that was ever pasted in a chat or ticket.
 
@@ -75,7 +89,12 @@ Not tax advice: confirm with a contabilista or the Autoridade Tributária.
 ## 7. Operations
 
 - [ ] A support email address and a response routine. Put it in the terms and privacy pages.
-- [ ] Monitoring: Vercel logs and Stripe webhook failures. Backups: Supabase Pro daily backups or your own dump.
+- [ ] Monitoring: point a free uptime monitor at `https://dummylab.vercel.app/api/health`. Watch Vercel logs and Stripe webhook
+      failures. Error tracking (Sentry free plan) is **not set up yet**: it needs your account and a DSN. Backups: Supabase Pro
+      daily backups or your own dump.
+- [ ] Analytics: create an Umami account (cloud free plan) and set `NEXT_PUBLIC_ANALYTICS_SRC` and `NEXT_PUBLIC_ANALYTICS_ID`.
+- [ ] Search: add the domain to Google Search Console and submit `/sitemap.xml`.
+- [ ] While you stay on the free Supabase plan, keep the daily demo reset cron: its writes also stop the project pausing.
 - [ ] Update the README link, screenshots and the About text once the price is live.
 
 ## Switches at a glance
@@ -85,3 +104,5 @@ Not tax advice: confirm with a contabilista or the Autoridade Tributária.
 | `RIOT_ENABLED` | `false` (only `RIOT_ALLOWED_EMAILS`) | `true` after the production key |
 | `BILLING_ENABLED` | `false` (Pro shows "coming soon") | `true` with Stripe keys and prices |
 | `RESEND_API_KEY` | empty (email routes answer 503) | set, with a verified domain |
+| `NEXT_PUBLIC_TURNSTILE_SITE_KEY` | empty (no widget) | set, plus CAPTCHA enabled in Supabase |
+| `NEXT_PUBLIC_ANALYTICS_SRC` / `_ID` | empty (no analytics) | Umami script URL and website id |
