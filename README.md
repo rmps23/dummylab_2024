@@ -2,7 +2,7 @@
 
 A coaching dashboard for **League of Legends** teams. Plan trainings, scrims and matches with each player's availability, and follow per-player and per-team stats built from match history pulled from the Riot Games API.
 
-**Live demo: [dummylab-2024.vercel.app](https://dummylab-2024.vercel.app)**. Press "Try the demo account" for a one-click login with a sample team (no sign-up).
+**Live website: [dummylab.vercel.app](https://dummylab.vercel.app)**. Press "Try the demo account" for a one-click login with a sample team (no sign-up).
 
 | Home | Schedule |
 |---|---|
