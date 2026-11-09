@@ -15,7 +15,7 @@ export default function LoginPage({ searchParams }) {
         </Link>
       </div>
       <div className="flex flex-1 items-center px-6 py-8">
-        <Login initialMode={mode} />
+        <Login initialMode={mode} linkError={searchParams?.error === "link"} />
       </div>
       <Footer className="px-6 pb-8" />
     </main>
