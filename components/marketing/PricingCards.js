@@ -2,6 +2,7 @@ import Link from "next/link";
 import { FaCheck } from "react-icons/fa6";
 import { PLANS } from "@/lib/plans";
 import { btnPrimary, btnSecondary } from "@/components/ui/buttons";
+import DemoButton from "@/components/marketing/DemoButton";
 
 // Shared by the landing page and /pricing. Payments are not live yet, so Pro shows as coming soon.
 export default function PricingCards({ proAvailable = false }) {
@@ -22,7 +23,7 @@ export default function PricingCards({ proAvailable = false }) {
             </li>
           ))}
         </ul>
-        <Link href="/#start" className={`${btnSecondary} mt-6`}>
+        <Link href="/login?mode=signup" className={`${btnSecondary} mt-6`}>
           Start for free
         </Link>
       </section>
@@ -50,9 +51,7 @@ export default function PricingCards({ proAvailable = false }) {
           </Link>
         ) : (
           <>
-            <Link href="/#start" className={`${btnPrimary} mt-6`}>
-              Try every Pro feature in the demo
-            </Link>
+            <DemoButton className="mt-6 w-full">Try every Pro feature in the demo</DemoButton>
             <p className="mt-2 text-center text-xs text-zinc-400">Payments open soon. The demo account has Pro switched on.</p>
           </>
         )}

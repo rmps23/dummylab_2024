@@ -5,7 +5,7 @@ const TINTS = [
   ["#F5B84B", "#3A2A08"],
   ["#FF6B7A", "#3F131A"],
   ["#8EA2FF", "#1A2250"],
-  ["#C9D4DC", "#1D2F3E"],
+  ["#C9CDD2", "#262A30"],
 ];
 
 export default function Avatar({ name = "?", size = 40, className = "" }) {

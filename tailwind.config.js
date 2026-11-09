@@ -14,21 +14,22 @@ module.exports = {
       },
       colors: {
         // Surfaces from the page background (ink) up to raised panels and wells.
-        ink: "#0A1118",
-        panel: "#0F1A24",
-        raised: "#15232F",
-        well: "#1D2F3E",
-        line: { DEFAULT: "#243847", strong: "#2F4A5C" },
+        ink: "#0E0F12",
+        panel: "#15171B",
+        raised: "#1C1F24",
+        well: "#262A30",
+        line: { DEFAULT: "#2B3037", strong: "#3B424B" },
         // Logo cyan. `accent` is kept as an alias so older classes still resolve.
         brand: { DEFAULT: "#4AC0DE", soft: "#8AD8EC", deep: "#1E7F99", ink: "#04222B" },
         accent: { DEFAULT: "#4AC0DE", deep: "#1E7F99" },
+        pop: "#F5B84B",
         win: "#3DD6A0",
         loss: "#FF6B7A",
         warn: "#F5B84B",
-        // Neutrals tinted towards the background blue. 100 = main text, 400 = secondary, 500 = muted (AA on panel).
+        // Neutral greys. The logo cyan is an accent, not a surface. 100 = main text, 400 = secondary, 500 = muted (AA on panel).
         zinc: {
-          50: "#F4F6F8", 100: "#E8E8E8", 200: "#D3DBE1", 300: "#BAC7D0", 400: "#A3B5C2",
-          500: "#8A9FAE", 600: "#5D7384", 700: "#2F4A5C", 800: "#243847", 900: "#15232F", 950: "#0A1118",
+          50: "#F5F5F6", 100: "#E8E8E8", 200: "#D5D8DC", 300: "#BCC1C7", 400: "#A6ADB5",
+          500: "#8C949D", 600: "#5F666E", 700: "#3B424B", 800: "#2B3037", 900: "#1C1F24", 950: "#0E0F12",
         },
       },
       boxShadow: {

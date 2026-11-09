@@ -31,7 +31,7 @@ export const metadata = {
   twitter: { card: "summary_large_image", title: "DummyLab", description: DESCRIPTION },
 };
 
-export const viewport = { themeColor: "#0A1118" };
+export const viewport = { themeColor: "#0E0F12" };
 
 export default function RootLayout({ children }) {
   return (

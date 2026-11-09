@@ -1,1 +1,1 @@
-DummyLab: the coaching dashboard for League of Legends teams
+DummyLab: scheduling and stats for League of Legends teams

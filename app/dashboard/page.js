@@ -21,6 +21,7 @@ import RoleBadge from "@/components/ui/RoleBadge";
 import AvailabilityDots from "@/components/ui/AvailabilityDots";
 import Avatar from "@/components/ui/Avatar";
 import ChampionIcon from "@/components/ui/ChampionIcon";
+import ChampionSplash from "@/components/ui/ChampionSplash";
 import EmptyState, { actionClass } from "@/components/ui/EmptyState";
 import { SkeletonKpis } from "@/components/ui/Skeleton";
 
@@ -108,6 +109,9 @@ const Dashboard = () => {
   const upcoming = (events || []).slice(0, 5);
   const form = recent.map((g) => g.win);
   const wr = total?.games ? pct(total.wins, total.games) : 0;
+  const streak = form.findIndex((w) => !w) === -1 ? form.length : form.findIndex((w) => !w);
+  const counts = recent.reduce((m, g) => m.set(g.champion, (m.get(g.champion) || 0) + 1), new Map());
+  const topChampion = [...counts.entries()].sort((a, b) => b[1] - a[1])[0]?.[0];
 
   const steps = [
     { label: "Create a team", href: "/dashboard/teams", done: teams.length > 0 },
@@ -132,6 +136,7 @@ const Dashboard = () => {
         ) : (
           <>
             <Card className="relative overflow-hidden">
+              {topChampion && <ChampionSplash name={topChampion} />}
               <div className="relative flex flex-wrap items-center gap-x-8 gap-y-5">
                 <Donut value={wr} size={112} label="Wins" />
                 <div className="min-w-[10rem]">
@@ -146,6 +151,9 @@ const Dashboard = () => {
                   <div className="eyebrow mb-2">Recent form</div>
                   <FormPips results={form} />
                 </div>
+                {streak >= 3 && (
+                  <span className="rounded-full bg-pop/15 px-3 py-1 text-xs font-bold text-pop">{streak} win streak</span>
+                )}
                 <div className="ml-auto hidden sm:block">
                   <div className="eyebrow mb-2 text-right">Roster</div>
                   <div className="flex -space-x-2">

@@ -4,7 +4,7 @@
 
 @layer base {
   body {
-    background: #0a1118;
+    background: #0e0f12;
     font-variant-numeric: tabular-nums;
   }
 
@@ -23,7 +23,7 @@
 
   * {
     scrollbar-width: thin;
-    scrollbar-color: #2F4A5C transparent;
+    scrollbar-color: #3B424B transparent;
   }
 }
 

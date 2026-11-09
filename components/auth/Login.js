@@ -6,9 +6,9 @@ import { FaPlay } from "react-icons/fa6";
 import { supabase } from "@/supabase";
 import { btnPrimary, btnSecondary, inputClass } from "@/components/ui/buttons";
 
-export default function Login() {
+export default function Login({ initialMode = "signin" }) {
   const router = useRouter();
-  const [mode, setMode] = useState("signin");
+  const [mode, setMode] = useState(initialMode);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);

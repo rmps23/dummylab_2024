@@ -1,8 +1,8 @@
 const base =
-  "inline-flex min-h-11 items-center justify-center gap-2 rounded-lg px-4 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-40";
+  "inline-flex min-h-11 items-center justify-center gap-2 rounded-lg px-4 font-display text-sm font-bold tracking-wide transition disabled:cursor-not-allowed disabled:opacity-40";
 
-export const btnPrimary = `${base} bg-brand text-brand-ink hover:bg-brand-soft`;
-export const btnSecondary = `${base} border border-line-strong bg-raised text-zinc-100 hover:bg-well`;
+export const btnPrimary = `${base} bg-brand text-brand-ink shadow-[0_3px_0_0_#1E7F99] hover:-translate-y-px hover:bg-brand-soft active:translate-y-0.5 active:shadow-none`;
+export const btnSecondary = `${base} border border-line-strong bg-raised text-zinc-100 shadow-[0_3px_0_0_#0E0F12] hover:-translate-y-px hover:bg-well active:translate-y-0.5 active:shadow-none`;
 export const btnGhost = `${base} text-zinc-300 hover:bg-white/[0.06]`;
 export const btnDanger = `${base} bg-loss text-ink hover:brightness-110`;
 export const iconBtn =
