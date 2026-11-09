@@ -13,6 +13,7 @@ import Skeleton from "@/components/ui/Skeleton";
 import { btnDanger, btnPrimary, btnSecondary, inputClass } from "@/components/ui/buttons";
 import RemoveAcc from "@/components/auth/RemoveAcc";
 import TeamNotifications from "@/components/settings/TeamNotifications";
+import TeamStaff from "@/components/settings/TeamStaff";
 
 const Settings = () => {
   const user = userStore((s) => s.user);
@@ -79,6 +80,7 @@ const Settings = () => {
         </Card>
 
         <TeamNotifications />
+        <TeamStaff />
 
         <Card title="Plan">
           <div className="flex flex-wrap items-center justify-between gap-3">

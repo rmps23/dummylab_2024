@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { createPortal } from "react-dom";
 import { GrClose } from "react-icons/gr";
 
 const FOCUSABLE =
@@ -50,11 +51,12 @@ const Modal = ({ show, onClose, content, title = "Dialog" }) => {
     };
   }, [show]);
 
-  if (!show) return null;
+  if (!show || typeof document === "undefined") return null;
 
-  return (
+  // Rendered in <body> so a parent with a transform or animation (cards) can't trap the overlay.
+  return createPortal(
     <div
-      className="fixed inset-0 z-50 overflow-y-auto bg-black/70 backdrop-blur-sm"
+      className="fixed inset-0 z-50 overflow-y-auto bg-black/70"
       onMouseDown={(e) => e.target === e.currentTarget && onCloseRef.current()}
     >
       <div
@@ -63,9 +65,8 @@ const Modal = ({ show, onClose, content, title = "Dialog" }) => {
         aria-modal="true"
         aria-label={title}
         tabIndex={-1}
-        className="relative mx-auto my-6 w-[calc(100%-2rem)] max-w-xl animate-rise rounded-2xl border border-white/10 bg-raised p-6 shadow-2xl outline-none sm:my-12"
+        className="relative mx-auto my-6 w-[calc(100%-2rem)] max-w-xl animate-rise rounded-xl border border-line bg-raised p-6 shadow-2xl outline-none sm:my-12"
       >
-        <span aria-hidden="true" className="absolute inset-x-6 top-0 h-px bg-gradient-to-r from-brand/70 via-accent/50 to-transparent" />
         <button
           type="button"
           aria-label="Close dialog"
@@ -76,7 +77,8 @@ const Modal = ({ show, onClose, content, title = "Dialog" }) => {
         </button>
         <div className="px-1 pb-2 pt-6">{content}</div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };
 

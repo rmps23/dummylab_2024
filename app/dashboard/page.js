@@ -21,6 +21,7 @@ import RoleBadge from "@/components/ui/RoleBadge";
 import AvailabilityDots from "@/components/ui/AvailabilityDots";
 import Avatar from "@/components/ui/Avatar";
 import ChampionIcon from "@/components/ui/ChampionIcon";
+import ChampionSplash from "@/components/ui/ChampionSplash";
 import EmptyState, { actionClass } from "@/components/ui/EmptyState";
 import { SkeletonKpis } from "@/components/ui/Skeleton";
 
@@ -29,7 +30,7 @@ function GetStarted({ steps }) {
   return (
     <Card title={`Get started · ${done} of ${steps.length} done`} className="border-brand/30 bg-brand/[0.04]">
       <div className="mb-3 h-1.5 overflow-hidden rounded-full bg-white/10">
-        <div className="h-full rounded-full bg-gradient-to-r from-cyan-400 to-violet-400" style={{ width: `${(done / steps.length) * 100}%` }} />
+        <div className="h-full rounded-full bg-brand" style={{ width: `${(done / steps.length) * 100}%` }} />
       </div>
       <ol className="grid gap-1 sm:grid-cols-2">
         {steps.map((s) => (
@@ -108,6 +109,9 @@ const Dashboard = () => {
   const upcoming = (events || []).slice(0, 5);
   const form = recent.map((g) => g.win);
   const wr = total?.games ? pct(total.wins, total.games) : 0;
+  const streak = form.findIndex((w) => !w) === -1 ? form.length : form.findIndex((w) => !w);
+  const counts = recent.reduce((m, g) => m.set(g.champion, (m.get(g.champion) || 0) + 1), new Map());
+  const topChampion = [...counts.entries()].sort((a, b) => b[1] - a[1])[0]?.[0];
 
   const steps = [
     { label: "Create a team", href: "/dashboard/teams", done: teams.length > 0 },
@@ -132,21 +136,24 @@ const Dashboard = () => {
         ) : (
           <>
             <Card className="relative overflow-hidden">
-              <span aria-hidden="true" className="pointer-events-none absolute -right-16 -top-20 h-56 w-56 rounded-full bg-brand/10 blur-3xl" />
+              {topChampion && <ChampionSplash name={topChampion} />}
               <div className="relative flex flex-wrap items-center gap-x-8 gap-y-5">
-                <Donut value={wr} size={112} />
+                <Donut value={wr} size={112} label="Wins" />
                 <div className="min-w-[10rem]">
-                  <div className="eyebrow">Last 30 days</div>
-                  <div className="mt-1 text-3xl font-bold leading-none">
-                    <span className="text-win">{total.wins}W</span> <span className="text-zinc-500">/</span>{" "}
-                    <span className="text-loss">{total.games - total.wins}L</span>
+                  <div className="eyebrow">Team win rate · last 30 days</div>
+                  <div className={`mt-1 text-5xl font-bold leading-none ${wr >= 50 ? "text-brand" : "text-loss"}`}>{wr}%</div>
+                  <div className="mt-2 text-sm text-zinc-400">
+                    <span className="font-semibold text-win">{total.wins}W</span> <span className="text-zinc-500">/</span>{" "}
+                    <span className="font-semibold text-loss">{total.games - total.wins}L</span> · {total.games} games
                   </div>
-                  <div className="mt-1 text-sm text-zinc-400">{total.games} games played</div>
                 </div>
                 <div>
                   <div className="eyebrow mb-2">Recent form</div>
                   <FormPips results={form} />
                 </div>
+                {streak >= 3 && (
+                  <span className="rounded-full bg-pop/15 px-3 py-1 text-xs font-bold text-pop">{streak} win streak</span>
+                )}
                 <div className="ml-auto hidden sm:block">
                   <div className="eyebrow mb-2 text-right">Roster</div>
                   <div className="flex -space-x-2">

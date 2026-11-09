@@ -1,5 +1,6 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse } from "next/server";
+import { safeNext } from "@/lib/authForm";
 
 export async function middleware(request) {
   let response = NextResponse.next({ request });
@@ -35,9 +36,11 @@ export async function middleware(request) {
     return NextResponse.redirect(url);
   }
 
-  if (user && pathname === "/") {
+  if (user && (pathname === "/" || pathname === "/login")) {
     const url = request.nextUrl.clone();
-    url.pathname = "/dashboard";
+    const next = pathname === "/login" ? safeNext(request.nextUrl.searchParams.get("next")) : "/dashboard";
+    url.search = "";
+    url.pathname = next;
     return NextResponse.redirect(url);
   }
 
@@ -45,5 +48,5 @@ export async function middleware(request) {
 }
 
 export const config = {
-  matcher: ["/", "/dashboard/:path*"],
+  matcher: ["/", "/login", "/dashboard/:path*"],
 };

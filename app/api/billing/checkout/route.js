@@ -2,7 +2,7 @@ import { isDemoUser, json, requireUser } from "@/lib/auth";
 import { billingEnabled, getStripe, priceFor } from "@/lib/stripe";
 import { createAdminClient } from "@/lib/supabase/admin";
 
-// Starts a Stripe Checkout session for the Pro plan. Disabled until BILLING_ENABLED=true.
+// Starts a Stripe Checkout session for the Pro or Academy plan. Disabled until BILLING_ENABLED=true.
 export async function POST(request) {
   const { user, error } = await requireUser();
   if (error) return error;
@@ -10,7 +10,8 @@ export async function POST(request) {
   if (!billingEnabled()) return json({ error: "Payments are not enabled yet", code: "billing_disabled" }, 503);
 
   const body = await request.json().catch(() => ({}));
-  const price = priceFor(body.interval === "year" ? "year" : "month");
+  const plan = body.plan === "academy" ? "academy" : "pro";
+  const price = priceFor(body.interval === "year" ? "year" : "month", process.env, plan);
   if (!price) return json({ error: "This billing interval is not available" }, 400);
 
   const stripe = getStripe();
@@ -30,7 +31,7 @@ export async function POST(request) {
     customer,
     client_reference_id: user.id,
     line_items: [{ price, quantity: 1 }],
-    subscription_data: { metadata: { user_id: user.id } },
+    subscription_data: { metadata: { user_id: user.id, plan } },
     allow_promotion_codes: true,
     success_url: `${origin}/dashboard/billing?checkout=success`,
     cancel_url: `${origin}/dashboard/billing?checkout=cancelled`,

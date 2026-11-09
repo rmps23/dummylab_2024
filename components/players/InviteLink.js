@@ -8,6 +8,7 @@ import Link from "next/link";
 import { isDemo, userStore } from "@/store/userStore";
 import { featureStore } from "@/store/featureStore";
 import { btnDanger, btnPrimary, btnSecondary, inputClass } from "@/components/ui/buttons";
+import { isPaid } from "@/lib/plans";
 
 export default function InviteLink({ player }) {
   const user = userStore((s) => s.user);
@@ -79,7 +80,7 @@ export default function InviteLink({ player }) {
         </p>
       )}
 
-      {loaded && plan !== "pro" ? (
+      {loaded && !isPaid(plan) ? (
         <div className="rounded-xl border border-brand/30 bg-brand/[0.05] p-4 text-sm">
           <p className="font-semibold">Availability links are a Pro feature.</p>
           <p className="mt-1 text-zinc-300">Upgrade to let players answer for upcoming events from their phone.</p>

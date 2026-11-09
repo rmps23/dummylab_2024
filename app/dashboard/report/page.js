@@ -13,6 +13,7 @@ import RoleBadge from "@/components/ui/RoleBadge";
 import EmptyState, { actionClass } from "@/components/ui/EmptyState";
 import Skeleton from "@/components/ui/Skeleton";
 import { btnSecondary } from "@/components/ui/buttons";
+import { isPaid } from "@/lib/plans";
 
 export default function Report() {
   const { activeTeamId, teams, loaded } = teamStore();
@@ -21,7 +22,7 @@ export default function Report() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    if (!activeTeamId || !featuresLoaded || plan !== "pro") return;
+    if (!activeTeamId || !featuresLoaded || !isPaid(plan)) return;
     setReport(null);
     setError(null);
     fetch(`/api/teams/${activeTeamId}/report`)
@@ -35,7 +36,7 @@ export default function Report() {
 
   const team = teams.find((t) => t.id === activeTeamId);
 
-  if ((loaded && teams.length === 0) || (featuresLoaded && plan !== "pro")) {
+  if ((loaded && teams.length === 0) || (featuresLoaded && !isPaid(plan))) {
     return (
       <>
         <PageHeader icon={FaFileLines} title="Weekly report" />
@@ -100,7 +101,7 @@ export default function Report() {
                   </thead>
                   <tbody>
                     {report.perPlayer.map((p) => (
-                      <tr key={p.id} className="border-t border-white/[0.06]">
+                      <tr key={p.id} className="border-t border-line">
                         <td className="flex items-center gap-2 py-2 pr-3 font-semibold">
                           {p.name} <RoleBadge role={p.role} />
                         </td>

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { getRegion, RiotError, timelineStats, toRows } from "@/lib/riot";
+import { getRegion, RiotError, riotFetch, timelineStats, toRows } from "@/lib/riot";
 
 describe("getRegion", () => {
   it("maps platforms to their routing clusters", () => {
@@ -111,5 +111,37 @@ describe("toRows", () => {
     const rows = toRows(m, null, "puuid-1");
     expect(rows.playerMatch.kill_part).toBeNull();
     expect(rows.playerMatch.team_damage_pct).toBeNull();
+  });
+});
+
+describe("riotFetch failure handling", () => {
+  const env = { RIOT_API_KEY: "test-key" };
+  const res = (status, headers = {}, body = {}) => ({ status, ok: status >= 200 && status < 300, headers: { get: (k) => headers[k] ?? null }, json: async () => body });
+  const run = (fetchImpl, retries = 2) => riotFetch("europe", "/x", retries, { fetchImpl, env, wait: async () => {} });
+
+  it("returns the body on success and null on 404", async () => {
+    expect(await run(async () => res(200, {}, { a: 1 }))).toEqual({ a: 1 });
+    expect(await run(async () => res(404))).toBeNull();
+  });
+
+  it("retries a short 429 and then succeeds", async () => {
+    let calls = 0;
+    const out = await run(async () => (++calls === 1 ? res(429, { "Retry-After": "2" }) : res(200, {}, { ok: true })));
+    expect(out).toEqual({ ok: true });
+    expect(calls).toBe(2);
+  });
+
+  it("reports a long 429 with the wait time instead of blocking", async () => {
+    await expect(run(async () => res(429, { "Retry-After": "90" }))).rejects.toMatchObject({ status: 429, retryAfter: 90 });
+  });
+
+  it("maps Riot outages, timeouts and rejected keys to clear errors", async () => {
+    await expect(run(async () => res(503))).rejects.toMatchObject({ status: 503 });
+    await expect(run(async () => { throw new Error("network"); })).rejects.toMatchObject({ status: 503 });
+    await expect(run(async () => res(403))).rejects.toMatchObject({ status: 502, message: expect.stringContaining("API key rejected") });
+  });
+
+  it("refuses to run without a key", async () => {
+    await expect(riotFetch("europe", "/x", 0, { env: {} })).rejects.toMatchObject({ status: 500 });
   });
 });

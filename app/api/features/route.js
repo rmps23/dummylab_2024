@@ -1,6 +1,7 @@
 import { isDemoUser, json, requireUser } from "@/lib/auth";
 import { riotEnabledFor } from "@/lib/features";
 import { billingEnabled } from "@/lib/stripe";
+import { isPaid } from "@/lib/plans";
 
 // What the signed-in user may do; the UI uses it to explain what is switched off and why.
 export async function GET() {
@@ -11,7 +12,7 @@ export async function GET() {
   return json({
     riot: riotEnabledFor(user),
     demo: isDemoUser(user),
-    plan: plan === "pro" ? "pro" : "free",
+    plan: isPaid(plan) ? plan : "free",
     billing: billingEnabled(),
   });
 }

@@ -15,8 +15,8 @@ const TeamCard = ({ team, players = [], active, onSelect }) => {
 
   return (
     <article
-      className={`animate-rise flex flex-col gap-4 rounded-xl border bg-panel/80 p-4 shadow-card transition ${
-        active ? "border-brand/50 shadow-glow" : "border-white/[0.07] hover:border-white/20"
+      className={`animate-rise flex flex-col gap-4 rounded-xl border bg-panel p-4 shadow-card transition ${
+        active ? "border-brand/50" : "border-line hover:border-white/20"
       }`}
     >
       <div className="flex items-center gap-3">
@@ -27,12 +27,19 @@ const TeamCard = ({ team, players = [], active, onSelect }) => {
             {players.length} player{players.length === 1 ? "" : "s"}
           </p>
         </div>
-        <button aria-label={`Edit ${team.name}`} onClick={() => setEditTeamModal(true)} className={iconBtn}>
-          <FaPen />
-        </button>
-        <button aria-label={`Delete ${team.name}`} onClick={() => setRemoveTeamModal(true)} className={iconBtn}>
-          <FaTrash />
-        </button>
+        {team.my_role && team.my_role !== "owner" && (
+          <span className="rounded-full bg-well px-2.5 py-1 text-[11px] font-bold uppercase tracking-wide text-zinc-300">{team.my_role}</span>
+        )}
+        {(!team.my_role || team.my_role === "owner") && (
+          <>
+            <button aria-label={`Edit ${team.name}`} onClick={() => setEditTeamModal(true)} className={iconBtn}>
+              <FaPen />
+            </button>
+            <button aria-label={`Delete ${team.name}`} onClick={() => setRemoveTeamModal(true)} className={iconBtn}>
+              <FaTrash />
+            </button>
+          </>
+        )}
       </div>
 
       <div className="flex min-h-6 flex-wrap gap-1.5">
@@ -46,7 +53,7 @@ const TeamCard = ({ team, players = [], active, onSelect }) => {
       <button
         onClick={onSelect}
         disabled={active}
-        className="min-h-11 rounded-lg border border-white/10 bg-white/[0.04] text-sm font-semibold transition hover:bg-white/10 disabled:border-brand/40 disabled:bg-brand/10 disabled:text-brand"
+        className="min-h-11 rounded-lg border border-line bg-white/[0.04] text-sm font-semibold transition hover:bg-white/10 disabled:border-brand/40 disabled:bg-brand/10 disabled:text-brand"
       >
         {active ? "Active team" : "Switch to this team"}
       </button>

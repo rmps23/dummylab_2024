@@ -16,11 +16,11 @@ export default function Agenda({ events, players, onSelect, onCreate }) {
 
   if (days.length === 0) {
     return (
-      <div className="rounded-2xl border border-dashed border-white/10 bg-panel/40 p-8 text-center">
+      <div className="rounded-xl border border-dashed border-line bg-panel p-8 text-center">
         <p className="text-zinc-300">Nothing scheduled in this period.</p>
         <button
           onClick={onCreate}
-          className="mt-3 inline-flex min-h-11 items-center rounded-lg bg-gradient-to-r from-cyan-400 to-sky-500 px-4 text-sm font-semibold text-zinc-950 hover:brightness-110"
+          className="mt-3 inline-flex min-h-11 items-center rounded-lg bg-brand px-4 text-sm font-semibold text-brand-ink hover:bg-brand-soft"
         >
           Schedule an event
         </button>
@@ -32,7 +32,7 @@ export default function Agenda({ events, players, onSelect, onCreate }) {
     <ol className="flex flex-col gap-4">
       {days.map(({ date, events: dayEvents }) => (
         <li key={date.toDateString()}>
-          <h3 className={`mb-2 text-sm font-bold ${isSameDay(date, new Date()) ? "text-cyan-400" : "text-zinc-300"}`}>
+          <h3 className={`mb-2 text-sm font-bold ${isSameDay(date, new Date()) ? "text-brand" : "text-zinc-300"}`}>
             {format(date, "EEEE d MMMM")}
             {isSameDay(date, new Date()) && " · Today"}
           </h3>
@@ -45,7 +45,7 @@ export default function Agenda({ events, players, onSelect, onCreate }) {
                 <li key={e.id}>
                   <button
                     onClick={() => onSelect(e.id)}
-                    className="flex min-h-14 w-full items-center gap-3 rounded-xl border border-white/[0.07] bg-panel/80 p-3 text-left shadow-card transition hover:border-brand/30 hover:bg-white/[0.05]"
+                    className="flex min-h-14 w-full items-center gap-3 rounded-xl border border-line bg-panel p-3 text-left shadow-card transition hover:border-brand/30 hover:bg-white/[0.05]"
                   >
                     <span aria-hidden="true" className={`h-10 w-1 shrink-0 rounded-full ${type.dot}`} />
                     <span className="min-w-0 flex-1">

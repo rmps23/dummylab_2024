@@ -10,6 +10,7 @@ import { fetchChampionStats, fetchPlayerStats, sumStats } from "@/hooks/stats";
 import { fetchMatches } from "@/hooks/players";
 import { fmt, kda, pct } from "@/lib/stats";
 import PageHeader from "@/components/ui/PageHeader";
+import Select from "@/components/ui/Select";
 import Card from "@/components/ui/Card";
 import KpiCard from "@/components/ui/KpiCard";
 import Donut from "@/components/ui/Donut";
@@ -22,9 +23,15 @@ import Skeleton, { SkeletonKpis } from "@/components/ui/Skeleton";
 import { btnSecondary } from "@/components/ui/buttons";
 import { featureStore } from "@/store/featureStore";
 import { FaFileLines } from "react-icons/fa6";
+import { isPaid } from "@/lib/plans";
 
-const select =
-  "min-h-11 cursor-pointer rounded-lg border border-white/10 bg-white/[0.05] px-3 text-sm font-semibold outline-none hover:bg-white/10 focus:border-brand/60";
+const QUEUES = [
+  { value: "", label: "All queues" },
+  { value: "420", label: "Ranked Solo" },
+  { value: "440", label: "Ranked Flex" },
+  { value: "700", label: "Clash" },
+  { value: "0", label: "Custom (scrims)" },
+];
 
 const rowMetrics = (r) => ({
   games: Number(r.games),
@@ -35,14 +42,6 @@ const rowMetrics = (r) => ({
   vision: Number(r.vision) / Number(r.minutes || 1),
 });
 
-const GUIDE = [
-  ["Win rate", "Wins divided by games played."],
-  ["KDA", "(kills + assists) / deaths. With no deaths, the deaths count as 1."],
-  ["CS / min", "Minions and jungle monsters killed per minute of game time."],
-  ["Damage / min", "Damage to champions per minute."],
-  ["Vision / min", "Vision score per minute (wards placed, cleared and vision control)."],
-  ["KP", "Kill participation: share of the team's kills a player took part in."],
-];
 
 // Inline win-rate bar with the number next to it.
 const WinRate = ({ value }) => (
@@ -117,27 +116,26 @@ function AnalyticsContent() {
         <Link href="/dashboard/report" className={btnSecondary}>
           <FaFileLines aria-hidden="true" /> Weekly report
         </Link>
-        <select aria-label="Player" className={select} value={player} onChange={(e) => setPlayer(e.target.value)}>
-          <option value="">Whole team</option>
-          {players.map((p) => (
-            <option key={p.id} value={p.id}>
-              {p.name}
-            </option>
-          ))}
-        </select>
-        <select aria-label="Period" className={select} value={days} onChange={(e) => setDays(Number(e.target.value))}>
-          <option value={7}>Last 7 days</option>
-          <option value={30}>Last 30 days</option>
-          <option value={90} disabled={plan !== "pro"}>Last 90 days{plan !== "pro" ? " (Pro)" : ""}</option>
-          <option value={0} disabled={plan !== "pro"}>All time{plan !== "pro" ? " (Pro)" : ""}</option>
-        </select>
-        <select aria-label="Queue" className={select} value={queue} onChange={(e) => setQueue(e.target.value)}>
-          <option value="">All queues</option>
-          <option value="420">Ranked Solo</option>
-          <option value="440">Ranked Flex</option>
-          <option value="700">Clash</option>
-          <option value="0">Custom (scrims)</option>
-        </select>
+        <Select
+          variant="chip"
+          label="Player"
+          value={player}
+          onChange={setPlayer}
+          options={[{ value: "", label: "Whole team" }, ...players.map((p) => ({ value: p.id, label: p.name }))]}
+        />
+        <Select
+          variant="chip"
+          label="Period"
+          value={days}
+          onChange={setDays}
+          options={[
+            { value: 7, label: "Last 7 days" },
+            { value: 30, label: "Last 30 days" },
+            { value: 90, label: "Last 90 days", disabled: !isPaid(plan), hint: !isPaid(plan) ? "Pro" : undefined },
+            { value: 0, label: "All time", disabled: !isPaid(plan), hint: !isPaid(plan) ? "Pro" : undefined },
+          ]}
+        />
+        <Select variant="chip" label="Queue" value={queue} onChange={setQueue} options={QUEUES} align="right" />
       </PageHeader>
 
       <div className="flex flex-col gap-4 p-4 sm:p-6">
@@ -146,7 +144,7 @@ function AnalyticsContent() {
             Stats are calculated from the match history of your players.
           </EmptyState>
         ) : error ? (
-          <div role="alert" className="flex items-center justify-between gap-3 rounded-xl border border-rose-700 bg-rose-950/40 p-4 text-sm">
+          <div role="alert" className="flex items-center justify-between gap-3 rounded-lg border border-rose-700 bg-rose-950/40 p-4 text-sm">
             <span>Could not load stats: {error}</span>
             <button onClick={load} className={btnSecondary}>
               Retry
@@ -192,18 +190,6 @@ function AnalyticsContent() {
               <KpiCard label="Vision / min" accent="win" value={fmt(totals.vision, 2)} />
             </div>
 
-            <details className="rounded-xl border border-white/[0.07] bg-panel/60 p-3 text-sm">
-              <summary className="min-h-9 cursor-pointer font-semibold text-zinc-300">What do these numbers mean?</summary>
-              <dl className="mt-2 grid gap-1 sm:grid-cols-[9rem_1fr]">
-                {GUIDE.map(([term, text]) => (
-                  <div key={term} className="contents">
-                    <dt className="text-zinc-200">{term}</dt>
-                    <dd className="text-zinc-400">{text}</dd>
-                  </div>
-                ))}
-              </dl>
-            </details>
-
             {player && (
               <Card title={`Last ${trend.length} games`}>
                 <TrendChart games={trend} kdaOf={(g) => kda(g.kills, g.deaths, g.assists)} />
@@ -227,7 +213,7 @@ function AnalyticsContent() {
                       const m = rowMetrics(r);
                       const p = nameOf(r.player_id);
                       return (
-                        <tr key={r.player_id} className="border-t border-white/[0.06] hover:bg-white/[0.03]">
+                        <tr key={r.player_id} className="border-t border-line hover:bg-white/[0.03]">
                           <td className="py-2 pr-3">
                             <button onClick={() => setPlayer(r.player_id)} className="flex min-h-11 items-center gap-2 text-left hover:text-brand">
                               <Avatar name={p?.name} size={28} />
@@ -262,7 +248,7 @@ function AnalyticsContent() {
                   </thead>
                   <tbody>
                     {champions.map((c) => (
-                      <tr key={c.champion} className="border-t border-white/[0.06] hover:bg-white/[0.03]">
+                      <tr key={c.champion} className="border-t border-line hover:bg-white/[0.03]">
                         <td className="flex items-center gap-3 py-2 pr-3">
                           <ChampionIcon name={c.champion} size={32} /> <span className="font-semibold">{c.champion}</span>
                         </td>

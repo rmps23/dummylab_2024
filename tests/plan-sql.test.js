@@ -3,20 +3,23 @@ import { describe, expect, it } from "vitest";
 import { PLANS } from "@/lib/plans";
 
 // The limits live twice: in lib/plans.js (shown to users) and in the migration (enforced). They must match.
-const sql = readFileSync("supabase/migrations/0006_plans.sql", "utf8");
+const sql = ["0006_plans.sql", "0008_team_staff.sql", "0009_three_plans.sql"].map((f) => readFileSync(`supabase/migrations/${f}`, "utf8")).join("\n");
 
 function sqlLimit(what) {
-  const match = new RegExp(`when '${what}' then case p_plan when 'pro' then (\\d+) else (\\d+) end`).exec(sql);
+  // Later migrations redefine plan_limit, so the last definition is the one in force.
+  const all = [...sql.matchAll(new RegExp(`when '${what}' then case p_plan when 'academy' then (\\d+) when 'pro' then (\\d+) else (\\d+) end`, "g"))];
+  const match = all[all.length - 1];
   if (!match) throw new Error(`limit for ${what} not found in the migration`);
-  return { pro: Number(match[1]), free: Number(match[2]) };
+  return { academy: Number(match[1]), pro: Number(match[2]), free: Number(match[3]) };
 }
 
 describe("plan limits in SQL match lib/plans.js", () => {
-  for (const what of ["teams", "players", "notes"]) {
+  for (const what of ["teams", "players", "notes", "staff"]) {
     it(what, () => {
       const limit = sqlLimit(what);
       expect(limit.free).toBe(PLANS.free.limits[what]);
       expect(limit.pro).toBe(PLANS.pro.limits[what]);
+      expect(limit.academy).toBe(PLANS.academy.limits[what]);
     });
   }
 

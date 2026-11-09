@@ -1,0 +1,12 @@
+<!doctype html>
+<html><body style="margin:0;background:#0E0F12;padding:24px 12px;font-family:Arial,Helvetica,sans-serif;color:#E8E8E8">
+<div style="max-width:480px;margin:0 auto">
+<img src="{{ .SiteURL }}/assets/logos/dummylab_logo.png" width="150" alt="DummyLab" style="display:block;margin:0 0 16px">
+<div style="background:#15171B;border:1px solid #2B3037;border-radius:10px;padding:24px">
+<h1 style="margin:0 0 12px;font-size:20px;color:#E8E8E8">Confirm your new email</h1>
+<p style="margin:0 0 20px;font-size:15px;line-height:1.5;color:#A6ADB5">Confirm that {{ .NewEmail }} is the new address for your DummyLab account.</p>
+<a href="{{ .ConfirmationURL }}" style="display:inline-block;background:#4AC0DE;color:#04222B;font-weight:700;font-size:15px;text-decoration:none;padding:12px 20px;border-radius:8px">Confirm new email</a>
+<p style="margin:20px 0 0;font-size:12px;line-height:1.5;color:#8C949D">If the button does not work, paste this link in your browser:<br><span style="word-break:break-all">{{ .ConfirmationURL }}</span></p>
+</div>
+<p style="margin:16px 4px 0;font-size:12px;line-height:1.5;color:#8C949D">If you did not ask for this, change your password.</p>
+</div></body></html>

@@ -26,7 +26,7 @@ const RemovePlayer = ({ player, setRemovePlayerModal }) => {
         <button className="inline-flex min-h-11 items-center justify-center rounded-lg bg-rose-600/90 px-4 text-sm font-semibold text-white hover:bg-rose-500 disabled:opacity-30" onClick={handleRemovePlayer}>
           Delete
         </button>
-        <button className="inline-flex min-h-11 items-center justify-center rounded-lg border border-white/10 bg-white/[0.05] px-4 text-sm font-semibold text-zinc-100 hover:bg-white/10" onClick={() => setRemovePlayerModal(false)}>
+        <button className="inline-flex min-h-11 items-center justify-center rounded-lg border border-line bg-white/[0.05] px-4 text-sm font-semibold text-zinc-100 hover:bg-white/10" onClick={() => setRemovePlayerModal(false)}>
           Cancel
         </button>
       </div>

@@ -26,6 +26,7 @@ const VIEWS = ["month", "week", "agenda"];
 const Schedule = () => {
   const { teams, activeTeamId, loaded } = teamStore();
   const allPlayers = playerStore((s) => s.players);
+  const viewOnly = teams.find((t) => t.id === activeTeamId)?.my_role === "viewer";
   const players = useMemo(() => allPlayers.filter((p) => p.team_id === activeTeamId), [allPlayers, activeTeamId]);
 
   const [view, setView] = useState("month");
@@ -69,7 +70,7 @@ const Schedule = () => {
   const step = (dir) => setCursor((c) => (view === "week" ? addWeeks(c, dir) : addMonths(c, dir)));
   const title = view === "week" ? `${format(range.from, "d MMM")} – ${format(range.to, "d MMM yyyy")}` : format(cursor, "MMMM yyyy");
   const replace = (event) => setEvents((list) => list.map((e) => (e.id === event.id ? event : e)));
-  const openForm = (date) => setForm({ date });
+  const openForm = (date) => !viewOnly && setForm({ date });
 
   function handleSaved(saved) {
     setForm(null);
@@ -93,7 +94,7 @@ const Schedule = () => {
   return (
     <>
       <PageHeader icon={FaCalendar} title="Schedule" subtitle={timeZone ? `Times shown in ${timeZone.replace("_", " ")}` : undefined}>
-        <button onClick={() => openForm(new Date())} disabled={!activeTeamId} className={btnPrimary}>
+        <button onClick={() => openForm(new Date())} disabled={!activeTeamId || viewOnly} className={btnPrimary}>
           <FaPlus aria-hidden="true" /> New event
         </button>
       </PageHeader>
@@ -101,25 +102,25 @@ const Schedule = () => {
       <div className="flex flex-col gap-4 p-4 sm:p-6">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-1">
-            <button aria-label="Previous" onClick={() => step(-1)} className={`${iconBtn} border border-white/10 bg-white/[0.04]`}>
+            <button aria-label="Previous" onClick={() => step(-1)} className={`${iconBtn} border border-line bg-white/[0.04]`}>
               <FaChevronLeft />
             </button>
             <button onClick={() => setCursor(new Date())} className={`${btnSecondary} px-3`}>
               Today
             </button>
-            <button aria-label="Next" onClick={() => step(1)} className={`${iconBtn} border border-white/10 bg-white/[0.04]`}>
+            <button aria-label="Next" onClick={() => step(1)} className={`${iconBtn} border border-line bg-white/[0.04]`}>
               <FaChevronRight />
             </button>
             <h2 className="ml-3 text-lg font-bold">{title}</h2>
           </div>
-          <div role="group" aria-label="Calendar view" className="hidden gap-1 rounded-xl border border-white/10 bg-white/[0.04] p-1 sm:flex">
+          <div role="group" aria-label="Calendar view" className="hidden gap-1 rounded-xl border border-line bg-white/[0.04] p-1 sm:flex">
             {VIEWS.map((v) => (
               <button
                 key={v}
                 onClick={() => setView(v)}
                 aria-pressed={view === v}
                 className={`min-h-9 rounded-lg px-4 text-sm font-semibold capitalize transition ${
-                  view === v ? "bg-brand/20 text-brand shadow-glow" : "text-zinc-400 hover:text-zinc-100"
+                  view === v ? "bg-brand/20 text-brand" : "text-zinc-400 hover:text-zinc-100"
                 }`}
               >
                 {v}
@@ -155,7 +156,7 @@ const Schedule = () => {
               <Agenda events={events} players={players} onSelect={setSelectedId} onCreate={() => openForm(new Date())} />
             </div>
 
-            <div className={`${gridClass} animate-rise grid-cols-7 gap-px overflow-hidden rounded-xl border border-white/[0.07] bg-white/[0.07] shadow-card`}>
+            <div className={`${gridClass} animate-rise grid-cols-7 gap-px overflow-hidden rounded-xl border border-line bg-white/[0.07] shadow-card`}>
               {range.days.slice(0, 7).map((d) => (
                 <div key={d.toISOString()} className="eyebrow bg-raised py-2 text-center">
                   {format(d, "EEE")}
@@ -178,7 +179,7 @@ const Schedule = () => {
                         openForm(day);
                       }}
                       className={`mb-1 flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold ${
-                        today ? "bg-brand text-zinc-950 shadow-glow" : "text-zinc-400 hover:bg-white/10"
+                        today ? "bg-brand text-zinc-950" : "text-zinc-400 hover:bg-white/10"
                       }`}
                     >
                       {format(day, "d")}

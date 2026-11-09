@@ -8,6 +8,7 @@ import { teamStore } from "@/store/teamStore";
 import { featureStore } from "@/store/featureStore";
 import Card from "@/components/ui/Card";
 import { btnPrimary, btnSecondary, inputClass } from "@/components/ui/buttons";
+import { isPaid } from "@/lib/plans";
 
 async function post(path) {
   const response = await fetch(path, { method: "POST" });
@@ -31,7 +32,7 @@ export default function TeamNotifications() {
     setWeekly(!!team?.weekly_report);
   }, [team?.id, team?.discord_webhook_url, team?.report_email, team?.weekly_report]);
 
-  if (!team) return null;
+  if (!team || (team.my_role && team.my_role !== "owner")) return null;
 
   async function run(label, action) {
     setBusy(true);
@@ -51,7 +52,7 @@ export default function TeamNotifications() {
       patchTeam(team.id, saved);
     });
 
-  if (loaded && plan !== "pro") {
+  if (loaded && !isPaid(plan)) {
     return (
       <Card title={`Notifications · ${team.name}`}>
         <p className="text-sm text-zinc-300">
@@ -107,7 +108,7 @@ export default function TeamNotifications() {
             className={inputClass}
           />
           <label className="flex min-h-11 cursor-pointer items-center gap-2 text-sm">
-            <input type="checkbox" checked={weekly} onChange={(e) => setWeekly(e.target.checked)} className="h-4 w-4 accent-cyan-400" />
+            <input type="checkbox" checked={weekly} onChange={(e) => setWeekly(e.target.checked)} className="h-4 w-4 accent-brand" />
             Email me the report every Monday
           </label>
           <div className="flex flex-wrap gap-2">

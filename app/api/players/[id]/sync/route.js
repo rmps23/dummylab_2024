@@ -71,6 +71,8 @@ export async function POST(request, { params }) {
     return json({ saved, remaining: rest.length, total: ids.length, pending: rest });
   } catch (e) {
     const status = e instanceof RiotError ? e.status : 500;
-    return json({ error: e.message }, status);
+    const headers = e instanceof RiotError && e.retryAfter ? { "Retry-After": String(e.retryAfter) } : undefined;
+    // Riot problems are reported as they are; anything else stays generic so internals do not leak.
+    return json({ error: e instanceof RiotError ? e.message : "Something went wrong while importing matches." }, status, headers);
   }
 }

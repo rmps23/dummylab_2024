@@ -27,14 +27,14 @@ const AddTeam = ({ setAddTeamModal }) => {
       <h2 className="text-lg font-bold">Team name</h2>
       <input
         type="text"
-        className="min-h-11 w-full rounded-lg border border-white/10 bg-black/30 px-3 text-sm outline-none transition placeholder:text-zinc-500 focus:border-brand/60 focus:ring-2 focus:ring-brand/20"
+        className="min-h-11 w-full rounded-lg border border-line bg-ink px-3 text-sm outline-none transition placeholder:text-zinc-500 focus:border-brand focus:ring-2 focus:ring-brand/25"
         placeholder="Insert team name..."
         value={teamName}
         maxLength={60}
         onChange={(e) => setTeamName(e.target.value)}
         onKeyDown={(e) => e.key === "Enter" && handleAddTeam()}
       />
-      <button className="inline-flex min-h-11 items-center justify-center rounded-lg bg-gradient-to-r from-cyan-400 to-sky-500 px-4 text-sm font-semibold text-zinc-950 shadow-[0_6px_18px_-8px_rgba(34,211,238,0.8)] transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-40 w-full" disabled={saving} onClick={handleAddTeam}>
+      <button className="inline-flex min-h-11 items-center justify-center rounded-lg bg-brand px-4 text-sm font-semibold text-brand-ink transition hover:bg-brand-soft disabled:cursor-not-allowed disabled:opacity-40 w-full" disabled={saving} onClick={handleAddTeam}>
         Confirm
       </button>
     </div>

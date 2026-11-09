@@ -29,6 +29,14 @@ describe("subscriptionToAccount", () => {
     });
   });
 
+  it("maps a subscription bought with an Academy price to the Academy plan", () => {
+    const env = { STRIPE_PRICE_ACADEMY_MONTHLY: "price_am", STRIPE_PRICE_ACADEMY_YEARLY: "price_ay" };
+    const academy = subscription({ items: { data: [{ price: { id: "price_ay" } }] } });
+    expect(subscriptionToAccount(academy, env).plan).toBe("academy");
+    expect(subscriptionToAccount(subscription({ items: { data: [{ price: { id: "price_m" } }] } }), env).plan).toBe("pro");
+    expect(subscriptionToAccount({ ...academy, status: "canceled" }, env).plan).toBe("free");
+  });
+
   it("keeps Pro while trialing or past due, and drops it for ended states", () => {
     expect(subscriptionToAccount(subscription({ status: "trialing" })).plan).toBe("pro");
     expect(subscriptionToAccount(subscription({ status: "past_due" })).plan).toBe("pro");
@@ -119,7 +127,7 @@ describe("plan errors", () => {
   it("turns database messages into friendly plan errors", () => {
     const error = toPlanError('plan_limit:teams');
     expect(error).toBeInstanceOf(PlanLimitError);
-    expect(error.message).toMatch(/1 team/);
+    expect(error.message).toMatch(/Pro allows 3 teams/);
     expect(toPlanError("something plan_limit:invites else").what).toBe("invites");
   });
 
@@ -145,11 +153,29 @@ describe("billing switches and plan data", () => {
     expect(priceFor("week", env)).toBeNull();
   });
 
-  it("keeps Free strictly smaller than Pro", () => {
-    for (const key of ["teams", "players", "notes"]) {
+  it("keeps every plan at least as big as the one below it", () => {
+    for (const key of ["teams", "players", "staff"]) {
       expect(PLANS.pro.limits[key]).toBeGreaterThan(PLANS.free.limits[key]);
+      expect(PLANS.academy.limits[key]).toBeGreaterThan(PLANS.pro.limits[key]);
     }
+    expect(PLANS.academy.limits.notes).toBeGreaterThanOrEqual(PLANS.pro.limits.notes);
     expect(PLANS.free.limits.statsDays).toBe(30);
     expect(PLANS.pro.limits.statsDays).toBeNull();
+    expect(PLANS.academy.limits.statsDays).toBeNull();
+  });
+
+  it("prices the paid plans with a yearly discount and in ascending order", () => {
+    expect(PLANS.free.price.month).toBe(0);
+    expect(PLANS.pro.price.month).toBeLessThan(PLANS.academy.price.month);
+    for (const id of ["pro", "academy"]) expect(PLANS[id].price.year).toBeLessThan(PLANS[id].price.month * 12);
+  });
+
+  it("picks Academy prices separately from Pro", () => {
+    const both = { ...env, STRIPE_PRICE_ACADEMY_MONTHLY: "price_am", STRIPE_PRICE_ACADEMY_YEARLY: "price_ay" };
+    expect(priceFor("month", both, "academy")).toBe("price_am");
+    expect(priceFor("year", both, "academy")).toBe("price_ay");
+    expect(priceFor("month", both, "pro")).toBe("price_m");
+    expect(priceFor("month", env, "academy")).toBeNull();
+    expect(priceFor("month", both, "enterprise")).toBeNull();
   });
 });
