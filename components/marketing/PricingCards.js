@@ -4,7 +4,7 @@ import { PLANS, PLAN_ORDER } from "@/lib/plans";
 import { btnPrimary, btnSecondary } from "@/components/ui/buttons";
 import DemoButton from "@/components/marketing/DemoButton";
 
-const BADGE = { pro: "Most coaches", academy: "For academies" };
+const BADGE = { pro: "Most coaches", academy: "For organisations" };
 
 // Shared by the landing page and /pricing. Payments are not live yet, so paid plans show as "opening soon".
 export default function PricingCards({ proAvailable = false }) {
