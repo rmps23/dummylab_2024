@@ -37,7 +37,7 @@ const RemoveAcc = ({ setRemoveAccModal }) => {
       </p>
       <input
         type="text"
-        className="min-h-11 w-full rounded-lg border border-white/10 bg-black/30 px-3 text-sm outline-none transition placeholder:text-zinc-500 focus:border-brand/60 focus:ring-2 focus:ring-brand/20"
+        className="min-h-11 w-full rounded-lg border border-line bg-ink px-3 text-sm outline-none transition placeholder:text-zinc-500 focus:border-brand focus:ring-2 focus:ring-brand/25"
         value={accName}
         onChange={(e) => setAccName(e.target.value)}
       />
@@ -49,7 +49,7 @@ const RemoveAcc = ({ setRemoveAccModal }) => {
         >
           Delete account
         </button>
-        <button className="inline-flex min-h-11 items-center justify-center rounded-lg border border-white/10 bg-white/[0.05] px-4 text-sm font-semibold text-zinc-100 hover:bg-white/10" onClick={() => setRemoveAccModal(false)}>
+        <button className="inline-flex min-h-11 items-center justify-center rounded-lg border border-line bg-white/[0.05] px-4 text-sm font-semibold text-zinc-100 hover:bg-white/10" onClick={() => setRemoveAccModal(false)}>
           Cancel
         </button>
       </div>

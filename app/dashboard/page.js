@@ -29,7 +29,7 @@ function GetStarted({ steps }) {
   return (
     <Card title={`Get started · ${done} of ${steps.length} done`} className="border-brand/30 bg-brand/[0.04]">
       <div className="mb-3 h-1.5 overflow-hidden rounded-full bg-white/10">
-        <div className="h-full rounded-full bg-gradient-to-r from-cyan-400 to-violet-400" style={{ width: `${(done / steps.length) * 100}%` }} />
+        <div className="h-full rounded-full bg-brand" style={{ width: `${(done / steps.length) * 100}%` }} />
       </div>
       <ol className="grid gap-1 sm:grid-cols-2">
         {steps.map((s) => (
@@ -132,16 +132,15 @@ const Dashboard = () => {
         ) : (
           <>
             <Card className="relative overflow-hidden">
-              <span aria-hidden="true" className="pointer-events-none absolute -right-16 -top-20 h-56 w-56 rounded-full bg-brand/10 blur-3xl" />
               <div className="relative flex flex-wrap items-center gap-x-8 gap-y-5">
-                <Donut value={wr} size={112} />
+                <Donut value={wr} size={112} label="Wins" />
                 <div className="min-w-[10rem]">
-                  <div className="eyebrow">Last 30 days</div>
-                  <div className="mt-1 text-3xl font-bold leading-none">
-                    <span className="text-win">{total.wins}W</span> <span className="text-zinc-500">/</span>{" "}
-                    <span className="text-loss">{total.games - total.wins}L</span>
+                  <div className="eyebrow">Team win rate · last 30 days</div>
+                  <div className={`mt-1 text-5xl font-bold leading-none ${wr >= 50 ? "text-brand" : "text-loss"}`}>{wr}%</div>
+                  <div className="mt-2 text-sm text-zinc-400">
+                    <span className="font-semibold text-win">{total.wins}W</span> <span className="text-zinc-500">/</span>{" "}
+                    <span className="font-semibold text-loss">{total.games - total.wins}L</span> · {total.games} games
                   </div>
-                  <div className="mt-1 text-sm text-zinc-400">{total.games} games played</div>
                 </div>
                 <div>
                   <div className="eyebrow mb-2">Recent form</div>

@@ -4,7 +4,7 @@ import RankBadge from "@/components/ui/RankBadge";
 import RoleBadge from "@/components/ui/RoleBadge";
 
 const EVENTS = [
-  ["04", "Team practice", "Training", "bg-sky-400", [0, 1, 2, 3, 3]],
+  ["04", "Team practice", "Training", "bg-brand", [0, 1, 2, 3, 3]],
   ["07", "Scrim vs Night Owls", "Scrim", "bg-amber-400", [0, 0, 1, 3, 4]],
   ["12", "Playoffs: Round 1", "Match", "bg-emerald-400", [0, 1, 1, 2, 3]],
 ];
@@ -16,7 +16,7 @@ export default function Preview() {
     <div
       role="img"
       aria-label="Preview of the DummyLab dashboard: win rate, recent form, upcoming events with player availability and ranks"
-      className="relative rounded-2xl border border-white/10 bg-panel/80 p-4 shadow-card backdrop-blur"
+      className="relative rounded-xl border border-line bg-panel p-4 shadow-card"
     >
       <div className="flex flex-wrap items-center gap-5 rounded-xl bg-black/20 p-4">
         <Donut value={58} size={88} />

@@ -93,7 +93,7 @@ const MatchHistory = () => {
         {blocked && <p className="rounded-lg border border-amber-500/30 bg-amber-500/10 p-3 text-sm text-amber-300">{blocked}</p>}
         {progress !== null && <ProgressBar value={progress} label="Importing matches" />}
 
-        <div className="flex flex-wrap items-center gap-4 rounded-xl border border-white/[0.07] bg-panel/80 p-4 shadow-card">
+        <div className="flex flex-wrap items-center gap-4 rounded-xl border border-line bg-panel p-4 shadow-card">
           {player?.role?.name && <RoleBadge role={player.role.name} />}
           {solo ? <RankBadge tier={solo.tier} rank={solo.rank} lp={solo.lp} /> : <span className="text-sm text-zinc-400">Unranked</span>}
           {rank.filter((r) => r.queue !== "RANKED_SOLO_5x5").map((r) => (
@@ -110,7 +110,7 @@ const MatchHistory = () => {
         </div>
 
         {matches.length === 0 ? (
-          <p className="rounded-xl border border-dashed border-white/10 p-8 text-center text-zinc-400">
+          <p className="rounded-xl border border-dashed border-line p-8 text-center text-zinc-400">
             No matches yet. Use &quot;Update from Riot&quot; to import the latest games.
           </p>
         ) : (
@@ -118,7 +118,7 @@ const MatchHistory = () => {
             {matches.map((g) => (
               <li
                 key={g.id}
-                className={`flex items-center gap-3 rounded-xl border border-white/[0.07] border-l-[3px] bg-panel/80 p-3 shadow-card ${g.win ? "border-l-win" : "border-l-loss"}`}
+                className={`flex items-center gap-3 rounded-xl border border-line border-l-[3px] bg-panel p-3 shadow-card ${g.win ? "border-l-win" : "border-l-loss"}`}
               >
                 <ChampionIcon name={g.champion} size={44} />
                 <div className="w-24">

@@ -3,7 +3,7 @@ import Link from "next/link";
 
 export default function SiteHeader() {
   return (
-    <header className="relative mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-4">
+    <header className="sticky top-0 z-30 border-b border-line bg-ink/95"><div className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-3">
       <Link href="/" aria-label="DummyLab home">
         <Image src="/assets/logos/dummylab_logo.png" width={140} height={33} alt="DummyLab" priority className="h-auto w-[140px]" />
       </Link>
@@ -15,6 +15,6 @@ export default function SiteHeader() {
           Try the demo
         </Link>
       </nav>
-    </header>
+    </div></header>
   );
 }

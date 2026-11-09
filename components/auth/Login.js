@@ -51,7 +51,7 @@ export default function Login() {
   }
 
   return (
-    <div className="mx-auto flex w-full max-w-sm flex-col gap-4 rounded-2xl border border-white/10 bg-panel/80 p-6 shadow-card backdrop-blur">
+    <div className="mx-auto flex w-full max-w-sm flex-col gap-4 rounded-xl border border-line bg-panel p-6 shadow-card">
       <div>
         <h2 className="text-xl font-bold">{mode === "signin" ? "Welcome back" : "Create your account"}</h2>
         <p className="text-sm text-zinc-400">Plan the week, track the stats.</p>

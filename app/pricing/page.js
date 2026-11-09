@@ -36,7 +36,6 @@ const Cell = ({ value }) =>
 export default function Pricing() {
   return (
     <div className="relative min-h-dvh overflow-hidden">
-      <span aria-hidden="true" className="pointer-events-none absolute -left-32 top-10 h-96 w-96 rounded-full bg-accent/20 blur-3xl" />
       <SiteHeader />
       <main id="main" className="relative mx-auto max-w-4xl px-6 py-10">
         <h1 className="text-center text-4xl font-bold">Pricing</h1>
@@ -48,7 +47,7 @@ export default function Pricing() {
 
         <section className="mt-14" aria-labelledby="compare-title">
           <h2 id="compare-title" className="mb-4 text-2xl font-bold">Compare plans</h2>
-          <div className="overflow-x-auto rounded-xl border border-white/[0.07] bg-panel/70">
+          <div className="overflow-x-auto rounded-xl border border-line bg-panel">
             <table className="w-full min-w-[480px] text-sm">
               <thead>
                 <tr className="text-left">
@@ -59,7 +58,7 @@ export default function Pricing() {
               </thead>
               <tbody>
                 {ROWS.map(([label, a, b]) => (
-                  <tr key={label} className="border-t border-white/[0.06]">
+                  <tr key={label} className="border-t border-line">
                     <th scope="row" className="p-3 text-left font-normal">{label}</th>
                     <td className="p-3 text-center"><Cell value={a} /></td>
                     <td className="p-3 text-center"><Cell value={b} /></td>

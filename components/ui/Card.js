@@ -1,12 +1,9 @@
-// The surface used for every panel: soft border, subtle depth, rounded corners.
+// The surface used for every panel: flat, one border, small radius.
 export default function Card({ as: Tag = "section", title, action, className = "", children, ...rest }) {
   return (
-    <Tag
-      className={`animate-rise rounded-xl border border-white/[0.07] bg-panel/80 shadow-card backdrop-blur ${className}`}
-      {...rest}
-    >
+    <Tag className={`animate-rise rounded-xl border border-line bg-panel shadow-card ${className}`} {...rest}>
       {(title || action) && (
-        <div className="flex items-center justify-between gap-3 px-4 pb-1 pt-4">
+        <div className="flex items-center justify-between gap-3 px-4 pb-1 pt-3.5">
           {title && <h2 className="eyebrow">{title}</h2>}
           {action}
         </div>

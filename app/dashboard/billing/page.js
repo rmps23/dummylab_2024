@@ -130,7 +130,7 @@ function BillingContent() {
                 </button>
               </div>
             ) : (
-              <p className="mt-4 rounded-lg border border-white/10 bg-white/[0.04] p-3 text-sm text-zinc-300">
+              <p className="mt-4 rounded-lg border border-line bg-white/[0.04] p-3 text-sm text-zinc-300">
                 Pro is coming soon: payments are not enabled yet. Planned price: €{pro.price.month} per month or €{pro.price.year} per
                 year.
               </p>

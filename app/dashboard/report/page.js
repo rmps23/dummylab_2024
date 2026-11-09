@@ -100,7 +100,7 @@ export default function Report() {
                   </thead>
                   <tbody>
                     {report.perPlayer.map((p) => (
-                      <tr key={p.id} className="border-t border-white/[0.06]">
+                      <tr key={p.id} className="border-t border-line">
                         <td className="flex items-center gap-2 py-2 pr-3 font-semibold">
                           {p.name} <RoleBadge role={p.role} />
                         </td>

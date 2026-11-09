@@ -75,7 +75,7 @@ const AddPlayer = ({ setCreatePlayerModal }) => {
         <input
           id="player-name"
           type="text"
-          className="min-h-11 w-full rounded-lg border border-white/10 bg-black/30 px-3 text-sm outline-none focus:border-brand/60"
+          className="min-h-11 w-full rounded-lg border border-line bg-black/30 px-3 text-sm outline-none focus:border-brand/60"
           placeholder="Insert player name..."
           value={name}
           maxLength={40}
@@ -91,7 +91,7 @@ const AddPlayer = ({ setCreatePlayerModal }) => {
         <Select id="player-role" value={role} onChange={setRole} options={ROLES.map((r) => ({ value: r.id, label: r.name }))} />
       </div>
 
-      <div className="rounded-lg border border-white/10 bg-black/20 p-4">
+      <div className="rounded-lg border border-line bg-black/20 p-4">
         {!riotEnabled ? (
           <p className="text-sm text-zinc-300">
             Riot lookups are not enabled for your account yet, so this player is added without a Riot ID. You can still
@@ -130,7 +130,7 @@ const AddPlayer = ({ setCreatePlayerModal }) => {
               <input
                 type="text"
                 aria-label="Game name"
-                className="min-h-11 min-w-0 flex-1 rounded-lg border border-white/10 bg-black/30 px-3 text-sm outline-none focus:border-brand/60"
+                className="min-h-11 min-w-0 flex-1 rounded-lg border border-line bg-black/30 px-3 text-sm outline-none focus:border-brand/60"
                 placeholder="Game Name"
                 value={gameName}
                 onChange={(e) => setGameName(e.target.value)}
@@ -139,7 +139,7 @@ const AddPlayer = ({ setCreatePlayerModal }) => {
               <input
                 type="text"
                 aria-label="Tag line"
-                className="min-h-11 min-w-0 max-w-24 flex-1 rounded-lg border border-white/10 bg-black/30 px-3 text-sm outline-none focus:border-brand/60"
+                className="min-h-11 min-w-0 max-w-24 flex-1 rounded-lg border border-line bg-black/30 px-3 text-sm outline-none focus:border-brand/60"
                 placeholder="Tag"
                 value={tagLine}
                 onChange={(e) => setTagLine(e.target.value)}
@@ -161,7 +161,7 @@ const AddPlayer = ({ setCreatePlayerModal }) => {
       </div>
 
       <button
-        className="inline-flex min-h-11 items-center justify-center rounded-lg bg-brand hover:bg-brand-soft px-4 text-sm font-semibold text-zinc-950 disabled:cursor-not-allowed disabled:opacity-40"
+        className="inline-flex min-h-11 items-center justify-center rounded-lg bg-brand hover:bg-brand-soft px-4 text-sm font-semibold text-brand-ink disabled:cursor-not-allowed disabled:opacity-40"
         disabled={!canSave}
         onClick={handleInsertPlayer}
       >

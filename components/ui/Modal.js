@@ -65,7 +65,7 @@ const Modal = ({ show, onClose, content, title = "Dialog" }) => {
         aria-modal="true"
         aria-label={title}
         tabIndex={-1}
-        className="relative mx-auto my-6 w-[calc(100%-2rem)] max-w-xl animate-rise rounded-xl border border-white/10 bg-raised p-6 shadow-2xl outline-none sm:my-12"
+        className="relative mx-auto my-6 w-[calc(100%-2rem)] max-w-xl animate-rise rounded-xl border border-line bg-raised p-6 shadow-2xl outline-none sm:my-12"
       >
         <button
           type="button"

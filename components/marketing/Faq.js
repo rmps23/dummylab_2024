@@ -29,7 +29,7 @@ export default function Faq() {
   return (
     <div className="mx-auto flex max-w-3xl flex-col gap-2">
       {ITEMS.map(([question, answer]) => (
-        <details key={question} className="group rounded-xl border border-white/[0.07] bg-panel/70 px-4">
+        <details key={question} className="group rounded-xl border border-line bg-panel px-4">
           <summary className="flex min-h-12 cursor-pointer list-none items-center justify-between gap-3 font-semibold">
             {question}
             <span aria-hidden="true" className="text-brand transition group-open:rotate-45">+</span>

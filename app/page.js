@@ -33,8 +33,6 @@ const STEPS = [
 export default function Home() {
   return (
     <main id="main" className="relative overflow-hidden">
-      <span aria-hidden="true" className="pointer-events-none absolute -left-32 top-10 h-96 w-96 rounded-full bg-accent/20 blur-3xl" />
-      <span aria-hidden="true" className="pointer-events-none absolute -right-24 top-96 h-96 w-96 rounded-full bg-brand/15 blur-3xl" />
 
       <SiteHeader />
 
@@ -42,7 +40,7 @@ export default function Home() {
         <div className="w-full max-w-xl text-center lg:text-left">
           <h1 className="text-4xl font-bold leading-tight sm:text-5xl">
             The coaching dashboard for{" "}
-            <span className="bg-gradient-to-r from-cyan-300 to-violet-400 bg-clip-text text-transparent">League teams</span>
+            <span className="text-brand">League teams</span>
           </h1>
           <p className="mt-4 text-lg text-zinc-300">
             Schedule trainings and scrims with player availability, and track stats from match history. Built for coaches
@@ -67,8 +65,8 @@ export default function Home() {
         <h2 id="features-title" className="sr-only">Features</h2>
         <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {FEATURES.map(({ icon: Icon, title, text }) => (
-            <li key={title} className="rounded-2xl border border-white/[0.07] bg-panel/70 p-5 shadow-card">
-              <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-brand/25 to-accent/25 text-brand">
+            <li key={title} className="rounded-xl border border-line bg-panel p-5 shadow-card">
+              <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-brand/12 text-brand">
                 <Icon aria-hidden="true" />
               </span>
               <h3 className="mt-4 font-bold">{title}</h3>

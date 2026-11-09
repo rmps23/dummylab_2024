@@ -2,9 +2,9 @@ import { btnPrimary } from "@/components/ui/buttons";
 
 export default function EmptyState({ icon: Icon, title, children, action }) {
   return (
-    <div className="mx-auto my-10 flex max-w-xl animate-rise flex-col items-center gap-3 rounded-2xl border border-dashed border-white/10 bg-panel/40 p-8 text-center">
+    <div className="mx-auto my-10 flex max-w-xl animate-rise flex-col items-center gap-3 rounded-xl border border-dashed border-line bg-panel p-8 text-center">
       {Icon && (
-        <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-brand/25 to-accent/25 text-2xl text-brand shadow-glow">
+        <span className="flex h-14 w-14 items-center justify-center rounded-xl bg-brand/12 text-2xl text-brand">
           <Icon aria-hidden="true" />
         </span>
       )}

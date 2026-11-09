@@ -107,7 +107,7 @@ export default function TeamNotifications() {
             className={inputClass}
           />
           <label className="flex min-h-11 cursor-pointer items-center gap-2 text-sm">
-            <input type="checkbox" checked={weekly} onChange={(e) => setWeekly(e.target.checked)} className="h-4 w-4 accent-cyan-400" />
+            <input type="checkbox" checked={weekly} onChange={(e) => setWeekly(e.target.checked)} className="h-4 w-4 accent-brand" />
             Email me the report every Monday
           </label>
           <div className="flex flex-wrap gap-2">

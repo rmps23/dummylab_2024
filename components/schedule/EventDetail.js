@@ -59,7 +59,7 @@ export default function EventDetail({ event, players, timeZone, onChange, onEdit
         </p>
         {timeZone && <p className="text-xs text-zinc-400">Times in {timeZone.replace("_", " ")}</p>}
         {event.link && (
-          <a href={event.link} target="_blank" rel="noopener noreferrer" className="break-all text-sm text-cyan-400 underline">
+          <a href={event.link} target="_blank" rel="noopener noreferrer" className="break-all text-sm text-brand underline">
             {event.link}
           </a>
         )}
@@ -126,11 +126,11 @@ export default function EventDetail({ event, players, timeZone, onChange, onEdit
           </button>
         )}
         {team?.discord_webhook_url && (
-          <button onClick={handleRemind} disabled={reminding} className="min-h-11 rounded-lg border border-white/10 bg-white/[0.05] px-4 text-sm font-semibold hover:bg-white/10 disabled:opacity-50">
+          <button onClick={handleRemind} disabled={reminding} className="min-h-11 rounded-lg border border-line bg-white/[0.05] px-4 text-sm font-semibold hover:bg-white/10 disabled:opacity-50">
             Remind on Discord
           </button>
         )}
-        <button onClick={() => onEdit(event)} className="min-h-11 rounded-lg bg-gradient-to-r from-cyan-400 to-sky-500 px-4 text-sm font-semibold text-zinc-950">
+        <button onClick={() => onEdit(event)} className="min-h-11 rounded-lg bg-brand px-4 text-sm font-semibold text-brand-ink">
           Edit
         </button>
       </div>

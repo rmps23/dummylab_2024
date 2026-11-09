@@ -197,7 +197,7 @@ function AnalyticsContent() {
               <KpiCard label="Vision / min" accent="win" value={fmt(totals.vision, 2)} />
             </div>
 
-            <details className="rounded-lg border border-white/[0.07] bg-panel/60 p-3 text-sm">
+            <details className="rounded-lg border border-line bg-panel p-3 text-sm">
               <summary className="min-h-9 cursor-pointer font-semibold text-zinc-300">What do these numbers mean?</summary>
               <dl className="mt-2 grid gap-1 sm:grid-cols-[9rem_1fr]">
                 {GUIDE.map(([term, text]) => (
@@ -232,7 +232,7 @@ function AnalyticsContent() {
                       const m = rowMetrics(r);
                       const p = nameOf(r.player_id);
                       return (
-                        <tr key={r.player_id} className="border-t border-white/[0.06] hover:bg-white/[0.03]">
+                        <tr key={r.player_id} className="border-t border-line hover:bg-white/[0.03]">
                           <td className="py-2 pr-3">
                             <button onClick={() => setPlayer(r.player_id)} className="flex min-h-11 items-center gap-2 text-left hover:text-brand">
                               <Avatar name={p?.name} size={28} />
@@ -267,7 +267,7 @@ function AnalyticsContent() {
                   </thead>
                   <tbody>
                     {champions.map((c) => (
-                      <tr key={c.champion} className="border-t border-white/[0.06] hover:bg-white/[0.03]">
+                      <tr key={c.champion} className="border-t border-line hover:bg-white/[0.03]">
                         <td className="flex items-center gap-3 py-2 pr-3">
                           <ChampionIcon name={c.champion} size={32} /> <span className="font-semibold">{c.champion}</span>
                         </td>

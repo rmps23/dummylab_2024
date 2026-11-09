@@ -4,33 +4,33 @@
 
 @layer base {
   body {
-    background:
-      radial-gradient(900px 420px at 88% -8%, rgba(34, 211, 238, 0.12), transparent 60%),
-      radial-gradient(700px 420px at -5% 0%, rgba(139, 92, 246, 0.12), transparent 55%),
-      #09090b;
-    background-attachment: fixed;
+    background: #0a1118;
     font-variant-numeric: tabular-nums;
   }
 
+  h1, h2, h3 {
+    font-family: var(--font-chakra), var(--font-inter), system-ui, sans-serif;
+  }
+
   :focus-visible {
-    outline: 2px solid #22d3ee;
+    outline: 2px solid #4AC0DE;
     outline-offset: 2px;
   }
 
   ::selection {
-    background: rgba(34, 211, 238, 0.35);
+    background: rgba(74, 192, 222, 0.35);
   }
 
   * {
     scrollbar-width: thin;
-    scrollbar-color: #3f3f46 transparent;
+    scrollbar-color: #2F4A5C transparent;
   }
 }
 
 @layer components {
   /* Small uppercase labels used across cards and tables. */
   .eyebrow {
-    @apply text-[11px] font-bold uppercase tracking-[0.14em] text-zinc-400;
+    @apply text-[11px] font-semibold uppercase tracking-[0.08em] text-zinc-500;
   }
 }
 
