@@ -123,7 +123,7 @@ describe("buildWeeklyReport", () => {
   it("renders CSV, text and HTML", () => {
     expect(reportToCsv(report).split("\n")[0]).toBe("Player,Role,Games,Wins,Win rate %,KDA,CS/min");
     expect(reportToText(report)).toContain("3 games, 2W 1L (67% win rate)");
-    expect(reportToHtml(report)).toContain("Riot Games");
+    expect(reportToHtml(report)).toContain("weekly report");
   });
 
   it("neutralises spreadsheet formulas and escapes HTML in names", () => {

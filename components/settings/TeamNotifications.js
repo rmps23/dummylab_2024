@@ -8,6 +8,7 @@ import { teamStore } from "@/store/teamStore";
 import { featureStore } from "@/store/featureStore";
 import Card from "@/components/ui/Card";
 import { btnPrimary, btnSecondary, inputClass } from "@/components/ui/buttons";
+import { isPaid } from "@/lib/plans";
 
 async function post(path) {
   const response = await fetch(path, { method: "POST" });
@@ -51,7 +52,7 @@ export default function TeamNotifications() {
       patchTeam(team.id, saved);
     });
 
-  if (loaded && plan !== "pro") {
+  if (loaded && !isPaid(plan)) {
     return (
       <Card title={`Notifications · ${team.name}`}>
         <p className="text-sm text-zinc-300">

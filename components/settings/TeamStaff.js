@@ -10,6 +10,7 @@ import Card from "@/components/ui/Card";
 import Select from "@/components/ui/Select";
 import { btnPrimary, btnSecondary, inputClass } from "@/components/ui/buttons";
 import { ROLE_HELP, ROLE_LABELS } from "@/lib/teamRoles";
+import { isPaid } from "@/lib/plans";
 
 // Owner-only panel: invite analysts and assistants to the active team, see who has access, remove people.
 export default function TeamStaff() {
@@ -90,7 +91,7 @@ export default function TeamStaff() {
     }
   }
 
-  const proOnly = plan !== "pro" && !demo;
+  const proOnly = !isPaid(plan) && !demo;
 
   return (
     <Card title={`Staff of ${team.name}`}>
@@ -102,11 +103,11 @@ export default function TeamStaff() {
 
         {proOnly ? (
           <p className="rounded-lg border border-line bg-raised p-3 text-sm text-zinc-300">
-            Inviting staff is a Pro feature (up to 3 people).{" "}
+            Inviting staff is a paid feature: Pro includes 1 person, Academy 5.{" "}
             {billing ? (
               <Link href="/dashboard/billing" className="font-semibold text-brand underline">Upgrade to Pro</Link>
             ) : (
-              "Pro opens soon."
+              "Paid plans open soon."
             )}
           </p>
         ) : demo ? (

@@ -9,6 +9,7 @@ const STAFF = "00000000-0000-0000-0000-000000000002";
 const VIEWER = "00000000-0000-0000-0000-000000000003";
 const STRANGER = "00000000-0000-0000-0000-000000000004";
 const FREE_OWNER = "00000000-0000-0000-0000-000000000005";
+const PRO_OWNER = "00000000-0000-0000-0000-000000000006";
 const DAY = 86400000;
 
 let db;
@@ -39,12 +40,12 @@ beforeAll(async () => {
     grant select on auth.users to authenticated;
   `);
 
-  for (const [id, mail] of [[OWNER, "owner@x.gg"], [STAFF, "staff@x.gg"], [VIEWER, "viewer@x.gg"], [STRANGER, "nobody@x.gg"], [FREE_OWNER, "free@x.gg"]]) {
+  for (const [id, mail] of [[OWNER, "owner@x.gg"], [STAFF, "staff@x.gg"], [VIEWER, "viewer@x.gg"], [STRANGER, "nobody@x.gg"], [FREE_OWNER, "free@x.gg"], [PRO_OWNER, "pro@x.gg"]]) {
     await db.query("insert into auth.users (id, email) values ($1, $2)", [id, mail]);
   }
-  await db.query("insert into account (user_id, plan, status) values ($1, 'pro', 'active')", [OWNER]);
+  await db.query("insert into account (user_id, plan, status) values ($1, 'academy', 'active'), ($2, 'pro', 'active')", [OWNER, PRO_OWNER]);
   await db.exec(`
-    insert into team (id, owner_id, name) overriding system value values (1, '${OWNER}', 'Apex'), (2, '${FREE_OWNER}', 'Solo');
+    insert into team (id, owner_id, name) overriding system value values (1, '${OWNER}', 'Apex'), (2, '${FREE_OWNER}', 'Solo'), (3, '${PRO_OWNER}', 'Coach');
     insert into player (id, owner_id, team_id, role_id, name, region, riot_id, riot_puuid)
       values ('10000000-0000-0000-0000-000000000001', '${OWNER}', 1, 3, 'Kaito', 'EUW1', 'Kaito#EUW', 'puuid-a'),
              ('10000000-0000-0000-0000-000000000002', '${FREE_OWNER}', 2, 3, 'Solo', 'EUW1', 'Solo#EUW', 'puuid-b');
@@ -133,6 +134,26 @@ describe("writing", () => {
   });
 });
 
+describe("plan limits", () => {
+  const add = (uid, team, n) =>
+    as(uid, (tx) =>
+      tx.query("insert into player (team_id, role_id, name, region, riot_id, riot_puuid) values ($1, 1, $2, 'EUW1', 'x#1', $3)", [team, `P${n}`, `puuid-limit-${uid.slice(-1)}-${n}`])
+    );
+  it("caps a Pro owner at 50 players and a Free owner at 10", async () => {
+    for (let n = 0; n < 9; n++) await add(FREE_OWNER, 2, n); // 1 existing + 9 = 10
+    await expect(add(FREE_OWNER, 2, 99)).rejects.toThrow(/plan_limit:players/);
+    for (let n = 0; n < 50; n++) await add(PRO_OWNER, 3, n);
+    await expect(add(PRO_OWNER, 3, 99)).rejects.toThrow(/plan_limit:players/);
+  });
+  it("caps teams: Free 1, Pro 3", async () => {
+    const team = (uid, n) => as(uid, (tx) => tx.query("insert into team (name) values ($1)", [`T${n}`]));
+    await expect(team(FREE_OWNER, 1)).rejects.toThrow(/plan_limit:teams/);
+    await team(PRO_OWNER, 1);
+    await team(PRO_OWNER, 2);
+    await expect(team(PRO_OWNER, 3)).rejects.toThrow(/plan_limit:teams/);
+  });
+});
+
 describe("invites and seats", () => {
   const invite = (uid, team, n) =>
     as(uid, (tx) =>
@@ -146,10 +167,14 @@ describe("invites and seats", () => {
     expect((await rows(STAFF, "select email from team_invite")).length).toBe(0);
   });
 
-  it("limits staff seats by plan: Pro has 3, Free has none", async () => {
-    // Seats used so far on the Pro owner: 2 members + 1 open invite = 3, so the next one is refused.
-    await expect(invite(OWNER, 1, 2)).rejects.toThrow(/plan_limit:staff/);
-    await expect(invite(FREE_OWNER, 2, 3)).rejects.toThrow(/plan_limit:staff/);
+  it("limits staff seats by plan: Academy 5, Pro 1, Free none", async () => {
+    // Academy owner: 2 members + 1 open invite = 3 of 5 seats used, so two more fit and the next is refused.
+    await expect(invite(OWNER, 1, 2)).resolves.toBeTruthy();
+    await expect(invite(OWNER, 1, 4)).resolves.toBeTruthy();
+    await expect(invite(OWNER, 1, 5)).rejects.toThrow(/plan_limit:staff/);
+    await expect(invite(PRO_OWNER, 3, 6)).resolves.toBeTruthy();
+    await expect(invite(PRO_OWNER, 3, 7)).rejects.toThrow(/plan_limit:staff/);
+    await expect(invite(FREE_OWNER, 2, 8)).rejects.toThrow(/plan_limit:staff/);
   });
 
   it("shows seats to the owner and to the member only", async () => {
@@ -166,7 +191,7 @@ describe("invites and seats", () => {
 });
 
 describe("stats window follows the team owner's plan", () => {
-  it("shows the full history on a Pro team even to a free account", async () => {
+  it("shows the full history on a paid team even to a free account", async () => {
     const [row] = await rows(STAFF, "select games from player_stats(1, null, null, null)");
     expect(Number(row.games)).toBe(2);
   });

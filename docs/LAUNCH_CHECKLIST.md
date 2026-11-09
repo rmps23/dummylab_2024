@@ -54,19 +54,19 @@ Follow [AUTH_AND_EMAIL.md](AUTH_AND_EMAIL.md):
 
 ## 4. Stripe (test mode first)
 
-- [ ] Create the product "DummyLab Pro" with two recurring prices (€9 per month, €90 per year) in **test mode**.
-- [ ] Set `STRIPE_SECRET_KEY` (sk_test), `STRIPE_PRICE_PRO_MONTHLY`, `STRIPE_PRICE_PRO_YEARLY`, `BILLING_ENABLED=true`.
+- [ ] Create two products in **test mode**: "DummyLab Pro" (3 EUR per month, 30 EUR per year) and "DummyLab Academy" (9 EUR per month, 90 EUR per year), each with a monthly and a yearly recurring price.
+- [ ] Set `STRIPE_SECRET_KEY` (sk_test), `STRIPE_PRICE_PRO_MONTHLY`, `STRIPE_PRICE_PRO_YEARLY`, `STRIPE_PRICE_ACADEMY_MONTHLY`, `STRIPE_PRICE_ACADEMY_YEARLY` and `BILLING_ENABLED=true`.
 - [ ] Add a webhook endpoint `https://<your-site>/api/billing/webhook` for `customer.subscription.created`,
       `customer.subscription.updated` and `customer.subscription.deleted`, and set `STRIPE_WEBHOOK_SECRET`.
       Locally: `stripe listen --forward-to localhost:3000/api/billing/webhook`.
-- [ ] Enable the **customer portal** in Stripe (cancel, change card, invoices).
+- [ ] Enable the **customer portal** in Stripe (cancel, change card, invoices) and allow customers to **switch plans** between Pro and Academy: upgrades for people who already pay go through the portal.
 - [ ] Test with card `4242 4242 4242 4242`: subscribe, see the plan switch to Pro, use the portal, cancel, see it fall back to Free.
 - [ ] Activate the Stripe account (identity and bank details), then repeat with live keys. Review VAT collection
       (Stripe Tax or manual) with your accountant.
 
 ## 5. Database
 
-- [ ] Run `supabase/migrations/0001` to `0008` in order. `0006` creates the plan limits, `0007` the notification settings and `0008` staff access (team members, invitations, staff seats). The policies are tested in `tests/rls.test.js`.
+- [ ] Run `supabase/migrations/0001` to `0008` in order. `0006` creates the plan limits, `0007` the notification settings and `0008` staff access (team members, invitations, staff seats) and `0009` the three plans (Free, Pro, Academy). The policies are tested in `tests/rls.test.js`.
 - [ ] Run `node --env-file=.env.local scripts/seed-demo.mjs` so the demo account is Pro and has notes.
 - [ ] Rotate the Supabase secret key and any key that was ever pasted in a chat or ticket.
 

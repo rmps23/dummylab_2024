@@ -3,6 +3,7 @@ import { emailConfigured, sendEmail } from "@/lib/email";
 import { buildWeeklyReport, reportToHtml, reportToText } from "@/lib/report";
 import { loadReportData } from "@/lib/reportData";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { isPaid } from "@/lib/plans";
 
 export const maxDuration = 60;
 
@@ -21,7 +22,7 @@ export async function GET(request) {
   for (const team of teams || []) {
     try {
       const { data: plan } = await admin.rpc("user_plan", { uid: team.owner_id });
-      if (plan !== "pro") continue;
+      if (!isPaid(plan)) continue;
 
       let to = team.report_email;
       if (!to) {

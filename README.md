@@ -23,7 +23,7 @@ The dashboard, schedule, players and analytics pages are behind the login: press
 - **Staff access (Pro):** invite analysts and assistant coaches by email as *staff* (edit the schedule, keep their own notes) or *viewer* (read only). Players, billing and Riot settings stay with the owner.
 - **Real sign-in:** email confirmation, password reset, a honeypot and optional Cloudflare Turnstile against spam, branded auth emails ([docs/AUTH_AND_EMAIL.md](docs/AUTH_AND_EMAIL.md)).
 - **Discord reminders and a weekly report (Pro):** post an event's availability to a channel, and get a weekly summary by email, CSV or print.
-- **Plans:** Free (1 team, 10 players, 30 days of stats) and Pro (5 teams, 100 players, 3 staff seats, full history, links, reminders, report). Limits are enforced in the database. Payments are built on Stripe test mode and switched off until launch.
+- **Plans:** Free (1 team, 10 players, 30 days of stats), Pro at 3 EUR a month (3 teams, 50 players, 1 staff seat, full history, links, reminders, report) and Academy at 9 EUR (10 teams, 200 players, 5 staff seats). The paid prices only cover running costs. Limits are enforced in the database. Payments are built on Stripe test mode and switched off until launch.
 - **Accessible and responsive:** keyboard-friendly dialogs, landmarks, 44 px touch targets, light on JavaScript.
 - **Demo account:** one-click login that never exposes credentials to the browser. It has every Pro feature, cannot change email or be deleted, and is reset daily.
 
@@ -42,7 +42,7 @@ Next.js 14 (App Router) · React 18 · Tailwind CSS · Zustand · Supabase (Auth
 
 ## Running locally
 
-1. Create a Supabase project and run the files in `supabase/migrations` in order (`0001` to `0008`) in the SQL editor, or with `supabase db push`.
+1. Create a Supabase project and run the files in `supabase/migrations` in order (`0001` to `0009`) in the SQL editor, or with `supabase db push`.
 2. Copy `.env.example` to `.env.local` and fill it in:
 
    | Variable | Where it comes from |

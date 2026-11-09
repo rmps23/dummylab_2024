@@ -1,6 +1,5 @@
 import Image from "next/image";
 import AvailabilityForm from "@/components/invite/AvailabilityForm";
-import Footer from "@/components/Footer";
 import { getInviteContext } from "@/lib/invites";
 import { createAdminClient } from "@/lib/supabase/admin";
 
@@ -34,7 +33,6 @@ export default async function InvitePage({ params }) {
           </div>
         )}
       </main>
-      <Footer className="px-4 pb-8" />
     </div>
   );
 }

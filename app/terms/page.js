@@ -27,10 +27,7 @@ export default function Terms() {
       <section>
         <h2>Riot Games data</h2>
         <p>
-          Game data comes from the Riot Games API. {SITE.name} isn&apos;t endorsed by Riot Games and doesn&apos;t
-          reflect the views or opinions of Riot Games or anyone officially involved in producing or managing Riot Games
-          properties. Riot Games and all associated properties are trademarks or registered trademarks of Riot Games,
-          Inc. Data availability depends on Riot and may change or stop at any time.
+          Game data comes from the Riot Games API and {SITE.name} is not endorsed by Riot Games (see the notice in the footer). Data availability depends on Riot and may change or stop at any time.
         </p>
       </section>
       <section>

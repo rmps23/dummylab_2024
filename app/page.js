@@ -110,9 +110,9 @@ export default function Home() {
       </section>
 
       <section className="border-t border-line" aria-labelledby="pricing-title">
-        <div className="mx-auto max-w-4xl px-6 py-16">
+        <div className="mx-auto max-w-6xl px-6 py-16">
           <h2 id="pricing-title" className="text-center text-3xl font-bold">Pricing</h2>
-          <p className="mx-auto mb-8 mt-2 max-w-xl text-center text-zinc-400">Start free with one team. Move to Pro when you run more than one roster.</p>
+          <p className="mx-auto mb-8 mt-2 max-w-xl text-center text-zinc-400">Free for one team. The paid plans only cover what the servers cost, so they stay as cheap as we can make them.</p>
           <PricingCards />
         </div>
       </section>

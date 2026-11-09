@@ -23,6 +23,7 @@ import Skeleton, { SkeletonKpis } from "@/components/ui/Skeleton";
 import { btnSecondary } from "@/components/ui/buttons";
 import { featureStore } from "@/store/featureStore";
 import { FaFileLines } from "react-icons/fa6";
+import { isPaid } from "@/lib/plans";
 
 const QUEUES = [
   { value: "", label: "All queues" },
@@ -41,14 +42,6 @@ const rowMetrics = (r) => ({
   vision: Number(r.vision) / Number(r.minutes || 1),
 });
 
-const GUIDE = [
-  ["Win rate", "Wins divided by games played."],
-  ["KDA", "(kills + assists) / deaths. With no deaths, the deaths count as 1."],
-  ["CS / min", "Minions and jungle monsters killed per minute of game time."],
-  ["Damage / min", "Damage to champions per minute."],
-  ["Vision / min", "Vision score per minute (wards placed, cleared and vision control)."],
-  ["KP", "Kill participation: share of the team's kills a player took part in."],
-];
 
 // Inline win-rate bar with the number next to it.
 const WinRate = ({ value }) => (
@@ -138,8 +131,8 @@ function AnalyticsContent() {
           options={[
             { value: 7, label: "Last 7 days" },
             { value: 30, label: "Last 30 days" },
-            { value: 90, label: "Last 90 days", disabled: plan !== "pro", hint: plan !== "pro" ? "Pro" : undefined },
-            { value: 0, label: "All time", disabled: plan !== "pro", hint: plan !== "pro" ? "Pro" : undefined },
+            { value: 90, label: "Last 90 days", disabled: !isPaid(plan), hint: !isPaid(plan) ? "Pro" : undefined },
+            { value: 0, label: "All time", disabled: !isPaid(plan), hint: !isPaid(plan) ? "Pro" : undefined },
           ]}
         />
         <Select variant="chip" label="Queue" value={queue} onChange={setQueue} options={QUEUES} align="right" />
@@ -196,18 +189,6 @@ function AnalyticsContent() {
               <KpiCard label="Damage / min" accent="loss" value={Math.round(totals.dmg)} />
               <KpiCard label="Vision / min" accent="win" value={fmt(totals.vision, 2)} />
             </div>
-
-            <details className="rounded-lg border border-line bg-panel p-3 text-sm">
-              <summary className="min-h-9 cursor-pointer font-semibold text-zinc-300">What do these numbers mean?</summary>
-              <dl className="mt-2 grid gap-1 sm:grid-cols-[9rem_1fr]">
-                {GUIDE.map(([term, text]) => (
-                  <div key={term} className="contents">
-                    <dt className="text-zinc-200">{term}</dt>
-                    <dd className="text-zinc-400">{text}</dd>
-                  </div>
-                ))}
-              </dl>
-            </details>
 
             {player && (
               <Card title={`Last ${trend.length} games`}>
